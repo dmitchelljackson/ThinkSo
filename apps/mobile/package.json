@@ -1,0 +1,12 @@
+{
+  "name": "@thinkso/mobile",
+  "version": "0.0.0",
+  "private": true,
+  "description": "ThinkSo mobile application (foundation placeholder)",
+  "scripts": {
+    "format:check": "prettier --check --ignore-unknown --no-error-on-unmatched-pattern 'src/**/*.{js,jsx,ts,tsx,json}'",
+    "lint": "eslint --max-warnings=0 --no-error-on-unmatched-pattern 'src/**/*.{js,jsx,ts,tsx}'",
+    "typecheck": "node -e \"console.log('SKIP mobile typecheck: tsconfig.json is not present yet')\"",
+    "test": "node -e \"console.log('SKIP mobile tests: test runner is not present yet')\""
+  }
+}

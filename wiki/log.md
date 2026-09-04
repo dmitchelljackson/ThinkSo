@@ -2,6 +2,18 @@
 
 This is an append-only history of material wiki operations.
 
+## [2026-09-04] setup | Android emulator and stack tooling verified
+
+Installed and verified the Android command-line toolchain and a dedicated `ThinkSo_API_36` Pixel 8 AVD running Android 16/API 36. The emulator boots to the launcher and is visible to `adb`; login-shell Android paths live in the user-level shell configuration rather than the repository. GitHub CLI 2.100.0 and `github/gh-stack` 0.1.1 are also active. iOS remains blocked only by Xcode first-run components, license acceptance, and a simulator runtime; AutoMobile installation is agent-owned, with only any actual macOS permission prompt reserved for the human.
+
+## [2026-09-04] decision | Foundation configuration approved
+
+The product owner approved and locked the foundation configuration, including runtime baselines, repository shape, Expo CNG and development builds, strict TypeScript boundaries, TanStack Query, React Obsidian with a mandatory compatibility spike, FastAPI/Postgres/PgQueuer backend conventions, generated OpenAPI transport, CI shape, and repository governance. T-000 entered implementation and T-010/T-020 became ready in dependency order.
+
+## [2026-09-04] add | Implementation-oriented provider setup guides
+
+Added owner-facing setup guides for Expo account/EAS project ownership, Google OAuth and Firebase, Meta developer/Threads API, and OpenRouter key and budget controls. Each guide separates work possible before scaffolding from work requiring agent-generated identifiers or callback URLs, uses safe placeholders, records secret-handling warnings, defines acceptance evidence, and provides explicit agent handoff fields. The guides link current official provider documentation and note where console labels, plan entitlements, or provider review requirements must be verified rather than assumed.
+
 ## [2026-09-04] publish | Initial public GitHub repository
 
 Accepted the Xcode tooling prerequisite, initialized the local workspace on `main`, connected the existing empty public `dmitchelljackson/ThinkSo` repository, and published commit `ebb4f587d862`. Before publication, added repository-wide ignore rules, removed Finder metadata from the candidate tree, sanitized one machine-local source path, validated all relative Markdown links, ran staged whitespace checks, and completed a redacted Gitleaks scan with no findings. The repository now exposes the portfolio README, literal design captures, preserved sources, canonical wiki, BDDs, API specification, architecture, and ordered ticket backlog.

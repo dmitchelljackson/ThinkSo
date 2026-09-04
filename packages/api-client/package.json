@@ -1,0 +1,12 @@
+{
+  "name": "@thinkso/api-client",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Generated OpenAPI client (foundation placeholder)",
+  "scripts": {
+    "format:check": "prettier --check --ignore-unknown --no-error-on-unmatched-pattern 'src/**/*.{js,jsx,ts,tsx,json}'",
+    "lint": "eslint --max-warnings=0 --no-error-on-unmatched-pattern 'src/**/*.{js,jsx,ts,tsx}'",
+    "typecheck": "node -e \"console.log('SKIP API client typecheck: generated source is not present yet')\"",
+    "test": "node -e \"console.log('SKIP API client tests: generated client is not present yet')\""
+  }
+}

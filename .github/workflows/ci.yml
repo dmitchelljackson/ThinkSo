@@ -1,0 +1,136 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 'stack/**']
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  hygiene:
+    name: Repository hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - uses: extractions/setup-just@v4
+        with:
+          just-version: 1.58.0
+      - run: pnpm install --frozen-lockfile
+      - run: just path-hygiene
+      - run: just links-check
+      - uses: gitleaks/gitleaks-action@v2
+        with:
+          args: detect --redact --no-banner
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  mobile:
+    name: Mobile checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - uses: extractions/setup-just@v4
+        with:
+          just-version: 1.58.0
+      - run: pnpm install --frozen-lockfile
+      - run: just mobile-format
+      - run: just mobile-lint
+      - run: just mobile-typecheck
+      - run: just mobile-test
+
+  backend:
+    name: Backend checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: 0.9.21
+          enable-cache: true
+      - uses: extractions/setup-just@v4
+        with:
+          just-version: 1.58.0
+      - run: uv python install
+      - run: uv sync --directory services/api --locked --dev
+      - run: just backend-format
+      - run: just backend-lint
+      - run: just backend-typecheck
+      - run: just backend-test
+
+  integration:
+    name: Backend integration
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
+        env:
+          POSTGRES_DB: thinkso_test
+          POSTGRES_USER: thinkso
+          POSTGRES_PASSWORD: thinkso-test-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U thinkso -d thinkso_test" --health-interval 5s --health-timeout
+          5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: 0.9.21
+          enable-cache: true
+      - uses: extractions/setup-just@v4
+        with:
+          just-version: 1.58.0
+      - run: uv python install
+      - run: uv sync --directory services/api --locked --dev
+      - run: just backend-integration
+
+  openapi:
+    name: OpenAPI drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - uses: extractions/setup-just@v4
+        with:
+          just-version: 1.58.0
+      - run: pnpm install --frozen-lockfile
+      - run: just openapi-drift
+
+  container:
+    name: Container build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: extractions/setup-just@v4
+        with:
+          just-version: 1.58.0
+      - run: just container-build

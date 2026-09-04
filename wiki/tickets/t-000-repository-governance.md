@@ -4,8 +4,8 @@
 
 | Field | Value |
 |---|---|
-| Type / status | `ENABLING` / `DRAFT` |
-| Owner review | `PENDING` |
+| Type / status | `ENABLING` / `IMPLEMENTING` |
+| Owner review | `APPROVED 2026-09-04` |
 | Stack position / predecessor | `000` / `main` |
 | Branch / PR | `stack/000-repository-governance` / — |
 
@@ -54,6 +54,8 @@ A clean public checkout has deterministic workspace commands, formatting, lint/t
 `2026-09-03 | COORDINATOR | CREATED | Remote repository exists empty at https://github.com/dmitchelljackson/ThinkSo; local push awaits tooling and owner review.`
 
 `2026-09-04 | COORDINATOR | PUBLISHED | Initialized main and published audited root commit ebb4f587d862 to the public repository. Gitleaks reported no findings; Finder metadata and local secret/config patterns are ignored. T-000 remains DRAFT because executable tooling, CI, gh-stack upgrade, and owner review are still outstanding.`
+
+`2026-09-04 | COORDINATOR | STARTED | Owner approved the foundation configuration. Created native stack branch stack/000-repository-governance; verified gh 2.100.0, gh-stack 0.1.1, pnpm 11.19.0, uv 0.9.21, just 1.58.0, Docker 29.1.3, and Gitleaks 8.30.1.`
 
 ## Observations and decisions
 

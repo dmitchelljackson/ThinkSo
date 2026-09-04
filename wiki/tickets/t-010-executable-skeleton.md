@@ -4,8 +4,8 @@
 
 | Field | Value |
 |---|---|
-| Type / status | `ENABLING` / `DRAFT` |
-| Owner review | `PENDING` |
+| Type / status | `ENABLING` / `READY` |
+| Owner review | `APPROVED 2026-09-04` |
 | Stack position / predecessor | `010` / T-000 |
 | Branch / PR | `stack/010-executable-skeleton` / — |
 

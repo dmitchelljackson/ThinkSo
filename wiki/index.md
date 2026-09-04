@@ -64,6 +64,10 @@ Screen-specific entry point: [Screens, BDD, and UI sources](../SCREENS.md)
 
 - [Autonomous build readiness](./operations/autonomous-build-readiness.md) — ordered human setup batches that let the coordinator build with minimal interruption.
 - [Human prerequisites](./operations/human-prerequisites.md) — early account, secret, privileged-toolchain, emulator, and agent-capability checkpoints.
+- [Expo account and project setup](./operations/expo-account-and-project-setup.md) — owner sequence for Expo ownership, EAS linking, tokens, and build evidence.
+- [Google OAuth and Firebase setup](./operations/google-oauth-and-firebase-setup.md) — owner sequence for dedicated Google/Firebase projects, native clients, callbacks, and secret handoff.
+- [Meta developer and Threads API setup](./operations/meta-threads-api-setup.md) — owner sequence for the Threads use case, callbacks, scopes, test users, and server credentials.
+- [OpenRouter key and budget guard](./operations/openrouter-key-and-budget-guard.md) — owner sequence for dedicated inference credentials, prepaid funding, and independent spend caps.
 
 ## Decisions
 

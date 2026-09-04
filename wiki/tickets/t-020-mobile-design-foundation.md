@@ -4,8 +4,8 @@
 
 | Field | Value |
 |---|---|
-| Type / status | `ENABLING` / `DRAFT` |
-| Owner review | `PENDING` |
+| Type / status | `ENABLING` / `READY` |
+| Owner review | `APPROVED 2026-09-04` |
 | Stack position / predecessor | `020` / T-010 |
 | Branch / PR | `stack/020-mobile-design-foundation` / — |
 
