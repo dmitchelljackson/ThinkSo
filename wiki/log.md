@@ -2,6 +2,10 @@
 
 This is an append-only history of material wiki operations.
 
+## [2026-09-04] publish | Initial public GitHub repository
+
+Accepted the Xcode tooling prerequisite, initialized the local workspace on `main`, connected the existing empty public `dmitchelljackson/ThinkSo` repository, and published commit `ebb4f587d862`. Before publication, added repository-wide ignore rules, removed Finder metadata from the candidate tree, sanitized one machine-local source path, validated all relative Markdown links, ran staged whitespace checks, and completed a redacted Gitleaks scan with no findings. The repository now exposes the portfolio README, literal design captures, preserved sources, canonical wiki, BDDs, API specification, architecture, and ordered ticket backlog.
+
 ## [2026-09-03] correction | README uses literal exported designs
 
 Replaced the initially selected generated reference examples with browser-rendered captures of the actual `ThinkSo Create Challenge.dc.html`, `ThinkSo The Record.dc.html`, and `ThinkSo Challenge Contract.dc.html` design documents. Updated the Contract caption to describe the displayed active-state screen rather than implying that one image shows every lifecycle state.

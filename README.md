@@ -118,6 +118,6 @@ The MVP is deliberately narrow: no feed, discovery, friends list, stats dashboar
 
 ## Repository status and access
 
-The public repository is <https://github.com/dmitchelljackson/ThinkSo>. This workspace has not been pushed yet; the first audited push will follow approval of the foundation configuration and executable skeleton.
+The public repository is live at <https://github.com/dmitchelljackson/ThinkSo>. Product implementation begins with the reviewed foundation configuration and executable skeleton.
 
 ThinkSo is **source-available, not open source**. Copyright © 2026 Mitchell Jackson; all rights are reserved. GitHub-native viewing and forking remain subject to GitHub's Terms of Service, but no general permission is granted to use, modify, distribute, or commercialize the project. See [COPYRIGHT.md](./COPYRIGHT.md) and [CONTRIBUTING.md](./CONTRIBUTING.md).

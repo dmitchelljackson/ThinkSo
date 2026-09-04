@@ -14,7 +14,7 @@ Complete this batch once. After it passes, the coordinator can build the reposit
 
 ### A-1 macOS developer authorization
 
-- [ ] In Terminal, accept the Xcode license: `sudo xcodebuild -license accept`.
+- [x] In Terminal, accept the Xcode license: `sudo xcodebuild -license accept`.
 - [ ] Launch Xcode once, allow first-run components to install, and install at least one current iOS Simulator runtime.
 - [ ] Resolve any macOS administrator or privacy prompts that block Xcode, Git, Homebrew, Simulator, Android Studio, or terminal automation.
 
