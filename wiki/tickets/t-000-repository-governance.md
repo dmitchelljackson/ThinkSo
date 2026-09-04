@@ -4,10 +4,10 @@
 
 | Field | Value |
 |---|---|
-| Type / status | `ENABLING` / `VERIFYING` |
+| Type / status | `ENABLING` / `STACKED` |
 | Owner review | `APPROVED 2026-09-04` |
 | Stack position / predecessor | `000` / `main` |
-| Branch / PR | `stack/000-repository-governance` / — |
+| Branch / PR | `stack/000-repository-governance` / [#1](https://github.com/dmitchelljackson/ThinkSo/pull/1) |
 
 ## Outcome
 
@@ -63,6 +63,10 @@ A clean public checkout has deterministic workspace commands, formatting, lint/t
 
 `2026-09-04 | COORDINATOR | FIXED | CR-001: synchronized H-009 with the live repository, gh 2.100.0, and gh-stack 0.1.1; clarified that AutoMobile installation and ordinary virtual-device setup are agent-owned.`
 
+`2026-09-04 | CODE_REVIEW | VERIFIED | a92f7ba63f4a4ad7856d797fc3684680ff85fbe7 closes CR-001; independent review reports no remaining blocker.`
+
+`2026-09-04 | COORDINATOR | STACKED | Opened review-ready PR #1 against main. All six GitHub Actions jobs passed for both the push and pull-request runs; the owner remains the sole merge authority.`
+
 ## Observations and decisions
 
 - Record implementation discoveries here; promote reusable facts to architecture pages.
@@ -72,5 +76,6 @@ A clean public checkout has deterministic workspace commands, formatting, lint/t
 
 - **Delivered:** deterministic pnpm/uv workspace foundations, root command menu, formatting/lint/type/test shells, public-tree hygiene, container/Compose baseline, native-stack setup, provider owner guides, and six diagnosable GitHub Actions jobs.
 - **Reviewed code candidate:** `8b1cc1eec1e0a4bfbf3ffed46ed9a509abc4dd68`; the subsequent ticket-only documentation repair closes CR-001.
+- **Pull request:** [#1 — T-000: Establish repository governance and deterministic tooling](https://github.com/dmitchelljackson/ThinkSo/pull/1).
 - **Evidence:** pnpm frozen install, Prettier, ESLint, Ruff, mypy, Markdown links (74 files), OpenAPI fail-closed scaffold check, Actionlint, Gitleaks, Compose validation, and pinned API container build all pass.
 - **Intentional limitation:** mobile/backend unit and integration suites and canonical OpenAPI generation report explicit setup skips until T-010 replaces the placeholders atomically.
