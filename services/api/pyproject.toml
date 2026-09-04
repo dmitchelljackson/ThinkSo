@@ -1,9 +1,18 @@
 [project]
 name = "thinkso-api"
 version = "0.0.0"
-description = "ThinkSo API foundation placeholder"
+description = "ThinkSo API"
 requires-python = ">=3.13,<3.14"
-dependencies = []
+dependencies = [
+  "alembic==1.16.5",
+  "dishka==1.6.0",
+  "fastapi==0.116.1",
+  "pgqueuer==0.22.0",
+  "psycopg[binary]==3.2.10",
+  "pydantic-settings==2.10.1",
+  "sqlalchemy[asyncio]==2.0.43",
+  "uvicorn[standard]==0.35.0",
+]
 
 [dependency-groups]
 dev = [
@@ -11,6 +20,7 @@ dev = [
   "pytest==8.4.1",
   "pytest-asyncio==1.1.0",
   "ruff==0.12.10",
+  "httpx==0.28.1",
 ]
 
 [tool.uv]
@@ -28,3 +38,8 @@ select = ["E", "F", "I", "UP", "B"]
 python_version = "3.13"
 strict = true
 files = ["src"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["src"]

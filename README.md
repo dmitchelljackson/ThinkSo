@@ -39,7 +39,7 @@ ThinkSo is a small product with unusually deep systems problems:
 
 - **Bounded AI agents.** Separate minting and judging agents use typed tools and validated outputs. Models can research and propose; deterministic application code owns permissions, state transitions, dates, spend limits, and side effects.
 - **Durable asynchronous work.** Agent turns stream over SSE, judgment runs on a schedule, Threads publication survives retries, and ambiguous external outcomes are reconciled before anything is posted twice.
-- **Real identity and commitment.** Google and Apple login can converge on one account, Threads authorization is required for participation, and accepted contracts cannot be silently edited or withdrawn.
+- **Real identity and commitment.** Firebase email/password authentication establishes an account, Threads authorization is required for participation, and accepted contracts cannot be silently edited or withdrawn.
 - **Explicit mobile boundaries.** DTO, domain, and UI models remain separate. TanStack Query owns server state; injected presenters own presentation logic and expose a typed unidirectional event API; React Native components render state and emit events.
 - **Full-stack delivery.** Work is divided into small vertical slices spanning mobile, API, persistence, agents, background jobs, tests, and documentation—not disconnected frontend/backend phases.
 
@@ -78,7 +78,7 @@ ThinkSo/
 
 | Surface | Technologies and boundaries |
 |---|---|
-| Mobile | Expo, React Native, TypeScript, Expo Router, TanStack Query, React Obsidian, React Native Testing Library |
+| Mobile | Expo, React Native, TypeScript, Expo Router, Firebase Authentication, TanStack Query, React Obsidian, React Native Testing Library |
 | Backend | Python, FastAPI, Pydantic, Dishka, async SQLAlchemy/psycopg, Alembic, Postgres |
 | Agents | PydanticAI, OpenRouter, typed research and mutation ports, persisted turns and citations |
 | Background work | PgQueuer with separate HTTP, worker, and scheduler entrypoints |
@@ -104,7 +104,9 @@ just links-check
 just hygiene
 ```
 
-`just --list` is the command menu. T-000 intentionally contains setup-aware placeholders for application tests; T-010 replaces those skips with the executable Expo and FastAPI projects. Docker services are validated with `docker compose config --quiet`, and `just container-build` builds the API image.
+`just --list` is the command menu. The executable skeleton includes real mobile and API tests, a generated OpenAPI client, and a live `GET /v1/health` endpoint. Run `just backend-smoke` to migrate a clean Compose database and start/stop the API, worker, and scheduler seams. Docker services are validated with `docker compose config --quiet`, and `just container-build` builds the API image.
+
+To regenerate the authoritative schema and committed client types after an API change, run `pnpm openapi:generate`; `just openapi-drift` regenerates and fails if the generated output differs.
 
 ## Engineering approach
 
