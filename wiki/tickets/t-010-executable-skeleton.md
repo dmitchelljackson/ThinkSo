@@ -54,6 +54,10 @@ One command boots Postgres and the backend entrypoints, the Expo development app
 
 `2026-09-04 | COORDINATOR | VERIFIED | pending coordinator commit | Root JS checks, backend format/lint/type/unit/integration/smoke, OpenAPI drift, Markdown links, Gitleaks, container build, Android/iOS Hermes exports, and git diff checks pass. ThinkSo rendered and reached the live health endpoint on Android; the iOS Simulator loaded the same bundle. Expo Router development-only files are now ignored so starting Metro cannot dirty or break lint.`
 
+`2026-09-04 | CODE_REVIEWER | FINDING | e1eff72be2473316660ab879c719f97d2d0f989a | CR-001: mobile health repository trusts compile-time openapi-fetch types without runtime DTO validation; add boundary validation and malformed-payload/date tests before T-010 can pass review.`
+
+`2026-09-04 | COORDINATOR | FIXED | pending coordinator commit | CR-001: the repository mapping boundary now validates every health DTO field and rejects invalid timestamps before constructing the domain model; malformed-value tests cover missing fields, wrong types, wrong status, and invalid dates.`
+
 ## Observations and decisions
 
 - A failed Obsidian compatibility spike returns evidence for owner review; it does not authorize silent DI replacement.
