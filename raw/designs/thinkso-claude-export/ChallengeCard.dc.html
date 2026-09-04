@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Gloria+Hallelujah&display=swap" rel="stylesheet" />
+</helmet>
+<div role="button" tabindex="0" onClick="{{ onPress }}" style="position:relative;container-type:inline-size;width:100%;box-sizing:border-box;background:#fdfcf8;border:1px solid rgba(20,23,31,0.2);border-radius:3px;font-family:'Courier Prime',ui-monospace,monospace;color:#14171f;cursor:pointer;-webkit-font-smoothing:antialiased;overflow:hidden" style-hover="border-color:rgba(20,23,31,0.45)">
+
+  <div style="position:absolute;left:9px;top:0;bottom:0;width:1px;background:rgba(186,96,86,0.55);pointer-events:none"></div>
+
+  <div style="padding:13px 15px 13px 20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <span style="font-size:11px;letter-spacing:0.08em;color:rgba(20,23,31,0.7)">{{ challengeId }}</span>
+      <sc-if value="{{ toneLive }}" hint-placeholder-val="{{ true }}">
+        <span style="flex:none;border:1px solid #2438c9;color:#2438c9;padding:3px 8px;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap">{{ status }}</span>
+      </sc-if>
+      <sc-if value="{{ toneSettled }}" hint-placeholder-val="{{ false }}">
+        <span style="flex:none;background:#14171f;color:#fdfcf8;padding:4px 8px;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap">{{ status }}</span>
+      </sc-if>
+      <sc-if value="{{ toneVoid }}" hint-placeholder-val="{{ false }}">
+        <span style="flex:none;border:1px dashed rgba(20,23,31,0.4);color:rgba(20,23,31,0.5);padding:3px 8px;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap">{{ status }}</span>
+      </sc-if>
+    </div>
+
+    <div style="position:relative;padding:7px 0 9px">
+      <h3 style="margin:0;font-family:Spectral,Georgia,serif;font-weight:700;font-size:clamp(19px,6.4cqw,25px);line-height:1.08;letter-spacing:-0.01em;text-transform:uppercase;text-wrap:balance">{{ title }}</h3>
+    </div>
+
+    <div style="position:relative;display:grid;grid-template-columns:1fr auto 1fr;align-items:baseline;gap:8px">
+      <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+        <span style="font-size:9.5px;letter-spacing:0.13em;text-transform:uppercase;color:rgba(20,23,31,0.5)">You</span>
+        <span style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ creatorName }}</span>
+      </div>
+      <span style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:#2438c9">vs</span>
+      <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+        <span style="font-size:9.5px;letter-spacing:0.13em;text-transform:uppercase;color:rgba(20,23,31,0.5)">{{ opponentLabel }}</span>
+        <span style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ opponentName }}</span>
+      </div>
+    </div>
+
+    <div style="border-top:1px dashed rgba(20,23,31,0.35);margin-top:11px;padding-top:9px;display:flex;flex-direction:column;gap:4px">
+      <span style="position:relative;align-self:flex-start;max-width:100%">
+        <span style="display:block;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#b0442f">{{ creatorCondition }}</span>
+        <sc-if value="{{ creatorWrong }}" hint-placeholder-val="{{ false }}">
+          <svg viewBox="0 0 160 44" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;left:-8px;top:-11px;width:calc(100% + 16px);height:34px;overflow:visible;pointer-events:none">
+            <path d="M26 6 C 74 0, 152 4, 156 21 C 158 35, 84 41, 42 39 C 12 37, 2 30, 5 19 C 8 9, 36 2, 92 3" fill="none" stroke="#b0442f" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </sc-if>
+      </span>
+      <p style="margin:0;font-size:13px;line-height:1.5;text-wrap:pretty">{{ creatorConsequence }}</p>
+    </div>
+
+    <div style="border-top:1px dashed rgba(20,23,31,0.35);margin-top:9px;padding-top:9px;display:flex;flex-direction:column;gap:4px">
+      <span style="position:relative;align-self:flex-start;max-width:100%">
+        <span style="display:block;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#2438c9">{{ opponentCondition }}</span>
+        <sc-if value="{{ opponentWrong }}" hint-placeholder-val="{{ false }}">
+          <svg viewBox="0 0 160 44" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;left:-8px;top:-11px;width:calc(100% + 16px);height:34px;overflow:visible;pointer-events:none">
+            <path d="M24 5 C 72 0, 150 5, 155 21 C 157 34, 82 41, 40 38 C 11 36, 1 29, 4 18 C 7 8, 34 1, 90 2" fill="none" stroke="#2438c9" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </sc-if>
+      </span>
+      <p style="margin:0;font-size:13px;line-height:1.5;text-wrap:pretty">{{ opponentConsequence }}</p>
+    </div>
+  </div>
+
+  <div style="position:relative;border-top:1px solid rgba(20,23,31,0.22)">
+    <sc-if value="{{ footerVerdict }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 15px 11px 20px;background:#14171f;color:#fdfcf8">
+        <span style="font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.6;flex:none">{{ footerLabel }}</span>
+        <span style="font-family:Spectral,Georgia,serif;font-weight:700;font-size:19px;line-height:1;letter-spacing:0.04em;text-transform:uppercase">{{ footerText }}</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{ footerPlain }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 15px 11px 20px">
+        <span style="flex:1 1 auto;min-width:0;font-size:12.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ footerText }}</span>
+        <span style="flex:none;display:flex;align-items:center;gap:5px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(20,23,31,0.45);white-space:nowrap">
+          Tap to open
+          <svg viewBox="0 0 12 16" aria-hidden="true" style="width:8px;height:11px">
+            <path d="M3 2 L 9 8 L 3 14" fill="none" stroke="rgba(20,23,31,0.5)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:361,&quot;height&quot;:380},&quot;challengeId&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;TS-000421&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;status&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;AWAITING ACCEPTANCE&quot;,&quot;ACTIVE&quot;,&quot;JUDGING&quot;,&quot;COMPLETED&quot;,&quot;DECLINED&quot;,&quot;EXPIRED&quot;,&quot;UNRESOLVED&quot;],&quot;default&quot;:&quot;ACTIVE&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;title&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Bears win 10 games&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;creatorName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Mitchell&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;opponentName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Don&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;solo&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;creatorConsequence&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;“I will admit the Bears are frauds.”&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;opponentConsequence&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;“Mitchell knows ball. I do not.”&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;timeLeft&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;129 days&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Footer&quot;},&quot;footerText&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Footer&quot;},&quot;result&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;RIGHT&quot;,&quot;WRONG&quot;],&quot;default&quot;:&quot;RIGHT&quot;,&quot;tsType&quot;:&quot;'RIGHT' | 'WRONG'&quot;,&quot;section&quot;:&quot;Completed&quot;},&quot;completedOn&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Jan 5, 2027&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Completed&quot;},&quot;wrongParty&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;you&quot;,&quot;them&quot;],&quot;default&quot;:&quot;none&quot;,&quot;tsType&quot;:&quot;'none' | 'you' | 'them'&quot;,&quot;section&quot;:&quot;Completed&quot;},&quot;onPress&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;() =&gt; void&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const status = (p.status ?? 'ACTIVE').toUpperCase();
+    const solo = p.solo ?? false;
+    const settled = status === 'COMPLETED' || status === 'RESOLVED';
+    const voided = ['DECLINED', 'EXPIRED', 'UNRESOLVED'].indexOf(status) !== -1;
+    const creatorName = p.creatorName ?? 'Mitchell';
+    return {
+      challengeId: p.challengeId ?? 'TS-000421',
+      status: settled ? 'COMPLETED' : status,
+      title: p.title ?? 'Bears win 10 games',
+      creatorName,
+      opponentName: solo ? creatorName : (p.opponentName ?? 'Don'),
+      opponentLabel: solo ? 'You' : 'Them',
+      creatorCondition: solo ? 'If ' + creatorName + ' is wrong' : 'If ' + creatorName + ' is wrong',
+      opponentCondition: solo ? 'If ' + creatorName + ' is right' : 'If ' + (p.opponentName ?? 'Don') + ' is wrong',
+      creatorConsequence: p.creatorConsequence ?? '“I will admit the Bears are frauds.”',
+      opponentConsequence: p.opponentConsequence ?? '“Mitchell knows ball. I do not.”',
+      toneLive: !settled && !voided,
+      toneSettled: settled,
+      toneVoid: voided,
+      footerVerdict: settled,
+      footerPlain: !settled,
+      footerLabel: 'Completed · ' + (p.completedOn ?? 'Jan 5, 2027'),
+      footerText: settled
+        ? (p.result ?? 'RIGHT')
+        : (p.footerText ?? ({
+            'AWAITING ACCEPTANCE': 'Awaiting acceptance',
+            'ACTIVE': (p.timeLeft ?? '129 days') + ' until judgment',
+            'JUDGING': 'Judging',
+            'DECLINED': 'Declined',
+            'EXPIRED': 'Expired',
+            'UNRESOLVED': 'Unresolved',
+          }[status] ?? status)),
+      creatorWrong: settled && (p.wrongParty ?? '') === 'you',
+      opponentWrong: settled && (p.wrongParty ?? '') === 'them',
+      onPress: p.onPress ?? (() => {}),
+    };
+  }
+}
+</script>
+</body>
+</html>

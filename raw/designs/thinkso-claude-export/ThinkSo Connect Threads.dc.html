@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="ext-resource-dependency" content="./ios-frame.jsx" data-resource-id="./ios-frame.jsx" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;600&family=Courier+Prime:wght@400;700&family=Gloria+Hallelujah&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: #e6e3db; }
+  a { color: #1b2a8f; }
+  a:hover { color: #2438c9; }
+</style>
+</helmet>
+<div style="min-height:100dvh;background:#e6e3db;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;font-family:'Courier Prime',ui-monospace,monospace;color:#14171f;-webkit-font-smoothing:antialiased">
+  <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ 393 }}" height="{{ 852 }}" hint-size="393px,852px">
+  <div style="position:relative;width:100%;min-height:100%;container-type:size;background:#f4f2ec;display:flex;flex-direction:column;padding:56px 26px 34px;box-sizing:border-box;overflow:hidden;font-family:'Courier Prime',ui-monospace,monospace;color:#14171f">
+
+    <div style="position:absolute;left:clamp(8px,3.2cqw,16px);top:0;bottom:0;width:1px;background:rgba(186,96,86,0.5)"></div>
+
+    <header style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-bottom:clamp(10px,2cqh,14px);border-bottom:1px solid rgba(20,23,31,0.28)">
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <span style="font-size:clamp(10px,3cqw,12px);letter-spacing:0.14em;text-transform:uppercase;color:rgba(20,23,31,0.75)">Thinkso · Account Setup</span>
+        <span style="font-size:clamp(10px,3cqw,12px);letter-spacing:0.14em;text-transform:uppercase;color:#1b2a8f">TS-000421</span>
+      </div>
+      <span style="font-size:clamp(10px,3cqw,12px);letter-spacing:0.14em;text-transform:uppercase;color:rgba(20,23,31,0.6);white-space:nowrap;padding-top:1px">Form 002</span>
+    </header>
+
+    <section style="padding:clamp(18px,4cqh,30px) 0 clamp(14px,3cqh,22px)">
+      <div style="position:relative;display:inline-block">
+        <h1 style="margin:0;font-family:Spectral,Georgia,serif;font-weight:400;font-size:clamp(32px,10cqw,44px);line-height:1.02;letter-spacing:-0.015em">Connect<br />Threads</h1>
+        <svg viewBox="0 0 210 16" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;left:-2%;bottom:-9px;width:100%;height:12px;overflow:visible;pointer-events:none">
+          <path d="M4 6 C 58 2, 128 11, 204 4" fill="none" stroke="#2438c9" stroke-width="2.6" stroke-linecap="round" />
+          <path d="M12 11 C 66 8, 132 15, 198 9" fill="none" stroke="#2438c9" stroke-width="1.7" stroke-linecap="round" opacity="0.8" />
+        </svg>
+      </div>
+    </section>
+
+    <section style="border-top:1px solid rgba(20,23,31,0.28);padding-top:clamp(12px,2.6cqh,18px);display:flex;flex-direction:column;gap:clamp(8px,1.8cqh,13px)">
+      <div style="display:flex;align-items:baseline;gap:10px">
+        <span style="font-size:clamp(9px,2.7cqw,11px);letter-spacing:0.14em;text-transform:uppercase;color:rgba(20,23,31,0.5)">Clause 1</span>
+        <span style="font-family:Spectral,Georgia,serif;font-size:clamp(15px,4.6cqw,19px);letter-spacing:-0.01em">Why we need this</span>
+      </div>
+      <p style="margin:0;font-size:clamp(12px,3.5cqw,14px);line-height:1.65;color:rgba(20,23,31,0.85);text-wrap:pretty">ThinkSo challenges have consequences. When you accept a challenge, you may agree to let ThinkSo publish a pre-approved message to your Threads account when the challenge is resolved.</p>
+
+      <div style="position:relative;border:1px solid rgba(20,23,31,0.5);background:rgba(255,255,255,0.5);padding:clamp(11px,3cqw,15px) clamp(12px,3.4cqw,16px);display:flex;flex-direction:column;gap:7px">
+        <span style="font-size:clamp(9px,2.7cqw,11px);letter-spacing:0.14em;text-transform:uppercase;color:rgba(20,23,31,0.5)">Guarantee</span>
+        <p style="margin:0;font-family:Spectral,Georgia,serif;font-size:clamp(14px,4.2cqw,17px);line-height:1.45;letter-spacing:-0.005em">ThinkSo will never write or post something you didn&rsquo;t agree to as part of a challenge.</p>
+        <svg viewBox="0 0 240 14" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;left:5%;bottom:6px;width:78%;height:10px;overflow:visible;pointer-events:none">
+          <path d="M2 5 C 62 1, 150 10, 238 3" fill="none" stroke="#2438c9" stroke-width="2.2" stroke-linecap="round" />
+          <path d="M8 10 C 68 7, 154 14, 232 8" fill="none" stroke="#2438c9" stroke-width="1.5" stroke-linecap="round" opacity="0.8" />
+        </svg>
+      </div>
+    </section>
+
+    <div style="flex:1 1 auto;min-height:clamp(10px,2cqh,26px)"></div>
+
+    <section style="border-top:1px solid rgba(20,23,31,0.28);padding-top:clamp(14px,3cqh,20px);display:flex;flex-direction:column;gap:clamp(12px,2.6cqh,18px)">
+      <div style="position:relative">
+        <button type="button" onClick="{{ toggle }}" aria-pressed="{{ ack }}" style="appearance:none;background:none;border:none;padding:0;margin:0;cursor:pointer;width:100%;text-align:left;display:flex;align-items:flex-start;gap:12px;font-family:inherit;color:inherit">
+          <span style="position:relative;flex:none;width:24px;height:24px;border:1.5px solid rgba(20,23,31,0.7);background:#fffdf7;margin-top:1px">
+            <sc-if value="{{ ack }}" hint-placeholder-val="{{ true }}">
+              <svg viewBox="0 0 24 24" aria-hidden="true" style="position:absolute;left:-4px;top:-5px;width:32px;height:32px">
+                <path d="M4 13 C 8 16, 10 20, 12 22 C 15 14, 20 6, 27 1" fill="none" stroke="#2438c9" stroke-width="2.6" stroke-linecap="round" />
+              </svg>
+            </sc-if>
+          </span>
+          <span style="font-size:clamp(11.5px,3.3cqw,13.5px);line-height:1.6;color:rgba(20,23,31,0.85);text-wrap:pretty">I understand that accepting a ThinkSo challenge can authorize ThinkSo to publish the agreed consequence to my Threads account.</span>
+        </button>
+        <div style="display:flex;align-items:flex-start;gap:6px;padding:6px 0 0 34px;color:#2438c9;font-family:'Gloria Hallelujah',cursive;transform:rotate(-2deg);transform-origin:left center">
+          <svg viewBox="0 0 40 40" aria-hidden="true" style="width:26px;height:26px;flex:none;margin-top:-2px">
+            <path d="M20 37 C 17 26, 15 14, 16 4" fill="none" stroke="#2438c9" stroke-width="2.2" stroke-linecap="round" />
+            <path d="M8 15 C 12 10, 15 6, 16 3 C 19 7, 23 11, 27 14" fill="none" stroke="#2438c9" stroke-width="2.2" stroke-linecap="round" />
+          </svg>
+          <span style="font-size:clamp(14px,4cqw,17px);line-height:1.2">read this part</span>
+        </div>
+      </div>
+
+      <sc-if value="{{ ack }}" hint-placeholder-val="{{ true }}">
+        <button type="button" style="appearance:none;border:none;cursor:pointer;width:100%;height:clamp(50px,13cqw,56px);border-radius:12px;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;gap:9px;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:clamp(16px,4.6cqw,18px);font-weight:600;letter-spacing:-0.01em" style-hover="background:#1a1a1a">
+          <svg viewBox="0 0 192 192" aria-hidden="true" style="width:1.2em;height:1.2em;flex:none">
+            <path fill="#fff" d="M141.537 88.988c-.827-.396-1.667-.778-2.518-1.143-1.482-27.307-16.403-42.94-41.457-43.1h-.34c-14.986 0-27.449 6.397-35.12 18.036l13.779 9.452c5.73-8.694 14.724-10.548 21.347-10.548h.229c8.25.053 14.475 2.451 18.504 7.129 2.932 3.405 4.893 8.111 5.864 14.05-7.314-1.243-15.224-1.626-23.68-1.141-23.82 1.372-39.134 15.265-38.105 34.569.522 9.792 5.4 18.216 13.735 23.719 7.048 4.652 16.124 6.927 25.558 6.412 12.458-.683 22.231-5.436 29.049-14.127 5.178-6.6 8.453-15.153 9.899-25.93 5.937 3.583 10.337 8.298 12.767 13.966 4.132 9.635 4.373 25.468-8.546 38.376-11.319 11.308-24.925 16.2-45.488 16.351-22.809-.169-40.06-7.484-51.275-21.742-10.503-13.351-15.93-32.635-16.133-57.317.203-24.682 5.63-43.966 16.133-57.317 11.215-14.258 28.465-21.573 51.275-21.742 22.975.171 40.526 7.521 52.171 21.848 5.71 7.025 10.015 15.861 12.853 26.162l16.147-4.308c-3.44-12.68-8.853-23.607-16.219-32.668C147.036 9.607 125.202.195 97.07 0h-.113C68.882.194 47.292 9.642 32.788 28.079 19.882 44.486 13.224 67.316 13.001 95.933L13 96l.001.067c.223 28.617 6.881 51.447 19.787 67.854C47.292 182.358 68.882 191.806 96.957 192h.113c24.958-.173 42.53-6.708 57.011-21.189 18.942-18.923 18.402-42.613 12.158-57.172-4.478-10.434-13.01-18.91-24.702-24.651ZM98.44 129.507c-10.44.588-21.286-4.098-21.82-14.135-.397-7.442 5.296-15.746 22.461-16.735 1.966-.113 3.895-.169 5.79-.169 6.235 0 12.068.606 17.371 1.765-1.978 24.702-13.58 28.713-23.802 29.274Z" />
+          </svg>
+          <span>Connect Threads</span>
+        </button>
+      </sc-if>
+      <sc-if value="{{ notAck }}" hint-placeholder-val="{{ false }}">
+        <button type="button" disabled="{{ true }}" style="appearance:none;border:1px solid rgba(20,23,31,0.22);cursor:not-allowed;width:100%;height:clamp(50px,13cqw,56px);border-radius:12px;background:rgba(20,23,31,0.07);color:rgba(20,23,31,0.4);display:flex;align-items:center;justify-content:center;gap:9px;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:clamp(16px,4.6cqw,18px);font-weight:600;letter-spacing:-0.01em">
+          <svg viewBox="0 0 192 192" aria-hidden="true" style="width:1.2em;height:1.2em;flex:none;opacity:0.4">
+            <path fill="#14171f" d="M141.537 88.988c-.827-.396-1.667-.778-2.518-1.143-1.482-27.307-16.403-42.94-41.457-43.1h-.34c-14.986 0-27.449 6.397-35.12 18.036l13.779 9.452c5.73-8.694 14.724-10.548 21.347-10.548h.229c8.25.053 14.475 2.451 18.504 7.129 2.932 3.405 4.893 8.111 5.864 14.05-7.314-1.243-15.224-1.626-23.68-1.141-23.82 1.372-39.134 15.265-38.105 34.569.522 9.792 5.4 18.216 13.735 23.719 7.048 4.652 16.124 6.927 25.558 6.412 12.458-.683 22.231-5.436 29.049-14.127 5.178-6.6 8.453-15.153 9.899-25.93 5.937 3.583 10.337 8.298 12.767 13.966 4.132 9.635 4.373 25.468-8.546 38.376-11.319 11.308-24.925 16.2-45.488 16.351-22.809-.169-40.06-7.484-51.275-21.742-10.503-13.351-15.93-32.635-16.133-57.317.203-24.682 5.63-43.966 16.133-57.317 11.215-14.258 28.465-21.573 51.275-21.742 22.975.171 40.526 7.521 52.171 21.848 5.71 7.025 10.015 15.861 12.853 26.162l16.147-4.308c-3.44-12.68-8.853-23.607-16.219-32.668C147.036 9.607 125.202.195 97.07 0h-.113C68.882.194 47.292 9.642 32.788 28.079 19.882 44.486 13.224 67.316 13.001 95.933L13 96l.001.067c.223 28.617 6.881 51.447 19.787 67.854C47.292 182.358 68.882 191.806 96.957 192h.113c24.958-.173 42.53-6.708 57.011-21.189 18.942-18.923 18.402-42.613 12.158-57.172-4.478-10.434-13.01-18.91-24.702-24.651ZM98.44 129.507c-10.44.588-21.286-4.098-21.82-14.135-.397-7.442 5.296-15.746 22.461-16.735 1.966-.113 3.895-.169 5.79-.169 6.235 0 12.068.606 17.371 1.765-1.978 24.702-13.58 28.713-23.802 29.274Z" />
+          </svg>
+          <span>Connect Threads</span>
+        </button>
+      </sc-if>
+
+      <p style="margin:0;text-align:center;font-size:clamp(10px,2.9cqw,11.5px);line-height:1.6;color:rgba(20,23,31,0.55)">Required to continue. You can revoke access in Settings at any time.</p>
+    </section>
+  </div>
+  </x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:393,&quot;height&quot;:852}}">
+class Component extends DCLogic {
+  state = { ack: false };
+  renderVals() {
+    return {
+      ack: this.state.ack,
+      notAck: !this.state.ack,
+      toggle: () => this.setState(s => ({ ack: !s.ack })),
+    };
+  }
+}
+</script>
+</body>
+</html>

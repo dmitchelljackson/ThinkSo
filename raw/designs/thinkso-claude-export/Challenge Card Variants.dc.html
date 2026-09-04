@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="ext-resource-dependency" content="./ios-frame.jsx" data-resource-id="./ios-frame.jsx" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;600&family=Courier+Prime:wght@400;700&family=Gloria+Hallelujah&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: #e6e3db; }
+  a { color: #1b2a8f; }
+  a:hover { color: #2438c9; }
+</style>
+</helmet>
+<div style="min-height:100dvh;background:#e6e3db;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;font-family:'Courier Prime',ui-monospace,monospace;color:#14171f;-webkit-font-smoothing:antialiased">
+  <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ 393 }}" height="{{ 852 }}" hint-size="393px,852px">
+  <div style="position:relative;min-height:100%;background:#f4f2ec;box-sizing:border-box;padding:56px 16px 46px;font-family:'Courier Prime',ui-monospace,monospace;color:#14171f">
+
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-bottom:10px;border-bottom:1px solid rgba(20,23,31,0.3)">
+      <span style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(20,23,31,0.75)">Thinkso · Challenge Card</span>
+      <span style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(20,23,31,0.5)">Exhibit A</span>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:26px;padding-top:22px">
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(20,23,31,0.45)">01 · Awaiting acceptance</span>
+        <dc-import name="ChallengeCard" status="AWAITING ACCEPTANCE" hint-size="100%,380px"></dc-import>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(20,23,31,0.45)">02 · Active</span>
+        <dc-import name="ChallengeCard" status="ACTIVE" hint-size="100%,380px"></dc-import>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(20,23,31,0.45)">03 · Judging</span>
+        <dc-import name="ChallengeCard" status="JUDGING" hint-size="100%,380px"></dc-import>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(20,23,31,0.45)">04 · Completed — right</span>
+        <dc-import name="ChallengeCard" status="COMPLETED" completed-on="Jan 5, 2027" result="RIGHT" wrong-party="them" hint-size="100%,380px"></dc-import>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(20,23,31,0.45)">05 · Completed — wrong</span>
+        <dc-import name="ChallengeCard" status="COMPLETED" completed-on="Jan 5, 2027" result="WRONG" wrong-party="you" hint-size="100%,380px"></dc-import>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(20,23,31,0.45)">06 · Declined</span>
+        <dc-import name="ChallengeCard" status="DECLINED" hint-size="100%,380px"></dc-import>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(20,23,31,0.45)">07 · Expired</span>
+        <dc-import name="ChallengeCard" status="EXPIRED" hint-size="100%,380px"></dc-import>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(20,23,31,0.45)">08 · Unresolved</span>
+        <dc-import name="ChallengeCard" status="UNRESOLVED" hint-size="100%,380px"></dc-import>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(20,23,31,0.45)">09 · Solo challenge</span>
+        <dc-import name="ChallengeCard" status="ACTIVE" solo="{{ true }}" challenge-id="TS-000512" title="I finish the marathon" creator-consequence="“I quit at mile nine. Do not ask me about it.”" opponent-consequence="“I finished. Screenshot attached. Never doubt me.”" hint-size="100%,380px"></dc-import>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(20,23,31,0.45)">10 · Long title / long terms</span>
+        <dc-import name="ChallengeCard" status="ACTIVE" challenge-id="TS-000733" title="Chicago gets more snow than Buffalo this winter" opponent-name="Priyanka" creator-consequence="“I have never once been right about the weather, and I never will be.”" opponent-consequence="“Priyanka called it in August. I doubted her.”" hint-size="100%,400px"></dc-import>
+      </div>
+    </div>
+  </div>
+  </x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:393,&quot;height&quot;:852}}"></script>
+</body>
+</html>
