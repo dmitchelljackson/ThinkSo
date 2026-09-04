@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Type / status | `ENABLING` / `READY` |
+| Type / status | `ENABLING` / `IMPLEMENTING` |
 | Owner review | `APPROVED 2026-09-04` |
 | Stack position / predecessor | `020` / T-010 |
 | Branch / PR | `stack/020-mobile-design-foundation` / — |
@@ -47,7 +47,7 @@ Login and Threads can be built from tested responsive ThinkSo primitives instead
 
 ## Activity log
 
-Coordinator-only append-only entries go here.
+`2026-09-04 | COORDINATOR | DISPATCHED | f5f7e1ec30d0c51800691bcc8f3572ca83672a0f | Created stack/020-mobile-design-foundation from the verified T-010 tip. Implement the shared native visual primitives and catalog without pulling Firebase behavior forward from T-030.`
 
 ## Observations and decisions
 
