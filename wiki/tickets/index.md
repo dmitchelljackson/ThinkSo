@@ -22,7 +22,7 @@ The coordinator maintains this table as tickets are created and advanced.
 | Position | Ticket | Type | Status | Depends on | PR |
 |---:|---|---|---|---|---|
 | 000 | [T-000 Repository governance and deterministic tooling](./t-000-repository-governance.md) | Enabling | `DRAFT` | `main` | — |
-| 010 | [T-010 Boot the mobile/API/database skeleton](./t-010-executable-skeleton.md) | Enabling | `VERIFYING` | T-000 | [#2](https://github.com/dmitchelljackson/ThinkSo/pull/2) |
+| 010 | [T-010 Boot the mobile/API/database skeleton](./t-010-executable-skeleton.md) | Enabling | `STACKED` | T-000 | [#2](https://github.com/dmitchelljackson/ThinkSo/pull/2) |
 | 020 | [T-020 Establish the mobile visual foundation](./t-020-mobile-design-foundation.md) | Enabling | `DRAFT` | T-010 | — |
 | 030 | [T-030 Authenticate with Firebase email/password and issue ThinkSo sessions](./t-030-firebase-email-password-login.md) | Product | `DRAFT` | T-020 | — |
 | 035 | [T-035 Recover a Firebase password](./t-035-password-recovery.md) | Product | `DRAFT` | T-030 | — |

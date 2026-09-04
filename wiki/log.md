@@ -2,6 +2,10 @@
 
 This is an append-only history of material wiki operations.
 
+## [2026-09-04] stack | T-010 executable foundation
+
+Published review-ready stacked PR #2 for the executable mobile/API/database foundation. Independent review found and verified the repair of one runtime DTO-validation gap. All 12 GitHub Actions checks passed; AutoMobile exercised the Android health refresh against the live API, and the iOS Simulator loaded the same bundle. The reviewed code candidate is `eea2ac87785bb2e40e190be7932a796037981817`; only ticket and wiki status bookkeeping followed it.
+
 ## [2026-09-04] implement and verify | Executable mobile/API/database skeleton
 
 Implemented the T-010 foundation across the monorepo: Expo Router and the Obsidian/TanStack presenter seam, generated OpenAPI transport, FastAPI/Dishka services, async Postgres/Alembic persistence, PgQueuer worker and scheduler entrypoints, Compose health checks, and CI-equivalent gates. Verified unit and integration tests, live container startup, OpenAPI drift, secret hygiene, Android and iOS Hermes exports, and native simulator loading on both platforms. Moved the dependency graph out of Expo Router's route directory after native smoke exposed its file-based-routing warning.
