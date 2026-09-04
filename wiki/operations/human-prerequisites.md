@@ -10,12 +10,16 @@ Start with the ordered [Autonomous build readiness](./autonomous-build-readiness
 
 **Human owns**
 
-- Install and initialize Xcode and its command-line tools.
-- Accept the Xcode license and install at least one supported iOS Simulator runtime.
-- Install and initialize Android Studio, the Android SDK/platform tools, and at least one supported Android virtual device.
-- Confirm a basic Expo/React Native build can launch on both virtual devices without requiring paid Apple capabilities.
-- Install and configure [AutoMobile](https://github.com/kaeawc/auto-mobile) as an MCP available to Codex.
-- Grant any required local permissions and confirm AutoMobile can see both virtual devices.
+- Accept Apple's Xcode license and any administrator prompt that cannot use an already-authorized noninteractive path.
+- Grant any macOS privacy permission AutoMobile actually requests.
+- Perform interactive provider login or signing steps when a later test requires them.
+
+**Agent owns**
+
+- Install and initialize Xcode command-line components and at least one supported iOS Simulator runtime after the human approves the license.
+- Install the Android SDK/platform tools and at least one supported Android virtual device; Android Studio itself is optional when the command-line toolchain is complete.
+- Install and configure [AutoMobile](https://github.com/kaeawc/auto-mobile) as a Codex MCP.
+- Boot both virtual devices, verify AutoMobile discovery and harmless interaction, and confirm a basic Expo/React Native build can launch without paid Apple capabilities.
 
 **Acceptance evidence**
 
@@ -153,25 +157,24 @@ Provider integration that requires a public callback before deployment may use a
 
 ## H-009 GitHub CLI authorization
 
-**Status:** The empty public repository exists at <https://github.com/dmitchelljackson/ThinkSo>, and GitHub CLI authentication succeeds for `dmitchelljackson`. No local content has been pushed. GitHub CLI 2.83.1 is installed locally, but GitHub's native stacked-PR tutorial requires 2.90.0 or later. The unaccepted Xcode license currently blocks Git/Homebrew operations.
+**Status:** Complete. The public repository is live at <https://github.com/dmitchelljackson/ThinkSo>; audited local content is pushed. GitHub CLI authentication succeeds for `dmitchelljackson`, GitHub CLI 2.100.0 is installed, and `github/gh-stack` 0.1.1 is verified.
 
-**Timing:** Complete during repository foundation before the agent creates and pushes the public monorepo.
+**Timing:** Completed during repository foundation before the first stacked implementation pull request.
 
 **Human owns**
 
-- Accept the Xcode license because this is an Apple legal agreement and privileged system action.
 - Authenticate GitHub CLI locally to the intended owner account with permission to create repositories and configure Actions.
 - Keep the account password, two-factor codes, recovery information, and tokens private.
 - Complete any browser, two-factor, organization, or privileged prompts required by GitHub authentication.
 
 **Agent owns after authorization**
 
-- Upgrade GitHub CLI to version 2.90.0 or later.
-- Install or upgrade the official native stack extension with `gh extension install github/gh-stack` or `gh extension upgrade stack`, then verify `gh stack --help`.
+- Keep GitHub CLI at version 2.90.0 or later.
+- Maintain the official native stack extension and verify `gh stack --help` after upgrades.
 - Configure non-interactive stack prerequisites such as Git rerere and the default push remote.
 - Audit the entire proposed public tree for credentials, personal data that should not be published, generated junk, and unsuitable source artifacts.
-- Initialize/configure Git as needed and create the public ThinkSo repository using `gh`.
-- Push the initial branch, add GitHub Actions, and report the repository URL and protection/settings still requiring human action.
+- Maintain Git configuration and the existing public ThinkSo repository through `gh`.
+- Push reviewed stack branches, maintain GitHub Actions, and report protection/settings requiring human action.
 
 **Acceptance evidence**
 
