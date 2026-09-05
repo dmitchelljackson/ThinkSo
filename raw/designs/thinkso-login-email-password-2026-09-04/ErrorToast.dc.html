@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Gloria+Hallelujah&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: #e6e3db; }
+  @keyframes toast-slip-in {
+    0%   { transform: translateY(-26px); opacity: 0; }
+    70%  { transform: translateY(2px); opacity: 1; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+</style>
+</helmet>
+<div style="position:relative;width:100%;font-family:'Courier Prime',ui-monospace,monospace;color:#14171f;animation:toast-slip-in 380ms cubic-bezier(0.2,0.9,0.3,1) both">
+  <div style="position:relative;background:#f4ccd4;border:1px solid rgba(20,23,31,0.55);box-shadow:0 12px 24px rgba(20,23,31,0.24),0 2px 0 rgba(20,23,31,0.08);padding:11px 13px 12px">
+
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding-bottom:8px;border-bottom:1px solid rgba(20,23,31,0.3)">
+      <div style="display:flex;align-items:baseline;gap:8px;min-width:0">
+        <span style="font-size:9.5px;letter-spacing:0.18em;text-transform:uppercase;color:#8e2a1c;white-space:nowrap">{{ label }}</span>
+        <span style="font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(20,23,31,0.45);white-space:nowrap">{{ meta }}</span>
+      </div>
+      <button type="button" aria-label="Dismiss" onClick="{{ dismiss }}" style="appearance:none;background:none;border:none;padding:2px;margin:-2px -2px 0 0;cursor:pointer;line-height:0;flex:none" style-hover="opacity:0.6">
+        <svg viewBox="0 0 16 16" aria-hidden="true" style="width:13px;height:13px">
+          <g fill="none" stroke="#2438c9" stroke-width="1.9" stroke-linecap="round">
+            <path d="M3.4 3 C 7 6.6, 10.4 10.2, 13.2 13.4" />
+            <path d="M13 3.2 C 9.6 6.8, 6.2 10.2, 3 13.2" />
+          </g>
+        </svg>
+      </button>
+    </div>
+
+    <p style="margin:9px 0 0;font-size:12.5px;line-height:1.6;color:#14171f;text-wrap:pretty">{{ message }}</p>
+
+    <sc-if value="{{ hasAction }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;align-items:center;justify-content:flex-end;gap:7px;padding-top:11px">
+        <button type="button" onClick="{{ action }}" style="appearance:none;cursor:pointer;background:none;border:1px solid rgba(20,23,31,0.55);color:#14171f;font-family:inherit;font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;padding:9px 16px" style-hover="border-color:#2438c9;color:#2438c9">{{ actionLabel }}</button>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:357,&quot;height&quot;:150},&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;message&quot;,&quot;retry&quot;],&quot;default&quot;:&quot;retry&quot;,&quot;tsType&quot;:&quot;'message' | 'retry'&quot;},&quot;label&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Filing error&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;meta&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;No. 07&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;message&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;The record would not open. Nothing was lost; every filed challenge is still on file.&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;actionLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Try again&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;onDismiss&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;() =&gt; void&quot;},&quot;onAction&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;() =&gt; void&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const variant = this.props.variant ?? 'retry';
+    return {
+      label: this.props.label ?? 'Filing error',
+      meta: this.props.meta ?? 'No. 07',
+      message: this.props.message ?? 'The record would not open. Nothing was lost; every filed challenge is still on file.',
+      actionLabel: this.props.actionLabel ?? 'Try again',
+      hasAction: variant === 'retry',
+      dismiss: this.props.onDismiss ?? (() => {}),
+      action: this.props.onAction ?? (() => {}),
+    };
+  }
+}
+</script>
+</body>
+</html>

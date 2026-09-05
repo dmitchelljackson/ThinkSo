@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="ext-resource-dependency" content="./ios-frame.jsx" data-resource-id="./ios-frame.jsx" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Gloria+Hallelujah&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: #e6e3db; }
+  a { color: #1b2a8f; }
+  a:hover { color: #2438c9; }
+  @keyframes coolDraw {
+    0%   { stroke-dashoffset: 330; }
+    42%  { stroke-dashoffset: 0; }
+    58%  { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: 330; }
+  }
+  @keyframes coolFlip {
+    0%, 46%   { transform: rotate(0deg); }
+    54%, 100% { transform: rotate(180deg); }
+  }
+</style>
+</helmet>
+<div style="min-height:100dvh;background:#e6e3db;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;font-family:'Courier Prime',ui-monospace,monospace;color:#14171f;-webkit-font-smoothing:antialiased">
+  <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ 393 }}" height="{{ 852 }}" hint-size="393px,852px">
+  <div style="position:relative;min-height:100%;background:#f4f2ec;box-sizing:border-box;font-family:'Courier Prime',ui-monospace,monospace;color:#14171f">
+
+    <sc-if value="{{ dialogOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:sticky;top:0;height:0;z-index:60">
+        <div style="position:absolute;top:0;left:0;right:0;height:852px;background:rgba(20,23,31,0.55);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box">
+        <div style="width:100%;max-width:345px">
+          <dc-import name="CommitmentDialog" variant="{{ dialogVariant }}" onCancel="{{ closeDialog }}" onConfirm="{{ confirmDialog }}" hint-size="100%,400px"></dc-import>
+        </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="position:sticky;top:0;z-index:20;background:#f4f2ec;padding:52px 18px 11px;border-bottom:1px solid rgba(20,23,31,0.45);display:flex;align-items:center;justify-content:flex-start;gap:14px">
+      <button type="button" aria-label="Back to the record" style="appearance:none;background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center">
+        <svg viewBox="0 0 22 18" aria-hidden="true" style="width:18px;height:15px">
+          <path d="M9 2 L 2 9 L 9 16 M2 9 L 20 9" fill="none" stroke="#14171f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <span style="font-size:11.5px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(20,23,31,0.75)">Thinkso · Challenge</span>
+    </div>
+
+    <div style="position:relative;padding:0 18px 210px">
+      <div style="position:absolute;left:9px;top:0;bottom:0;width:1px;background:rgba(186,96,86,0.5);pointer-events:none"></div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 0 12px;border-bottom:1px solid rgba(20,23,31,0.3)">
+        <span style="font-size:12px;letter-spacing:0.08em;color:rgba(20,23,31,0.7)">TS-000421</span>
+        <span style="font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:#2438c9;font-weight:700">{{ statusLabel }}</span>
+      </div>
+
+      <h1 style="margin:20px 0 0;font-family:Spectral,Georgia,serif;font-weight:700;font-size:33px;line-height:1.05;letter-spacing:-0.015em;text-transform:uppercase;text-wrap:balance">Bears win 10 games</h1>
+
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:start;gap:12px;padding:22px 0 20px">
+        <div style="display:flex;flex-direction:column;gap:5px;min-width:0">
+          <span style="font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:#2438c9;font-weight:700">You</span>
+          <span style="font-size:16px">Mitchell</span>
+        </div>
+        <span style="font-family:Spectral,Georgia,serif;font-weight:600;font-size:15px;letter-spacing:0.06em;text-transform:uppercase;color:#2438c9;padding-top:14px">vs</span>
+        <div style="display:flex;flex-direction:column;gap:5px;min-width:0">
+          <span style="font-size:10.5px;letter-spacing:0.13em;text-transform:uppercase;color:rgba(20,23,31,0.55)">{{ themLabel }}</span>
+          <span style="font-size:16px">Don</span>
+          <sc-if value="{{ accepted }}" hint-placeholder-val="{{ true }}">
+            <span style="position:relative;align-self:flex-start;font-family:'Gloria Hallelujah',cursive;color:#2438c9;font-size:15px;transform:rotate(-2deg);padding:2px 0 8px">
+              @dontpuntedme
+              <svg viewBox="0 0 130 12" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;left:-2px;bottom:0;width:102%;height:8px;overflow:visible">
+                <path d="M2 5 C 34 1, 92 9, 128 3" fill="none" stroke="#2438c9" stroke-width="1.8" stroke-linecap="round" />
+              </svg>
+            </span>
+          </sc-if>
+        </div>
+      </div>
+
+      <div style="border-top:1px dashed rgba(20,23,31,0.4);padding-top:18px">
+        <span style="font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:#b0442f;font-weight:700">Consequences</span>
+        <div style="padding-top:16px;display:flex;flex-direction:column;gap:7px">
+          <span style="font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;color:#b0442f">If Mitchell is wrong</span>
+          <p style="margin:0;font-size:16px;line-height:1.55;text-wrap:pretty">&ldquo;I will admit the Bears are frauds.&rdquo;</p>
+        </div>
+        <div style="margin-top:16px;border-top:1px dashed rgba(20,23,31,0.28);padding-top:16px;display:flex;flex-direction:column;gap:7px">
+          <span style="font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;color:#2438c9">If Don is wrong</span>
+          <p style="margin:0;font-size:16px;line-height:1.55;text-wrap:pretty">&ldquo;Mitchell knows ball. I do not.&rdquo;</p>
+        </div>
+      </div>
+
+      <div style="margin-top:22px;border-top:1px dashed rgba(20,23,31,0.4);padding-top:18px">
+        <span style="font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:#2438c9;font-weight:700">Resolution terms</span>
+        <p style="margin:16px 0 0;font-size:15px;line-height:1.7;color:rgba(20,23,31,0.9);text-wrap:pretty">This challenge resolves in Mitchell&rsquo;s favor if the Chicago Bears record 10 or more wins during the 2026 NFL regular season. Only games designated by the NFL as regular-season games count.</p>
+        <p style="margin:14px 0 0;font-size:15px;line-height:1.7;color:rgba(20,23,31,0.9);text-wrap:pretty">Preseason and postseason games are excluded. A tie does not count as a win.</p>
+        <p style="margin:14px 0 0;font-size:15px;line-height:1.7;color:rgba(20,23,31,0.9);text-wrap:pretty">The final official regular-season results published by the NFL will be used to determine the outcome.</p>
+      </div>
+
+      <div style="margin-top:24px;border-top:1px solid rgba(20,23,31,0.3);display:grid;grid-template-columns:1fr auto;gap:0 14px">
+        <span style="font-size:11.5px;letter-spacing:0.13em;text-transform:uppercase;color:rgba(20,23,31,0.65);padding:14px 0 13px">First judgment</span>
+        <span style="font-size:13px;letter-spacing:0.06em;text-transform:uppercase;text-align:right;padding:14px 0 13px">Jan 5, 2027</span>
+        <span style="font-size:11.5px;letter-spacing:0.13em;text-transform:uppercase;color:rgba(20,23,31,0.65);border-top:1px dashed rgba(20,23,31,0.25);padding:13px 0">Resolve by</span>
+        <span style="font-size:13px;letter-spacing:0.06em;text-transform:uppercase;text-align:right;border-top:1px dashed rgba(20,23,31,0.25);padding:13px 0">Jan 12, 2027</span>
+        <span style="font-size:11.5px;letter-spacing:0.13em;text-transform:uppercase;color:rgba(20,23,31,0.65);border-top:1px dashed rgba(20,23,31,0.25);padding:13px 0">{{ lastDateLabel }}</span>
+        <span style="font-size:13px;letter-spacing:0.06em;text-transform:uppercase;text-align:right;border-top:1px dashed rgba(20,23,31,0.25);padding:13px 0">{{ lastDateValue }}</span>
+      </div>
+
+      <sc-if value="{{ isActive }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top:26px;display:flex;flex-direction:column;align-items:flex-start;gap:12px">
+          <div style="width:100%;box-sizing:border-box;border:2px solid #2438c9;padding:16px 18px;display:flex;align-items:baseline;gap:11px">
+            <span style="font-family:Spectral,Georgia,serif;font-weight:700;font-size:38px;line-height:1;color:#2438c9">129</span>
+            <span style="font-size:13px;letter-spacing:0.13em;text-transform:uppercase;line-height:1.35;color:#2438c9;font-weight:700">days until<br />judgment</span>
+          </div>
+          <span style="font-family:'Gloria Hallelujah',cursive;color:#2438c9;font-size:16px;transform:rotate(-2deg);padding-left:6px">the clock is ticking</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isJudging }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:26px;display:flex;flex-direction:column;align-items:flex-start;gap:12px">
+          <div style="width:100%;box-sizing:border-box;border:2px solid #2438c9;padding:16px 18px;display:flex;align-items:center;gap:14px">
+            <svg viewBox="0 0 40 48" aria-hidden="true" style="width:26px;height:31px;flex:none;animation:coolFlip 2.6s ease-in-out infinite">
+              <g fill="none" stroke="#2438c9" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="330" style="animation:coolDraw 2.6s ease-in-out infinite">
+                <path d="M20 3 L 32 21 L 26 21 L 37 44 L 20 30 L 3 44 L 14 21 L 8 21 Z" />
+                <path d="M20 3 L 8 21 M20 3 L 32 21" />
+              </g>
+            </svg>
+            <span style="font-size:14px;letter-spacing:0.13em;text-transform:uppercase;color:#2438c9;font-weight:700">Judgment in progress</span>
+          </div>
+          <span style="font-family:'Gloria Hallelujah',cursive;color:#2438c9;font-size:16px;transform:rotate(-2deg);padding-left:6px">no takebacks now</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isResolved }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:26px;border-top:2px solid #14171f;padding-top:14px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+            <span style="font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:#b0442f;font-weight:700">Judgment</span>
+            <span style="font-size:11px;letter-spacing:0.06em;color:rgba(20,23,31,0.5)">Filed Jan 13, 2027</span>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-top:14px">
+            <h2 style="margin:0;font-family:Spectral,Georgia,serif;font-weight:700;font-size:30px;line-height:1.06;letter-spacing:-0.01em;text-transform:uppercase;color:#2438c9">Mitchell<br />was right</h2>
+            <svg viewBox="0 0 60 58" aria-hidden="true" style="width:52px;height:50px;flex:none;margin-top:4px">
+              <path d="M8 10 L 52 10 L 52 52 L 8 52 Z" fill="none" stroke="rgba(20,23,31,0.4)" stroke-width="1.4" />
+              <path d="M13 30 C 20 36, 24 44, 27 49 C 33 32, 44 14, 57 2" fill="none" stroke="#2438c9" stroke-width="3.4" stroke-linecap="round" />
+            </svg>
+          </div>
+
+          <p style="margin:12px 0 0;font-size:15px;line-height:1.7;text-wrap:pretty">The Bears finished the 2026 regular season with a 10&ndash;7 record. They won 10 games, so the proposition holds. Don was wrong.</p>
+
+          <div style="position:relative;margin-top:18px">
+            <span style="font-size:11.5px;letter-spacing:0.13em;text-transform:uppercase;color:#2438c9;font-weight:700">Evidence</span>
+            <div style="display:flex;flex-direction:column;gap:8px;padding-top:10px">
+              <a href="#nfl-schedule" style="font-size:13.5px;line-height:1.4">NFL.com &mdash; Bears 2026 Schedule &amp; Results</a>
+              <a href="#nfl-standings" style="font-size:13.5px;line-height:1.4">NFL.com &mdash; 2026 Standings</a>
+              <a href="#nfl-tiebreak" style="font-size:13.5px;line-height:1.4">NFL Operations &mdash; Tie-Breaking Procedures</a>
+            </div>
+            <span style="position:absolute;right:0;top:-4px;font-family:'Gloria Hallelujah',cursive;color:#2438c9;font-size:15px;transform:rotate(-4deg)">receipts</span>
+          </div>
+
+          <div style="margin-top:20px;border-top:1px dashed rgba(20,23,31,0.35);padding-top:14px">
+            <span style="font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:#b0442f;font-weight:700">Consequence published</span>
+            <p style="margin:12px 0 0;font-size:16px;line-height:1.55;text-wrap:pretty">&ldquo;Mitchell knows ball. I do not.&rdquo;</p>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding-top:10px">
+              <span style="font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(20,23,31,0.6)">Posted to Don&rsquo;s Threads</span>
+              <span style="font-size:11px;letter-spacing:0.06em;color:rgba(20,23,31,0.5)">Jan 13, 2027 · 9:02 AM</span>
+            </div>
+            <a href="#threads-post" style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;border:1px solid rgba(20,23,31,0.4);padding:12px 14px;text-decoration:none;color:#14171f" style-hover="border-color:#2438c9;color:#2438c9">
+              <span style="display:flex;align-items:center;gap:9px;min-width:0">
+                <svg viewBox="0 0 192 192" aria-hidden="true" style="width:16px;height:16px;flex:none">
+                  <path fill="currentColor" d="M141.537 88.988c-.827-.396-1.667-.778-2.518-1.143-1.482-27.307-16.403-42.94-41.457-43.1h-.34c-14.986 0-27.449 6.397-35.12 18.036l13.779 9.452c5.73-8.694 14.724-10.548 21.347-10.548h.229c8.25.053 14.475 2.451 18.504 7.129 2.932 3.405 4.893 8.111 5.864 14.05-7.314-1.243-15.224-1.626-23.68-1.141-23.82 1.372-39.134 15.265-38.105 34.569.522 9.792 5.4 18.216 13.735 23.719 7.048 4.652 16.124 6.927 25.558 6.412 12.458-.683 22.231-5.436 29.049-14.127 5.178-6.6 8.453-15.153 9.899-25.93 5.937 3.583 10.337 8.298 12.767 13.966 4.132 9.635 4.373 25.468-8.546 38.376-11.319 11.308-24.925 16.2-45.488 16.351-22.809-.169-40.06-7.484-51.275-21.742-10.503-13.351-15.93-32.635-16.133-57.317.203-24.682 5.63-43.966 16.133-57.317 11.215-14.258 28.465-21.573 51.275-21.742 22.975.171 40.526 7.521 52.171 21.848 5.71 7.025 10.015 15.861 12.853 26.162l16.147-4.308c-3.44-12.68-8.853-23.607-16.219-32.668C147.036 9.607 125.202.195 97.07 0h-.113C68.882.194 47.292 9.642 32.788 28.079 19.882 44.486 13.224 67.316 13.001 95.933L13 96l.001.067c.223 28.617 6.881 51.447 19.787 67.854C47.292 182.358 68.882 191.806 96.957 192h.113c24.958-.173 42.53-6.708 57.011-21.189 18.942-18.923 18.402-42.613 12.158-57.172-4.478-10.434-13.01-18.91-24.702-24.651ZM98.44 129.507c-10.44.588-21.286-4.098-21.82-14.135-.397-7.442 5.296-15.746 22.461-16.735 1.966-.113 3.895-.169 5.79-.169 6.235 0 12.068.606 17.371 1.765-1.978 24.702-13.58 28.713-23.802 29.274Z" />
+                </svg>
+                <span style="font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">View the post on Threads</span>
+              </span>
+              <svg viewBox="0 0 20 14" aria-hidden="true" style="width:15px;height:11px;flex:none">
+                <path d="M2 7 L 17 7 M11 2 L 17 7 L 11 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="margin-top:26px;border-top:1px solid rgba(20,23,31,0.25);padding-top:14px;display:flex;align-items:flex-start;gap:10px">
+        <svg viewBox="0 0 18 20" aria-hidden="true" style="width:13px;height:15px;flex:none;margin-top:1px">
+          <path d="M4 9 L 4 6 C 4 3, 6 1.5, 9 1.5 C 12 1.5, 14 3, 14 6 L 14 9" fill="none" stroke="rgba(20,23,31,0.5)" stroke-width="1.5" />
+          <path d="M2.5 9 L 15.5 9 L 15.5 18.5 L 2.5 18.5 Z" fill="none" stroke="rgba(20,23,31,0.5)" stroke-width="1.5" />
+        </svg>
+        <p style="margin:0;font-size:12px;line-height:1.65;color:rgba(20,23,31,0.55);text-wrap:pretty">{{ lockNote }}</p>
+      </div>
+    </div>
+
+    <sc-if value="{{ isInvite }}" hint-placeholder-val="{{ false }}">
+      <div style="position:sticky;bottom:0;height:0;z-index:30">
+        <div style="position:absolute;bottom:46px;left:16px;right:16px;display:flex;align-items:flex-end;gap:12px">
+          <button type="button" onClick="{{ openRecipient }}" style="appearance:none;cursor:pointer;padding:0;border:none;background:none;flex:1 1 0;min-width:0;transform:rotate(-1.2deg);filter:drop-shadow(0 2px 4px rgba(20,23,31,0.22))" style-hover="transform:rotate(-1.2deg) scale(1.02)">
+            <span style="position:relative;display:block;width:100%;height:128px;border-radius:22px;background:#fdfcf8;padding:5px;box-sizing:border-box">
+              <span style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;height:100%;border-radius:18px;background:#2f9e52;color:#fdfcf8;overflow:hidden">
+                <span style="position:absolute;inset:0;border-radius:18px;background:linear-gradient(158deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 30%, rgba(255,255,255,0) 48%, rgba(6,42,20,0.16) 100%);pointer-events:none"></span>
+                <span style="position:absolute;inset:1px;border-radius:17px;border:1px solid rgba(255,255,255,0.16);pointer-events:none"></span>
+                <span style="position:relative;font-family:Spectral,Georgia,serif;font-weight:700;font-size:26px;letter-spacing:0.05em;text-transform:uppercase;line-height:1">Send it</span>
+                <svg viewBox="0 0 104 78" aria-hidden="true" style="position:relative;width:140px;height:52px">
+                  <g fill="none" stroke="#fdfcf8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 36 C 15 33, 28 38, 40 35 L 44 74 C 30 77, 15 72, 6 75 Z" />
+                    <path d="M11 47 C 19 45, 28 49, 36 46 M12 56 C 20 54, 28 58, 37 55 M14 66 C 21 64, 27 67, 32 66" stroke-width="1.6" opacity="0.9" />
+                    <path d="M72 24 L 84 34 L 46 62 L 34 52 Z" />
+                    <path d="M46 62 L 34 52 L 30 68 Z" />
+                    <path d="M36 61 L 32 64" stroke-width="2" />
+                    <path d="M66 30 L 78 40" stroke-width="1.5" opacity="0.85" />
+                    <path d="M76 20 C 62 12, 70 4, 84 1 C 78 11, 86 14, 94 10 C 102 22, 95 40, 80 41 C 67 41, 65 27, 76 20 Z" stroke-width="2.4" />
+                    <path d="M80 15 C 74 21, 74 30, 80 35" stroke-width="1.6" opacity="0.85" />
+                    <path d="M89 19 C 93 26, 92 33, 87 37" stroke-width="1.4" opacity="0.7" />
+                  </g>
+                </svg>
+              </span>
+            </span>
+          </button>
+
+          <button type="button" style="appearance:none;cursor:pointer;padding:0;border:none;background:none;flex:1 1 0;min-width:0;transform:rotate(1.4deg);filter:drop-shadow(0 2px 4px rgba(20,23,31,0.2))" style-hover="transform:rotate(1.4deg) scale(1.02)">
+              <span style="position:relative;display:block;width:100%;height:128px;border-radius:22px;background:#fdfcf8;padding:5px;box-sizing:border-box">
+                <span style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;height:100%;border-radius:18px;background:#fbf7ee;border:2px solid #b0442f;color:#b0442f;overflow:hidden;box-sizing:border-box">
+                  <span style="position:relative;font-family:Spectral,Georgia,serif;font-weight:700;font-size:25px;letter-spacing:0.04em;text-transform:uppercase;line-height:1">Reject</span>
+                  <svg viewBox="0 0 78 84" aria-hidden="true" style="position:relative;width:46px;height:50px">
+                    <g fill="none" stroke="#b0442f" stroke-width="2.2" stroke-linecap="round">
+                      <path d="M24 12 C 12 17, 8 30, 14 40 C 20 51, 42 54, 53 47 C 64 40, 63 22, 52 15 C 45 10, 33 9, 26 13" />
+                      <path d="M35 6 C 33 2, 36 1, 37 4 M43 7 C 43 2, 47 2, 46 6" stroke-width="1.7" />
+                      <path d="M22 26 C 26 22, 30 23, 32 27" stroke-width="1.9" />
+                      <path d="M42 25 C 46 21, 51 23, 52 28" stroke-width="1.9" />
+                      <path d="M28 36 C 33 32, 44 33, 47 39 C 44 45, 32 45, 28 37" />
+                      <path d="M34 40 C 36 43, 40 43, 41 40" stroke-width="1.5" />
+                      <path d="M26 31 L 22 37 M23 40 L 20 45" stroke-width="1.6" />
+                      <path d="M50 32 L 55 38 M54 41 L 57 46" stroke-width="1.6" />
+                      <path d="M28 52 C 26 60, 27 68, 31 74 C 39 78, 48 76, 51 70 C 53 63, 52 55, 49 50" />
+                      <path d="M27 58 C 20 60, 15 65, 14 71 M51 57 C 58 59, 63 63, 65 69" stroke-width="1.9" />
+                      <path d="M33 75 L 31 82 M45 74 L 47 82" stroke-width="1.9" />
+                    </g>
+                  </svg>
+                </span>
+              </span>
+          </button>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+  </x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:393,&quot;height&quot;:852},&quot;contractState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;invite&quot;,&quot;active&quot;,&quot;judging&quot;,&quot;resolved&quot;],&quot;default&quot;:&quot;active&quot;,&quot;tsType&quot;:&quot;'invite' | 'active' | 'judging' | 'resolved'&quot;}}">
+class Component extends DCLogic {
+  state = { dialog: null, override: null };
+  renderVals() {
+    const state = this.state.override ?? this.props.contractState ?? 'active';
+    const dialog = this.state.dialog ?? (this.props.dialog ?? 'none');
+    const invite = state === 'invite';
+    const resolved = state === 'resolved';
+    return {
+      dialogOpen: dialog !== 'none',
+      dialogVariant: dialog === 'none' ? 'creator' : dialog,
+      openRecipient: () => this.setState({ dialog: 'recipient' }),
+      closeDialog: () => this.setState({ dialog: 'none' }),
+      confirmDialog: () => this.setState(s2 => ({
+        dialog: 'none',
+        override: (s2.dialog ?? this.props.dialog) === 'recipient' ? 'active' : s2.override,
+      })),
+      statusLabel: { invite: 'Invite', active: 'Active', judging: 'Judging', resolved: 'Resolved' }[state] ?? 'Active',
+      isInvite: invite,
+      isActive: state === 'active',
+      isJudging: state === 'judging',
+      isResolved: resolved,
+      accepted: !invite,
+      themLabel: invite ? 'Them (intended)' : 'Them',
+      lastDateLabel: invite ? 'Expires' : 'Accepted',
+      lastDateValue: invite ? 'Sep 4, 2026' : 'Sep 2, 2026',
+      lockNote: invite
+        ? 'This challenge is not active until it is accepted. Accepting locks both consequences.'
+        : resolved
+          ? 'Judgment is final. The authorized consequence has been published.'
+          : 'This is a locked, immutable ThinkSo record. No edits, cancellations, or withdrawals.',
+    };
+  }
+}
+</script>
+</body>
+</html>

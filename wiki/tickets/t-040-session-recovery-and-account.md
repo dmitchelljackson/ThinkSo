@@ -6,7 +6,7 @@
 |---|---|
 | Type / status | `PRODUCT` / `DRAFT` |
 | Owner review | `PENDING` |
-| Stack position / predecessor | `040` / T-030 |
+| Stack position / predecessor | `040` / T-035 |
 | Branch / PR | `stack/040-session-recovery-and-account` / — |
 
 ## Outcome
@@ -15,7 +15,7 @@ ThinkSo restores and refreshes sessions across relaunches, protects navigation w
 
 ## Sources
 
-- [Login BDD 1.14–1.18](../behavior/login-screen-bdd.md#114-restore-valid-stored-session-credentials)
+- [Login BDD 1.14–1.16](../behavior/login-screen-bdd.md#114-restore-and-refresh-stored-thinkso-session-credentials)
 - [Account BDD 6.1–6.6](../behavior/account-screen-bdd.md#61-display-the-account-screen)
 - [`POST /auth/refresh`, logout, and `/me`](../api/api-specification.md#post-authrefresh)
 - [Mobile networking](../architecture/mobile-networking.md)
@@ -39,7 +39,7 @@ None beyond T-030 provider setup; deterministic tests use fake credentials.
 
 ## Acceptance and gates
 
-- [ ] BDD 1.14–1.18 and 6.1–6.6 pass.
+- [ ] BDD 1.14–1.16 and 6.1–6.6 pass.
 - [ ] Only terminal refresh rejection signs out; transport failures preserve credentials.
 - [ ] Concurrent requests share one refresh and never fork the refresh family.
 - [ ] Logout returns to Login before best-effort server revocation completes.

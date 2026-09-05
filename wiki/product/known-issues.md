@@ -1,5 +1,11 @@
 # Known issues and post-MVP limitations
 
+## Email ownership is not confirmed
+
+**Status:** Deliberate demo simplification; add verification before treating the service as production-ready.
+
+MVP lets a Firebase email/password account proceed immediately after registration and does not require `email_verified`. This avoids a separate verification-email, deep-link, resend, and cross-device reconciliation flow, but it means ThinkSo has not proven that the registrant controls the supplied address. Password reset still uses Firebase's email flow. The Firebase UID and connected Threads identity remain stronger account signals; normalized email retirement matching is only a best-effort deterrent until verification is added.
+
 ## Judgment appeals are not implemented
 
 **Status:** Deferred to V2.

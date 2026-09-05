@@ -23,7 +23,7 @@ Use the feature-oriented monorepo shape and dependency direction in [Repository 
 - HTTP routers validate/authorize and call application services.
 - Application services own transactions and state transitions.
 - Repositories/query modules isolate persistence details where it improves testing; avoid ceremonial layers.
-- Provider adapters isolate Apple, Google, Threads, Expo push, model gateway, and web research.
+- Provider adapters isolate Firebase Authentication, Threads, Expo push, model gateway, and web research.
 - Workers call the same application services/state transition code as HTTP routes.
 - Prompts are versioned files/config, not enormous inline strings.
 
@@ -39,7 +39,7 @@ The preserved Claude Design export is a visual source, not production layout cod
 - SSE state handling has explicit snapshot replacement and incremental-event reducers.
 - Unknown SSE events and response fields are ignored for forward compatibility.
 - Meaningful UI is accessible without interpreting doodles, color, or animation.
-- Use real approved Apple/Google sign-in assets/components.
+- Email/password inputs use native React Native controls wrapped by the ThinkSo design system. Firebase SDK objects and error codes stay behind the authentication adapter and never enter UI models.
 
 ## Mobile application layers and lifecycle
 
@@ -59,7 +59,7 @@ transport DTO → repository<Domain> → TanStack data definition
 - Domain services remain plain TypeScript and do not import React, Obsidian, navigation, TanStack, or platform APIs.
 - Presenter state normally dies with its mounted presenter. Anything that must outlive it belongs to an explicitly scoped repository/service, persistent client storage, or the backend.
 - Do not introduce RxJS, Redux, or Zustand without a new concrete requirement and architecture decision.
-- Adapters isolate FastAPI transport, `expo-secure-store`, provider authentication, push, sharing, and app-lifecycle APIs.
+- Adapters isolate FastAPI transport, `expo-secure-store`, Firebase Authentication, push, sharing, and app-lifecycle APIs.
 - An application-scoped session manager owns session restoration, refresh coordination, sign-out, and retired-session rejection even when Login is unmounted.
 - Expo Router protected routes derive from session state; screens do not imperatively duplicate authentication guards.
 - Use React Native `AppState` to reconcile interrupted provider flows and stale foreground data when the app becomes active.
@@ -72,8 +72,8 @@ See [Mobile networking and session recovery](./mobile-networking.md) for failure
 - Store both the ThinkSo access token and refresh credential in `expo-secure-store`, not Async Storage or component state.
 - Cache the access token in application memory while the process is running so normal requests do not read SecureStore repeatedly. SecureStore remains its persistent home across process death and relaunch.
 - ThinkSo access tokens are opaque, database-backed bearer credentials with a 24-hour lifetime. The backend verifies that their session remains active on every authenticated request, allowing immediate revocation before nominal expiry.
-- Rotating refresh credentials expire after 30 days without use and after an absolute maximum of 180 days, after which Apple or Google authentication is required again.
-- Provider credentials used only to prove Apple/Google identity are exchanged with the ThinkSo backend; the app then uses ThinkSo-issued session credentials for its API.
+- Rotating ThinkSo refresh credentials expire after 30 days without use and after an absolute maximum of 180 days, after which Firebase email/password authentication is required again.
+- A fresh Firebase ID token is exchanged with the ThinkSo backend; the app then uses ThinkSo-issued session credentials for its API. Firebase credentials and ThinkSo session credentials remain separate concerns.
 - At cold launch, hold protected routing in an initializing state while SecureStore is read. Use a stored access token if it is still valid; otherwise attempt refresh. Do not flash Login before restoration completes.
 - Refresh on demand when an access token has less than one hour remaining. Do not run a periodic or background refresh timer.
 - After an authenticated request returns `401`, permit one coordinated refresh and one replay of that request. A second `401` signs the user out rather than looping.
@@ -128,7 +128,7 @@ Every vertical slice includes:
 
 Unit and layer-level tests are implemented with the code they protect. Automated end-to-end suites are a later, separate delivery phase after the complete product flow exists; do not block early vertical slices on building the E2E harness. Once added, E2E tests intentionally overlap critical unit-tested behavior to verify the assembled system.
 
-Configure an Android emulator and the free iOS Simulator early. Agents use AutoMobile to launch and interact with real native builds, inspect screenshots and visible state, and manually exercise each vertical slice. Android receives real notification-delivery coverage. Implement and fake-test Apple login beside Google, but exercise feasible iOS flows with Google until paid Apple enrollment enables live Apple credentials/entitlements and end-to-end verification. Real APNs delivery, TestFlight, and App Store verification also remain deferred. Installing and configuring Xcode, Android Studio, the virtual devices, and AutoMobile is a human-owned prerequisite; using the configured capability during implementation is agent work. This interactive review complements Node-based presenter/component tests and does not pull the deferred deterministic end-to-end suite into the first slices.
+Configure an Android emulator and the free iOS Simulator early. Agents use AutoMobile to launch and interact with real native builds, inspect screenshots and visible state, and manually exercise each vertical slice. Firebase email/password authentication is exercised on both simulators; deterministic auth tests use the Firebase Auth Emulator. Android receives real notification-delivery coverage. Real APNs delivery, TestFlight, and App Store verification remain deferred until paid Apple enrollment. Installing and configuring Xcode, Android Studio, the virtual devices, and AutoMobile is a human-owned prerequisite; using the configured capability during implementation is agent work. This interactive review complements Node-based presenter/component tests and does not pull the deferred deterministic end-to-end suite into the first slices.
 
 AI features add small representative cases only after the agent works. Begin with manual inspection plus deterministic schema/date checks; add model graders for fuzzy resolvability/faithfulness later. Production failures become regression cases. APO/GEPA waits until behavior stabilizes and a meaningful held-out corpus exists.
 

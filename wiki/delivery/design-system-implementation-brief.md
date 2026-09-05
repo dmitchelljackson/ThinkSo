@@ -4,7 +4,7 @@ Use this brief when the Expo application skeleton exists and before implementing
 
 ## Objective
 
-Create the smallest production-ready React Native design foundation needed to implement Login and Connect Threads faithfully and responsively. Use the preserved Claude Design export as visual evidence, the design-system wiki page as the component boundary, and the BDD files as behavioral authority.
+Create the smallest production-ready React Native design foundation needed to implement Firebase email/password Login, Create Account, and Connect Threads faithfully and responsively. Use the current [Firebase email/password design archive](../../raw/designs/thinkso-login-email-password-2026-09-04.md) as visual evidence, the design-system wiki page as the component boundary, and the BDD files as behavioral authority.
 
 ## Required reading
 
@@ -14,8 +14,8 @@ Create the smallest production-ready React Native design foundation needed to im
 4. `wiki/architecture/engineering-conventions.md`
 5. `wiki/behavior/login-screen-bdd.md`
 6. `wiki/behavior/connect-threads-screen-bdd.md`
-7. `raw/designs/thinkso-claude-export.md`
-8. Relevant files inside `raw/designs/thinkso-claude-export/`
+7. `raw/designs/thinkso-login-email-password-2026-09-04.md`
+8. Relevant files inside `raw/designs/thinkso-login-email-password-2026-09-04/`
 
 ## Build scope
 
@@ -34,7 +34,7 @@ Do not build Challenge Card, contract sections, commitment dialogs, invitation s
 - Do not copy the export's simulated iPhone frame or assume a 393 × 852 viewport.
 - Do not translate inline CSS mechanically.
 - Do not invent a universal component API around one occurrence.
-- Do not wrap Apple/Google controls in styling that violates provider requirements.
+- Do not restore the historical Apple/Google controls; account access is Firebase email/password only.
 - Keep the Threads control distinct from ordinary ThinkSo buttons.
 - Keep behavior and domain state out of visual primitives.
 - Preserve existing user changes and follow repository commands/conventions once present.

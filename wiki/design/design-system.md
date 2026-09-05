@@ -46,7 +46,7 @@ Do not scatter opacity-adjusted hex/RGBA literals through screens. Define a smal
 | editorial | Spectral | primary headings, contract titles, emphatic legal copy |
 | administrative | Courier Prime | labels, body copy, metadata, buttons, form language |
 | annotation | Gloria Hallelujah | sparse handwritten notes only |
-| provider-native | platform/provider requirement | Apple, Google, and Threads controls where required |
+| provider-native | platform/provider requirement | Threads authorization and other external-provider controls where required |
 
 Font files, supported weights, fallback behavior, and licenses must be verified during implementation. Do not allow a missing weight to silently synthesize a visibly wrong face. Support native text scaling without letting essential controls clip.
 
@@ -128,7 +128,7 @@ Font files, supported weights, fallback behavior, and licenses must be verified 
 
 ## Components that must remain distinct
 
-- Apple and Google sign-in controls use their approved provider components/assets.
+- Account-access email/password fields use the shared native form primitives. Historical Apple/Google buttons in older exports are not implemented.
 - The Threads connect control follows Threads branding and has its own disabled state.
 - Green `ACCEPT` and outlined `REJECT` invitation stickers are product-specific action surfaces, not ordinary `ActionButton` variants.
 - The press-and-hold retirement control is behaviorally distinct from a normal destructive button.

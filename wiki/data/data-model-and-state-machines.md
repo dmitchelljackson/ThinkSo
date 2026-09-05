@@ -5,20 +5,21 @@
 ### users
 
 - `id`
-- primary login identity linkage
-- default display name captured from primary login account context
+- unique Firebase UID linkage
+- normalized Firebase account email used as a private identity/recovery signal
+- nullable display name populated from the connected Threads profile rather than signup
 - `retired_at` nullable
 - timestamps
 
 Retirement is permanent. Historical rows remain.
 
-### auth_identities / sessions
+### Firebase identities / sessions
 
-Model primary Apple/Google identities separately from social publishing connections. One shared login endpoint dispatches by provider. Sessions must be revocable individually and en masse at retirement.
+Firebase Authentication owns email/password credentials, reset messages, and Firebase refresh tokens. ThinkSo stores no password hash or plaintext password. One Firebase UID maps to at most one active ThinkSo user; the normalized Firebase account email is retained as an additional retirement-matching signal. Threads remains a separate required social connection.
 
-One active user may link multiple login identities, including both Apple and Google. Persist each provider identity as the namespaced pair `(provider, provider_subject)`; never use a raw provider subject or email address as the sole primary key. Apple and Google subjects, every provider-verified normalized email observed for the user, and the connected Threads user ID form a layered identity set.
+When a profile is permanently retired, preserve tombstones for the Firebase UID, every normalized Firebase account email observed for it, and the Threads user ID. A future authentication or Threads connection that matches any tombstoned identifier is treated as the same retired user and cannot create or activate a profile. This is deliberate, proportionate deterrence for a low-stakes recreational product, not legal identity verification or guaranteed prevention of evasion. Because MVP skips email confirmation, the email signal alone is weaker and is documented as a known limitation.
 
-When a profile is permanently retired, preserve tombstones for all of those identifiers. A future authentication or Threads connection that matches any tombstoned identifier is treated as the same retired user and cannot create or activate a profile. This is a deliberate, proportionate deterrent for a low-stakes recreational product, not a claim of legal identity verification or an attempt to make ban evasion impossible. A returning person would need both a new login identity/email and a new Threads account to avoid every layer.
+ThinkSo issues its own revocable sessions after the backend verifies a current Firebase ID token. The exact bridge from Firebase password-reset/account-change revocation to ThinkSo-session-family revocation is **OPEN** and blocks completion of T-030.
 
 Persist sessions with enough data to enforce the locked policy:
 
@@ -73,7 +74,7 @@ Maintain a durable append-only cost ledger keyed to the attributable user and op
 
 ### contracts
 
-Each agent proposal is a new immutable contract row in `PROPOSED`. Revisions never overwrite a prior proposal. Contract content includes title, `creator_display_name`, intended-opponent display, resolution contract, dates, state timestamps, and a nullable `terminal_at` used for CLOSED ordering. The creator label defaults from the account display name but may be changed by the minting agent for that proposal without changing the user profile. The resolution contract itself contains the official evidence sources or source hierarchy; do not persist a competing structured judgment-source field. Descriptive participant names are not identity constraints. Participant binding/state timestamps change through guarded transitions; the agreed contract text does not. Contract serialization also includes the creator's Threads handle and, after acceptance, the authenticated challenger's Threads handle. If a different link-holder accepts first, retain the intended-opponent text and display the authenticated challenger separately. Preserved public Contract history retains both bound participants' handles after retirement.
+Each agent proposal is a new immutable contract row in `PROPOSED`. Revisions never overwrite a prior proposal. Contract content includes title, `creator_display_name`, intended-opponent display, resolution contract, dates, state timestamps, and a nullable `terminal_at` used for CLOSED ordering. The creator label defaults from the connected Threads profile name or handle but may be changed by the minting agent for that proposal without changing the user profile. The resolution contract itself contains the official evidence sources or source hierarchy; do not persist a competing structured judgment-source field. Descriptive participant names are not identity constraints. Participant binding/state timestamps change through guarded transitions; the agreed contract text does not. Contract serialization also includes the creator's Threads handle and, after acceptance, the authenticated challenger's Threads handle. If a different link-holder accepts first, retain the intended-opponent text and display the authenticated challenger separately. Preserved public Contract history retains both bound participants' handles after retirement.
 
 ### consequences and consequence_destinations
 
@@ -163,7 +164,7 @@ The retirement operation must be one database transaction where possible:
 2. set `retired_at` permanently;
 3. transition every unresolved participating contract to VOIDED;
 4. revoke/delete sessions and push-token rows;
-5. preserve tombstones for every linked Apple/Google subject, verified normalized email, and Threads user ID;
+5. preserve tombstones for the Firebase UID, every normalized Firebase account email, and Threads user ID;
 6. commit;
 7. revoke the provider token as an external side effect with retry/audit handling.
 

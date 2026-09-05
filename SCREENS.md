@@ -7,10 +7,12 @@ This is the root directory for finding screen behavior specifications and their 
 ### 1. Account Access / Login
 
 - [BDD acceptance criteria](./wiki/behavior/login-screen-bdd.md)
-- [Primary UI — ThinkSo Access Form](<./raw/designs/thinkso-claude-export/ThinkSo Access Form.dc.html>)
-- [Alternate UI composition — ThinkSo Login](<./raw/designs/thinkso-claude-export/ThinkSo Login.dc.html>)
-- [Shared ErrorToast](<./raw/designs/thinkso-claude-export/ErrorToast.dc.html>)
-- [Shared loading S](<./raw/designs/thinkso-claude-export/CoolSpinner.dc.html>)
+- [Primary Login UI — ThinkSo Access Form](<./raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Access Form.dc.html>)
+- [Create Account UI — ThinkSo Register](<./raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Register.dc.html>)
+- [Forgot Password entry affordance — ThinkSo Access Form](<./raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Access Form.dc.html>) — no standalone forgot-password dialog was exported; normal dialog behavior is specified by the BDD.
+- [Historical provider-button composition — ThinkSo Login](<./raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Login.dc.html>) — visual evidence only; Apple/Google controls are not product behavior.
+- [Shared ErrorToast](<./raw/designs/thinkso-login-email-password-2026-09-04/ErrorToast.dc.html>)
+- [Shared loading S](<./raw/designs/thinkso-login-email-password-2026-09-04/CoolSpinner.dc.html>)
 
 ### 2. Connect Threads
 
@@ -66,6 +68,7 @@ This is the root directory for finding screen behavior specifications and their 
 
 - [ThinkSo Flow](<./raw/designs/thinkso-claude-export/ThinkSo Flow.dc.html>)
 - [Export manifest and interpretation warning](./raw/designs/thinkso-claude-export.md)
+- [Firebase email/password archive manifest and pointer](./raw/designs/thinkso-login-email-password-2026-09-04.md)
 - [Shared Claude artifact pointer](./raw/designs/claude-product-flow.md)
 
 ## Canonical supporting docs

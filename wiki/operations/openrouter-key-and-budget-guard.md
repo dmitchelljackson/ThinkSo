@@ -13,7 +13,7 @@ ThinkSo's locked agent configuration is:
 - a dedicated production OpenRouter key with a matching USD $25 daily provider-side limit;
 - prepaid credits, manual refill, and automatic top-up disabled.
 
-As of 2026-09-04, the implementation has no secret destination or live integration worksheet. The owner can prepare the OpenRouter account and billing guard now. The key should be created and placed only after the agent supplies the exact ignored/deployment secret destination.
+The permanent local secret destination is ignored `services/api/.env.local`, variable `OPENROUTER_API_KEY`. The owner can configure the account, billing guard, and key now. Once the owner reports `configured`, the coordinator validates it without printing the value and proceeds under the locked development-spend policy.
 
 OpenRouter's current API reference supports an API-key `limit` in USD and `limit_reset` values including `daily`; resets occur at midnight UTC. OpenRouter's workspace-budget feature is documented as Enterprise-only, so a workspace budget must not be treated as available on the demo account without an observed entitlement. The dedicated key limit is the required provider guard. See [Create a new API key](https://openrouter.ai/docs/api/api-reference/api-keys/create-a-new-api-key) and [Workspace budgets](https://openrouter.ai/docs/guides/features/workspaces/workspace-budgets).
 
@@ -30,7 +30,7 @@ OpenRouter's current API reference supports an API-key `limit` in USD and `limit
 
 After the backend configuration exists, the agent must prepare:
 
-- the exact ignored local/deployment secret destination and environment-variable name for the inference key (do not invent a name in this guide);
+- startup validation and redacted diagnostics for `OPENROUTER_API_KEY` from ignored `services/api/.env.local`;
 - application configuration for `z-ai/glm-5.3-flash`, provider routing, output/token bounds, and bounded web-search usage;
 - the application-side USD $0.25 per-user UTC-day ledger/gate and the USD $1.00 per-Contract judging cap;
 - a redacted verification command that proves the key is usable without echoing it;
@@ -43,7 +43,7 @@ The agent must not place a key in mobile code, an `EXPO_PUBLIC_*` variable, sour
 1. Create a dedicated standard OpenRouter inference key in the current key-management UI. If using the management API instead, note that OpenRouter documents management keys as administrative-only; they are not completion/inference credentials.
 2. Set the key's spending limit to **25 USD** with a **daily** reset if that control is available for the selected account/key. Do not choose monthly or lifetime in place of the required daily guard. OpenRouter documents daily resets at midnight UTC.
 3. If the account exposes an organization/workspace budget, configure it only after confirming the plan and role allow it. It is an additional defense, not a reason to skip the dedicated key limit. Keep limits ordered as required by OpenRouter if multiple intervals are configured.
-4. Enter the key directly into the agent-supplied ignored local file, deployment secret manager, or CI secret store. Do not paste it into chat, the wiki, a ticket, a URL, a shell command, or a screenshot. Confirm only `configured`.
+4. Enter the key directly as `OPENROUTER_API_KEY` in ignored `services/api/.env.local`. Do not paste it into chat, the wiki, a ticket, a URL, a shell command, or a screenshot. Confirm only `configured`.
 5. Record the non-secret key label/hash suffix (if the UI exposes one), configured limit/reset, current credit posture, and automatic-top-up state.
 
 ### 4. Agent verification after owner activation

@@ -4,7 +4,7 @@ Implementation-oriented owner guide for H-006, T-050, and the Threads publicatio
 
 ## Current boundary
 
-As of 2026-09-04, ThinkSo has no Meta app, Threads App ID, app secret, public callback URL, or approved test account. The app's callback must be generated from the implementation and deployment choice; do not register a guessed URL.
+As of 2026-09-04, the dedicated Meta app exists with the Threads use case, its Threads App ID and secret are configured in the ignored backend environment, and the designated Threads tester invitation is accepted. A persistent ngrok development domain is authenticated and running, and ignored local configuration contains the exact HTTPS URL ending in `/integrations/threads/callback`. Registering that URL in Meta and completing end-to-end authorization remain pending.
 
 Meta's official Threads collection says to create a Meta app with the Threads use case, authorize app users, and request a Threads user access token. It documents the authorization-code exchange, long-lived-token exchange, refresh flow, and `threads_basic`/`threads_content_publish` permissions. Use the official collection and current Meta documentation as the contract; dashboard labels and navigation are not stable enough to reproduce from memory.
 
@@ -21,9 +21,9 @@ Official entry points: [Meta for Developers](https://developers.facebook.com/), 
 
 ### 2. Agent work before app activation
 
-After the mobile/backend scaffold and T-050 transport shape exist, the agent must produce:
+Before live T-050 verification, the agent must produce:
 
-- the exact HTTPS callback URI for the current local tunnel, staging service, or deployment (one character must not be changed when copied into Meta);
+- the exact HTTPS callback URI for the configured persistent local ngrok tunnel, staging service, or deployment (one character must not be changed when copied into Meta);
 - the exact authorization start URL shape and requested scope list; for ThinkSo's current product, the minimum expected scopes are `threads_basic` and `threads_content_publish`;
 - the exact backend secret destination for the Threads app secret and encrypted user-token key/material;
 - the expected non-secret app identifiers and a named test account;
@@ -86,11 +86,11 @@ meta_app_id: <non-secret Meta app ID>
 threads_app_id: <non-secret Threads App ID; confirm distinct from Meta app ID if shown>
 threads_app_secret_destination: <agent-supplied backend secret path/name>
 threads_app_secret_status: NOT_REQUESTED | CONFIGURED | ROTATE_REQUIRED
-threads_callback_uri: <exact HTTPS URI supplied by agent>
+threads_callback_uri: configured in ignored `THREADS_OAUTH_REDIRECT_URI`; persistent ngrok origin plus `/integrations/threads/callback`
 threads_scopes_requested: <exact list>
 threads_scopes_granted: <exact list from provider evidence>
-test_account: <safe Threads handle or provider ID>
-test_account_role_status: <NOT_ADDED | INVITED | ACCEPTED | NOT_REQUIRED>
+test_account: configured in ignored `THREADS_TEST_HANDLE`; value not committed
+test_account_role_status: ACCEPTED
 app_review_or_production_status: <NOT_STARTED | TESTING_ONLY | SUBMITTED | APPROVED | BLOCKED | NOT_REQUIRED>
 provider_api_version: <agent-observed version or UNVERSIONED>
 evidence: <redacted provider URL, command output, screenshot path, and post ID/link if safe>

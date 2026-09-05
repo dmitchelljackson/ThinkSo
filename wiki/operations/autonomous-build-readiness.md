@@ -8,15 +8,15 @@ The human handles only legal agreements, identity/account ownership, payments, p
 
 Never paste passwords, two-factor codes, recovery data, provider secrets, or private keys into chat, tickets, the wiki, or committed files. When a secret is needed, the agent first creates the ignored local file or platform-secret destination and gives the human one exact placement instruction.
 
-## Batch A — do before autonomous implementation starts
+## Batch A — establish once, without blocking unrelated work
 
-Complete this batch once. After it passes, the coordinator can build the repository foundation and all provider-independent tickets without stopping.
+Complete each capability once. Provider-independent work starts immediately; an incomplete row blocks only work that truly requires that provider. Once a CLI session or secret is configured, the coordinator validates it and proceeds under the standing authorization in [Human prerequisites](./human-prerequisites.md).
 
 ### A-1 macOS developer authorization
 
-- [ ] In Terminal, accept the Xcode license: `sudo xcodebuild -license accept`.
-- [ ] Launch Xcode once, allow first-run components to install, and install at least one current iOS Simulator runtime.
-- [ ] Resolve any macOS administrator or privacy prompts that block Xcode, Git, Homebrew, Simulator, Android Studio, or terminal automation.
+- [x] Xcode license and first-launch setup are complete; `xcodebuild -checkFirstLaunchStatus` exits successfully.
+- [x] A current iOS Simulator runtime (iOS 26.5) is installed.
+- [x] No administrator or privacy prompt blocks the currently verified toolchain.
 
 **Why human:** accepting Apple's agreement and entering administrator credentials cannot be delegated.
 
@@ -25,15 +25,15 @@ Complete this batch once. After it passes, the coordinator can build the reposit
 - [x] Complete Android SDK first-run setup; the command-line SDK is sufficient and Android Studio is not a prerequisite for the current agent workflow.
 - [x] Install the Android SDK/platform tools and create one supported Android virtual device (`ThinkSo_API_36`, Pixel 8, Android 16/API 36).
 - [x] Boot the Android emulator once and verify it reaches the launcher (`emulator-5556`, verified 2026-09-04).
-- [ ] Boot the iOS Simulator once and verify it reaches the home screen.
+- [x] Boot the iOS Simulator once and verify it reaches the home screen (`ThinkSo-iPhone-17`, verified 2026-09-04).
 
 Agents own normal simulator/emulator use after this first-run setup. Paid Apple membership is not needed for these simulator checks.
 
 ### A-3 AutoMobile access
 
-- [ ] Install and configure [AutoMobile](https://github.com/kaeawc/auto-mobile) as a Codex MCP.
-- [ ] Grant its required local permissions.
-- [ ] Verify it can see, inspect, tap, type, scroll, and capture screenshots on the Android emulator and iOS Simulator.
+- [x] Install and configure [AutoMobile](https://github.com/kaeawc/auto-mobile) `0.0.67` as an exact-version Codex MCP.
+- [x] Grant the access required for the verified Android and iOS sessions.
+- [x] Verify it can list and inspect both targets, navigate each to its home screen, and capture screenshots. Feature-ticket UI verification owns further tap/type/scroll evidence.
 
 ### A-4 GitHub account authorization
 
@@ -45,17 +45,19 @@ GitHub CLI 2.100.0 and `github/gh-stack` 0.1.1 are installed and verified. The p
 
 ### A-5 Expo owner account
 
-- [ ] Create the free Expo account that will own ThinkSo.
-- [ ] Verify its email and complete recovery/two-factor setup.
-- [ ] Authenticate the Expo/EAS CLI when the agent reaches the prepared login step, or place a dedicated Expo token into the exact ignored/CI secret destination the agent supplies.
+EAS CLI `23.2.0` is installed globally. Token authentication succeeds for personal owner `mitchelljackson`, and the canonical project is linked as `@mitchelljackson/thinkso` with project ID `a53d6e77-474f-4f27-a5d4-35627d7c405e`.
 
-The agent owns creating and linking the Expo project through the CLI. Do not manually invent project IDs or bundle/application identifiers ahead of the repository scaffold.
+- [x] Create the free Expo account that will own ThinkSo.
+- [x] Verify the account sufficiently for authenticated EAS access; recovery/two-factor settings remain private owner maintenance.
+- [x] Authenticate Expo/EAS using the dedicated `EXPO_TOKEN` in ignored root `.env.local`.
+
+The agent created and linked the Expo project through the CLI. The canonical slug/scheme is `thinkso` and both native identifiers are `com.thinkso.app`.
 
 ### A-6 Provider owner accounts
 
-- [ ] Confirm access to the Google account that will own ThinkSo's Google OAuth and Firebase projects.
-- [ ] Confirm access to the Facebook account that will own the Meta developer app, and complete Meta developer enrollment or identity agreements if prompted.
-- [ ] Confirm access to the OpenRouter account.
+- [x] Confirm access to the Google account that owns ThinkSo's Firebase project.
+- [x] Confirm access to the Facebook account that will own the Meta developer app. Meta developer enrollment or identity agreements remain pending if prompted.
+- [x] Confirm access to the OpenRouter account.
 
 Creating exact clients, callbacks, scopes, and credentials belongs to Batch B because the agent must first generate canonical identifiers and redirect URLs.
 
@@ -65,24 +67,26 @@ Creating exact clients, callbacks, scopes, and credentials belongs to Batch B be
 - [ ] Disable automatic top-up.
 - [ ] Set the provider-side daily limit to the locked USD $25 value.
 - [ ] Create a dedicated ThinkSo API key; do not reuse a general personal key.
-- [ ] Keep the key private until the agent supplies its ignored secret destination.
+- [ ] Put the key directly in `services/api/.env.local` as `OPENROUTER_API_KEY`; report only `configured`.
 
 ## Batch B — one consolidated provider activation checkpoint
 
-The coordinator must first scaffold the apps, choose canonical identifiers, prepare ignored secret destinations, and produce an exact callback/credential worksheet. It should then request this batch as one consolidated `STOP: HUMAN REQUIRED`, not interrupt separately for every provider.
+The coordinator prepares every identifier, ignored destination, callback, and verification command before presenting this single checkpoint. After the owner completes it, the coordinator detects the configured state and resumes automatically; the owner does not hold credentials waiting for another request.
 
-### B-1 Google identity and Firebase
+### B-1 Firebase email/password identity
 
-- [ ] Complete any Google Cloud/Firebase console consent, terms, or project-ownership prompts that cannot be automated.
-- [ ] Approve the exact Android, iOS-simulator, and backend OAuth identifiers/redirects supplied by the agent.
-- [ ] Put any Google/Firebase private credential into the exact local, EAS, or GitHub secret destination supplied by the agent.
-- [ ] Interactively sign into a designated Google test account on the virtual device when the smoke test requests it.
+- [x] Create Firebase project `thinkso-5768a`, register both `com.thinkso.app` platform apps, and install their config files in ignored destinations.
+- [x] Enable Firebase Authentication Email/Password; a non-creating REST probe reached normal credential validation on 2026-09-04.
+- [x] Confirm Email enumeration protection is enabled; an unknown-account sign-in probe returned generic `INVALID_LOGIN_CREDENTIALS` on 2026-09-04.
+- [ ] Review the Password Reset email template before live smoke testing; Firebase's hosted action handler is sufficient for MVP. Email confirmation is deferred.
+- [ ] Create one disposable live email/password account only when the smoke test requests it. Automated QA uses deterministic Firebase Auth Emulator users.
 
 ### B-2 Meta and Threads
 
-- [ ] Complete Meta app ownership, agreements, identity checks, test-user approval, and any required dashboard-only settings.
+- [x] Create and own the Meta app with the Threads use case, configure the designated Threads tester, and accept its invitation.
+- [ ] Complete any remaining Meta agreements, identity checks, or dashboard-only requirements encountered during OAuth verification.
 - [ ] Approve the exact redirect URI, requested Threads scopes, and app identifiers supplied by the agent.
-- [ ] Put the Meta app secret into the exact backend secret destination supplied by the agent.
+- [x] Put the Meta app secret into `services/api/.env.local`; its presence and client-credential validity were verified without exposing it.
 - [ ] Interactively authorize a designated Threads test account when the smoke test requests it.
 
 ### B-3 Expo and Android push
@@ -102,7 +106,7 @@ Return only the non-secret values requested in the worksheet, such as project ID
 
 ## Later human gates — not required to start or finish the local Android-first demo
 
-- [ ] **Apple Developer Program:** paid membership and live Sign in with Apple entitlement/credential verification, APNs, TestFlight, and App Store work remain deferred. Apple login code/configuration and fake tests ship beside Google.
+- [ ] **Apple Developer Program:** paid membership, APNs, TestFlight, and App Store work remain deferred. Apple login is not part of MVP.
 - [ ] **Railway:** account, billing, hosted Postgres, production secrets, and deployment remain deferred until deployment is chosen.
 - [ ] **Production domain:** purchase, DNS, canonical web/deep-link URLs, and provider production URLs remain deferred.
 - [ ] **Hosted mobile E2E:** paid emulator/device hosting is not assumed; local AutoMobile verification is sufficient initially.
@@ -120,6 +124,12 @@ The human should not be interrupted for these ordinary tasks:
 - run migrations, local services, unit/integration tests, code review, and AutoMobile verification;
 - update tickets, BDD links, architecture pages, and the append-only wiki log.
 
+## Continuation rule
+
+The coordinator must always take the next safe action. It may not stop merely because a later provider credential is absent. It records the narrow dependency, substitutes fakes where appropriate, advances the stack through all independent work, and returns to the live integration as soon as readiness is machine-detectable.
+
+Once the owner says a listed destination is `configured`, the coordinator validates it without printing secrets and continues. It asks again only for a failed interactive authorization, a missing legal/account decision, secret rotation, a higher spend limit, a destructive provider action, or a public production action.
+
 ## Ready signal
 
-The coordinator may begin when A-1 through A-7 are checked. Provider-independent work continues immediately. Provider-dependent work becomes fully autonomous after the single Batch B activation checkpoint passes. Deferred gates never block the local Android-first demo.
+The local toolchain, GitHub, emulators, and agent UI-control gate is already ready. Provider-independent work continues now. Each provider becomes ready when its account login/secret row is machine-verifiable; it does not require a separate conversational approval. Deferred gates never block the local Android-first demo.

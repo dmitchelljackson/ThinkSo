@@ -14,9 +14,9 @@ Done when a fresh checkout can boot the mobile app and API, migrate an empty DB,
 
 ## Phase 1 — identity and session
 
-Implement Apple and Google UI/provider adapters, backend credential verification through the shared `/auth/login`, session persistence, `/me`, logout, user/session tables, protected navigation, and relaunch restoration together. Build and fake-test both provider paths; defer only live Apple credentials, entitlement/signing, and end-to-end Apple verification until paid Apple Developer enrollment.
+Implement separate Sign In and Register screens, Firebase email/password authentication, the Forgot Password dialog and Firebase-hosted reset flow, backend Firebase ID-token verification through `/auth/login`, session persistence, `/me`, logout, user/session tables, protected navigation, and relaunch restoration. Use the Firebase Auth Emulator and deterministic accounts for automated tests; a live Firebase smoke test remains a separate gate. Email confirmation is deferred and recorded as an MVP limitation.
 
-Acceptance scenario: launch → authenticate → backend user exists → relaunch remains authenticated → sign out immediately clears the current device and returns to Login even when best-effort server revocation cannot complete.
+Acceptance scenario: register → exchange a Firebase ID token → backend user exists → relaunch remains authenticated → sign out immediately clears the current device and returns to Login even when best-effort server revocation cannot complete. Forgot Password always gives a neutral confirmation and uses Firebase's hosted reset page.
 
 Use the locked session lifetimes, refresh behavior, and retired-login response from the API and Login BDD.
 

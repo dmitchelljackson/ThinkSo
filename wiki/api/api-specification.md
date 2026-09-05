@@ -13,6 +13,21 @@ This is the current MVP contract. Endpoint purposes and lifecycle behavior are *
 - Canonical mutation result: return the full canonical `Contract`.
 - Unknown JSON response fields must be ignored by clients.
 
+### Foundation health
+
+`GET /v1/health` is public and returns the API process health snapshot:
+
+```json
+{
+  "status": "ok",
+  "service": "thinkso-api",
+  "version": "0.0.0",
+  "checked_at": "2026-09-04T14:30:57.255022Z"
+}
+```
+
+`checked_at` is a UTC instant. The endpoint is a process/readiness signal for local and deployment smoke checks; it does not replace feature authorization or database migration checks.
+
 ### Error response
 
 ```json
@@ -121,7 +136,7 @@ In `POSTING`, `verdict` is present and final but the required Threads consequenc
 
 One serialization is used in direct reads, list-entry envelopes, chat proposals, and mutation responses. A list entry nests the unchanged canonical contract beside list-specific ordering metadata; it does not create a summary/detail contract variant. Nullable fields remain present as `null`. MVP omits viewer-relative action flags: clients derive visible controls from authenticated identity, state, and timestamps, while every mutation repeats authoritative server eligibility checks.
 
-`creator_display_name` and `opponent_display_name` are immutable descriptive Contract text, not access-control identities. The creator label defaults from the creator's ThinkSo account name, which originates from primary login; the minting agent may change that label for a proposal at the creator's request without changing the user profile. The authenticated user who wins acceptance is stored separately in `challenger`. If the intended name and actual challenger differ, clients display both: the original intended-opponent wording remains unchanged and the bound challenger identity is identified separately. The creator's Threads handle is always displayed with the creator label; after acceptance the bound challenger's Threads handle is displayed with the opponent label. Before acceptance there is no challenger handle to show.
+`creator_display_name` and `opponent_display_name` are immutable descriptive Contract text, not access-control identities. Because a connected Threads account is required before minting, the creator label defaults from the creator's Threads profile name or handle; the minting agent may change that label for one proposal without changing the user profile. The authenticated user who wins acceptance is stored separately in `challenger`. If the intended name and actual challenger differ, clients display both: the original intended-opponent wording remains unchanged and the bound challenger identity is identified separately. The creator's Threads handle is always displayed with the creator label; after acceptance the bound challenger's Threads handle is displayed with the opponent label. Before acceptance there is no challenger handle to show.
 
 The minting proposal tool requires explicit `creator_display_name`, `opponent_display_name`, `acceptance_expiration`, `resolution_date`, and `resolution_expiration`; backend code supplies no fallback dates. The creator name is prefilled from the authenticated account context but remains explicit in the tool call. The tool rejects missing/invalid dates, `acceptance_expiration >= resolution_date`, and a judging window shorter than 48 hours. A seven-day judging window is minting-agent prompt guidance, not a validation requirement. No fixed acceptance-window duration is imposed; the agent must choose an event-aware fair commitment deadline.
 
@@ -138,22 +153,26 @@ Do not add a separate structured judgment-source field. The immutable `resolutio
 Auth: public.
 
 ```json
-{ "provider": "apple", "credential": "provider-issued-token" }
+{ "firebase_id_token": "firebase-client-id-token" }
 ```
 
-`provider`: `apple | google`. The server verifies the credential and finds or creates the ThinkSo user.
+The mobile client signs in or registers directly with Firebase Authentication using email/password, then sends a freshly obtained Firebase ID token here. The backend verifies signature, issuer, audience, expiry, Firebase UID, and claimed email with the Firebase Admin SDK before finding or creating the ThinkSo user. Invalid, expired, disabled, or revoked credentials receive `401 invalid_firebase_credential`. ThinkSo never receives the plaintext password. MVP deliberately does not require `email_verified == true`; see the known limitation.
 
 ```json
 {
   "access_token": "opaque-database-backed-token",
   "refresh_token": "rotating-opaque-token",
   "expires_in": 86400,
-  "user": { "id": "uuid", "display_name": "Mitchell", "is_retired": false, "social_identity": null },
+  "user": { "id": "uuid", "display_name": null, "is_retired": false, "social_identity": null },
   "onboarding_complete": false
 }
 ```
 
 The mobile app stores both tokens in SecureStore and caches the access token in application memory while running. Access tokens expire after 24 hours. They are opaque and database-backed; every authenticated request also verifies that the associated session remains active, so logout, retirement, and administrative revocation take effect immediately.
+
+Account creation, email/password sign-in, and password-reset email delivery are Firebase client operations, not ThinkSo API endpoints. A ThinkSo profile is created on the first successful Firebase ID-token exchange. Firebase's hosted action handler serves password-reset links for MVP. Email confirmation is deferred.
+
+**OPEN security gate:** Firebase revokes its own refresh tokens after a password reset or major account change, but that does not inherently revoke an already-issued ThinkSo session. Before T-030 is complete, choose and test the mechanism that invalidates ThinkSo session families after such a Firebase revocation. Do not claim password-reset session invalidation until that mechanism exists.
 
 ### `POST /auth/refresh`
 
@@ -212,7 +231,9 @@ Auth required. Returns the authorization URL and CSRF state (**DERIVED**):
 
 ### `GET /integrations/threads/callback?code=...&state=...`
 
-Browser/OAuth callback. Verifies the single-use state, exchanges the code server-side, converts the result to a long-lived token, verifies the Threads identity plus `threads_basic` and `threads_content_publish`, encrypts the token, records its expiry, and only then marks the connection `CONNECTED` and onboarding complete. Exact mobile deep-link response is **OPEN**.
+Browser/OAuth callback. The route path is fixed as `/integrations/threads/callback`; `THREADS_OAUTH_REDIRECT_URI` supplies its exact environment-specific public HTTPS URL. Local development uses the owner's persistent ngrok development domain forwarding to the API on `localhost:8000`, so Meta can reach this otherwise-local route without a deployed API or an owned domain.
+
+The callback verifies the single-use state, exchanges the code server-side, converts the result to a long-lived token, verifies the Threads identity plus `threads_basic` and `threads_content_publish`, encrypts the token, records its expiry, and only then marks the connection `CONNECTED` and onboarding complete. It then returns the browser to `thinkso://auth/threads/complete` with only a non-secret outcome code. The mobile client re-reads authoritative backend state before routing; no OAuth code, provider token, app secret, or identity data is placed in the application deep link.
 
 If either required scope is absent, authorization is unsuccessful: do not mark the connection `CONNECTED`, do not admit the user to Main, and return them to Connect Threads with a retryable error explaining that publishing permission is required. A partial grant does not count as a Threads connection.
 

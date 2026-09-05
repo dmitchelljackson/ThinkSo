@@ -28,7 +28,7 @@ The initial workflow should expose separate, diagnosable jobs rather than one op
 
 Root `just` commands must run the same checks locally. CI should orchestrate repository commands rather than contain a second implementation of the build.
 
-Live Apple, Google, Meta/Threads, Expo Push, OpenRouter, and deployment smoke tests must not run on untrusted pull requests with production secrets. Provider contract tests use fakes by default; explicitly controlled integration or release workflows own live-provider verification.
+Live Firebase, Meta/Threads, Expo Push, OpenRouter, and deployment smoke tests must not run on untrusted pull requests with production credentials. Firebase Authentication tests use the local Auth Emulator; other provider contract tests use fakes by default. Explicitly controlled integration or release workflows own live-provider verification.
 
 GitHub evaluates each PR in a native stack as though it targets the stack's root base branch. Keep required format, lint, type, unit, contract-drift, and applicable integration checks on every layer. If later jobs become expensive, use GitHub's stack event metadata to restrict those specific jobs to the lowest unmerged or top layer; do not weaken per-layer correctness gates preemptively.
 

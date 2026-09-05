@@ -2,6 +2,10 @@
 
 This is an append-only history of material wiki operations.
 
+## [2026-09-04] update | Firebase authentication plan and revised UI sources
+
+Replaced the Apple/Google-first authentication plan with Firebase email/password authentication and a separate password-recovery slice. Added the revised login and registration design archive, updated the affected BDDs, API and data contracts, architecture, operations guides, ticket map, known issues, and screen indexes. These general planning changes were committed directly to `main` so implementation pull requests remain focused on their ticket-specific behavior.
+
 ## [2026-09-04] setup | Android emulator and stack tooling verified
 
 Installed and verified the Android command-line toolchain and a dedicated `ThinkSo_API_36` Pixel 8 AVD running Android 16/API 36. The emulator boots to the launcher and is visible to `adb`; login-shell Android paths live in the user-level shell configuration rather than the repository. GitHub CLI 2.100.0 and `github/gh-stack` 0.1.1 are also active. iOS remains blocked only by Xcode first-run components, license acceptance, and a simulator runtime; AutoMobile installation is agent-owned, with only any actual macOS permission prompt reserved for the human.

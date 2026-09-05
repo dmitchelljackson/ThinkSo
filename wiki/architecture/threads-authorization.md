@@ -26,6 +26,8 @@ Threads uses the OAuth 2.0 Authorization Code flow:
 
 The app secret and Threads user token never reside on the mobile client.
 
+The provider callback path is `/integrations/threads/callback`. In local development, a persistent ngrok-assigned HTTPS origin forwards that route to `localhost:8000`; the full value lives in ignored `THREADS_OAUTH_REDIRECT_URI` and must exactly match Meta's registered redirect. The callback returns to `thinkso://auth/threads/complete` using a non-secret outcome code, and the app confirms the result against backend state. The tunnel is development infrastructure only, not a production dependency.
+
 The server connection state is authoritative if the mobile return is interrupted. Whenever Connect Threads regains focus and during the next application bootstrap, the client checks the backend status. If the backend already completed authorization and reports `CONNECTED`, the app routes directly to Main without a toast or another authorization attempt, even if the original deep link was missed.
 
 If Connect Threads regains focus and the backend still reports the prior unconnected state, with no explicit provider error, treat the indeterminate return as cancellation. Stop loading, keep the local acknowledgment checked, re-enable Connect Threads, and show no toast.

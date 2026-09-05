@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Gloria+Hallelujah&display=swap" rel="stylesheet" />
+</helmet>
+<div style="position:relative;width:100%;box-sizing:border-box;background:#fdfcf8;border:1px solid rgba(20,23,31,0.55);font-family:'Courier Prime',ui-monospace,monospace;color:#14171f;-webkit-font-smoothing:antialiased">
+  <div style="position:absolute;left:9px;top:0;bottom:0;width:1px;background:rgba(186,96,86,0.5);pointer-events:none"></div>
+
+  <div style="padding:16px 18px 18px 22px">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-bottom:13px;border-bottom:1px solid rgba(20,23,31,0.3)">
+      <span style="font-size:10.5px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(20,23,31,0.6);padding-top:4px">Thinkso · TS-000421</span>
+      <span style="flex:none;border:2px solid #b0442f;color:#b0442f;padding:3px 9px;font-family:Spectral,Georgia,serif;font-weight:700;font-size:13px;letter-spacing:0.18em;text-transform:uppercase;transform:rotate(-3deg)">Final</span>
+    </div>
+
+    <h2 style="margin:16px 0 0;font-family:Spectral,Georgia,serif;font-weight:700;font-size:29px;line-height:1.06;letter-spacing:-0.015em;text-transform:uppercase;text-wrap:balance">{{ heading }}</h2>
+
+    <p style="margin:14px 0 0;font-size:14.5px;line-height:1.65;text-wrap:pretty">{{ line1 }}</p>
+    <p style="margin:11px 0 0;font-size:14.5px;line-height:1.65;color:rgba(20,23,31,0.85);text-wrap:pretty">{{ line2 }}</p>
+    <sc-if value="{{ hasLine3 }}" hint-placeholder-val="{{ false }}">
+      <p style="margin:11px 0 0;font-size:14.5px;line-height:1.65;color:rgba(20,23,31,0.85);text-wrap:pretty">{{ line3 }}</p>
+    </sc-if>
+
+    <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;padding:14px 0 2px;flex-wrap:nowrap">
+      <span style="font-family:'Gloria Hallelujah',cursive;color:#2438c9;font-size:14px;white-space:nowrap;transform:rotate(-2deg)">{{ annotation }}</span>
+      <svg viewBox="0 0 46 20" aria-hidden="true" style="width:26px;height:13px;flex:none">
+        <path d="M2 11 C 16 8, 28 12, 42 10" fill="none" stroke="#2438c9" stroke-width="2" stroke-linecap="round" />
+        <path d="M32 4 C 37 7, 41 9, 44 10 C 40 12, 36 15, 32 18" fill="none" stroke="#2438c9" stroke-width="2" stroke-linecap="round" />
+      </svg>
+      <sc-if value="{{ isCreator }}" hint-placeholder-val="{{ true }}">
+        <svg viewBox="0 0 54 62" aria-hidden="true" style="width:30px;height:34px;flex:none;transform:rotate(4deg)">
+          <g fill="none" stroke="#2438c9" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 5 C 20 3, 33 7, 44 4 L 47 52 C 34 56, 20 51, 7 54 Z" />
+            <path d="M15 17 C 23 15, 32 19, 40 16 M16 27 C 24 25, 32 29, 41 26 M17 37 C 24 35, 30 38, 36 37" stroke-width="1.4" opacity="0.85" />
+            <path d="M22 47 C 30 44, 38 48, 44 45" stroke-width="1.4" opacity="0.6" />
+          </g>
+        </svg>
+      </sc-if>
+      <sc-if value="{{ isRecipient }}" hint-placeholder-val="{{ false }}">
+        <svg viewBox="0 0 76 66" aria-hidden="true" style="width:40px;height:35px;flex:none;transform:rotate(3deg)">
+          <g fill="none" stroke="#2438c9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 44 C 11 34, 18 23, 31 22 C 43 21, 52 28, 51 39 C 50 48, 39 53, 28 51 C 22 50, 19 47, 18 44 Z" />
+            <path d="M44 26 C 43 19, 47 13, 53 13 C 60 13, 64 18, 62 25 C 61 30, 55 32, 51 30" />
+            <path d="M47 10 C 48 6, 51 8, 53 4 C 54 8, 57 6, 58 10" />
+            <path d="M62 20 L 72 22 L 62 26" />
+            <path d="M58 29 C 61 31, 61 35, 58 35" stroke-width="1.6" />
+            <path d="M55 19 C 56 19, 57 20, 56 21" stroke-width="2.4" />
+            <path d="M18 34 C 10 29, 7 22, 9 16 C 14 21, 17 24, 21 27 M14 32 C 8 26, 6 20, 7 15" stroke-width="1.6" />
+            <path d="M28 51 L 26 62 M21 62 L 32 62 M40 50 L 43 62 M38 62 L 49 62" />
+          </g>
+        </svg>
+      </sc-if>
+    </div>
+
+    <div style="display:flex;align-items:stretch;gap:10px;padding-top:14px;border-top:1px solid rgba(20,23,31,0.3);margin-top:8px">
+      <button type="button" onClick="{{ onCancel }}" style="flex:1 1 0;appearance:none;cursor:pointer;background:none;border:1px solid rgba(20,23,31,0.45);color:rgba(20,23,31,0.7);font-family:inherit;font-size:11.5px;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;height:50px;padding:0" style-hover="border-color:#14171f;color:#14171f">Never mind</button>
+      <button type="button" onClick="{{ onConfirm }}" style="flex:1.15 1 0;appearance:none;cursor:pointer;background:#14171f;border:1px solid #14171f;color:#fdfcf8;font-family:inherit;font-size:11.5px;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;height:50px;padding:0" style-hover="background:#22262f">Send it</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:345,&quot;height&quot;:420},&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;creator&quot;,&quot;recipient&quot;],&quot;default&quot;:&quot;creator&quot;,&quot;tsType&quot;:&quot;'creator' | 'recipient'&quot;},&quot;onCancel&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;() =&gt; void&quot;},&quot;onConfirm&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;() =&gt; void&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const creator = (p.variant ?? 'creator') === 'creator';
+    return {
+      isCreator: creator,
+      isRecipient: !creator,
+      heading: creator ? 'Put it on record?' : 'You sure?',
+      line1: creator
+        ? 'Once you send this, you can’t change it or take it back.'
+        : 'You’re accepting this contract exactly as written.',
+      line2: creator
+        ? 'Anyone with the link can view it. First person to accept it is locked in.'
+        : 'If ThinkSo rules you wrong, the agreed post gets sent to your Threads account.',
+      hasLine3: !creator,
+      line3: 'No backing out after this.',
+      annotation: creator ? 'receipts are forever' : 'last chance, coward',
+      onCancel: p.onCancel ?? (() => {}),
+      onConfirm: p.onConfirm ?? (() => {}),
+    };
+  }
+}
+</script>
+</body>
+</html>

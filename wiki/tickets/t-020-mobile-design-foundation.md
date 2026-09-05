@@ -22,7 +22,7 @@ Login and Threads can be built from tested responsive ThinkSo primitives instead
 
 ## Scope and work
 
-- Fonts/licenses, semantic tokens, `DocumentScreen`, text/rule/header primitives, provider-button boundary, `ActionButton`, `FilingErrorToast`, `LoadingS`, and dialog shell only as required by the first two screens.
+- Fonts/licenses, semantic tokens, `DocumentScreen`, text/rule/header primitives, Firebase account-form boundary, `ActionButton`, `FilingErrorToast`, `LoadingS`, and dialog shell only as required by the first two screens.
 - Isolated component catalog/previews and interaction tests for all supported states.
 - Responsive phone composition, bounded tablet column, safe areas, keyboard behavior, and portrait decision based on evidence.
 
@@ -42,7 +42,7 @@ Login and Threads can be built from tested responsive ThinkSo primitives instead
 
 - [ ] No production dependency on Claude export runtime, HTML, CSS, or fake device frame.
 - [ ] Shared toast/loading behavior is testable at application scope.
-- [ ] Screens can use provider-native controls without forcing them into `ActionButton`.
+- [ ] Login/Create Account can use Firebase email/password controls without forcing account-form behavior into visual primitives.
 - [ ] Font licensing and committed assets are safe for a public repository.
 
 ## Activity log

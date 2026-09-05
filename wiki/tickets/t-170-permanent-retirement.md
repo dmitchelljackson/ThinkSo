@@ -41,7 +41,7 @@ After two warnings and a continuous five-second hold, a user permanently retires
 - [ ] Cases 6.7–6.20 and related Contract/publication/notification retirement cases pass.
 - [ ] Incomplete hold resets; transient submission failure leaves the active profile usable.
 - [ ] Retirement is atomic in Postgres and local credential clearing does not wait for provider cleanup.
-- [ ] Any tombstoned Apple/Google/email/Threads signal blocks future reuse.
+- [ ] Any tombstoned Firebase UID, normalized Firebase email, or Threads user ID blocks future reuse.
 
 ## Activity log
 

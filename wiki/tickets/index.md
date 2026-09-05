@@ -24,8 +24,9 @@ The coordinator maintains this table as tickets are created and advanced.
 | 000 | [T-000 Repository governance and deterministic tooling](./t-000-repository-governance.md) | Enabling | `DRAFT` | `main` | — |
 | 010 | [T-010 Boot the mobile/API/database skeleton](./t-010-executable-skeleton.md) | Enabling | `DRAFT` | T-000 | — |
 | 020 | [T-020 Establish the mobile visual foundation](./t-020-mobile-design-foundation.md) | Enabling | `DRAFT` | T-010 | — |
-| 030 | [T-030 Authenticate with Apple or Google and issue ThinkSo sessions](./t-030-apple-google-login.md) | Product | `DRAFT` | T-020 | — |
-| 040 | [T-040 Restore sessions and provide local-first sign-out](./t-040-session-recovery-and-account.md) | Product | `DRAFT` | T-030 | — |
+| 030 | [T-030 Authenticate with Firebase email/password and issue ThinkSo sessions](./t-030-firebase-email-password-login.md) | Product | `DRAFT` | T-020 | — |
+| 035 | [T-035 Recover a Firebase password](./t-035-password-recovery.md) | Product | `DRAFT` | T-030 | — |
+| 040 | [T-040 Restore sessions and provide local-first sign-out](./t-040-session-recovery-and-account.md) | Product | `DRAFT` | T-035 | — |
 | 050 | [T-050 Require and maintain a Threads connection](./t-050-threads-connection.md) | Product | `DRAFT` | T-040 | — |
 | 060 | [T-060 Browse The Record](./t-060-the-record.md) | Product | `DRAFT` | T-050 | — |
 | 070 | [T-070 Read protected Contract lifecycle views](./t-070-contract-read.md) | Product | `DRAFT` | T-060 | — |
@@ -60,7 +61,7 @@ This map prevents a later ticketing pass from silently dropping behavior. Some d
 
 | BDD section | Primary ticket ownership |
 |---|---|
-| 1 Login | T-030 cases 1.1–1.13; T-040 cases 1.14–1.18 |
+| 1 Login | T-030 cases 1.1–1.7 and 1.12–1.13; T-035 cases 1.8–1.11; T-040 cases 1.14–1.16 |
 | 2 Connect Threads | T-050 cases 2.1–2.21 |
 | 3 The Record | T-060 cases 3.1–3.20 |
 | 4 Challenge Contract | T-070 read/display cases 4.1–4.9 and 4.16–4.28; T-120 acceptance 4.10–4.15; T-130/T-140/T-170 integrate judging, publication, and retirement states |
@@ -75,7 +76,7 @@ This map prevents a later ticketing pass from silently dropping behavior. Some d
 
 | Surface | Ticket ownership |
 |---|---|
-| Authentication, identities, sessions, `/me` | T-030 login/issuance; T-040 refresh/logout/session reads; T-170 retirement invalidation |
+| Authentication, identities, sessions, `/me` | T-030 Firebase login/issuance; T-035 post-reset session invalidation; T-040 refresh/logout/session reads; T-170 retirement invalidation |
 | Threads integration and authorization gate | T-050 connection/maintenance; T-140 publication pause/resume; T-170 disconnect cleanup |
 | Push tokens and delivery | T-150 registration; T-160 acceptance/judgment events and delivery; T-170 cleanup |
 | Record and Contract reads | T-060 Record; T-070 Contract; later lifecycle tickets supply real state transitions |

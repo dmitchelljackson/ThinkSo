@@ -238,7 +238,7 @@ UI reference: [ThinkSo Account](<../../raw/designs/thinkso-claude-export/ThinkSo
 
 ```gherkin
 Given a profile was permanently retired
-When a later login or Threads connection matches any preserved Apple subject, Google subject, verified normalized email, or Threads user ID
+When a later login or Threads connection matches any preserved Firebase UID, normalized Firebase email, or Threads user ID
 Then the server treats it as the same retired person
 And it does not create or reactivate a usable ThinkSo profile
 ```

@@ -1,8 +1,8 @@
 # Screens and behavior
 
-## 1. Login / Intro
+## 1. Login / Account Access
 
-Purpose: establish a ThinkSo session through Apple or Google.
+Purpose: establish a ThinkSo session through Firebase email/password authentication.
 
 Required content:
 
@@ -10,12 +10,17 @@ Required content:
 - ThinkSo wordmark with the juvenile `!?` layer;
 - recurring `YOU VS THEM` motif, with YOU/THEM looking typed into contract fields;
 - tagline: **Write it down. We’ll call it. Keep the receipts.**
-- platform-compliant Continue with Apple and Continue with Google controls using real approved assets/components;
+- email and password fields with password obscured by default and an explicit show/hide control;
+- primary Log In, Create Account, and Forgot Password actions;
+- the [ThinkSo Access Form](<../../raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Access Form.dc.html>) and separate [ThinkSo Register](<../../raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Register.dc.html>) exports as current visual evidence;
 - How It Works, Terms, and Privacy links.
+
+The Register export contains a `Name for the record` field, but this is a raw-source mismatch. The locked product uses the connected Threads identity for public identity, so the Create Account UI does not show or require signup display name. No standalone forgot-password dialog was exported; use a normal account-access dialog from the Access Form affordance, with behavior defined by the Login BDD.
 
 Behavior:
 
-- successful primary login creates or restores the ThinkSo user and session;
+- successful Firebase email/password authentication creates or restores the ThinkSo user and session without requiring email verification in MVP;
+- Create Account exchanges the Firebase token immediately and routes a new profile to Connect Threads; email ownership confirmation is a documented post-MVP issue. Forgot Password uses Firebase's neutral reset-email flow and returns the user to Login after the hosted reset action;
 - a user without a completed Threads connection proceeds to Connect Threads;
 - a ready user proceeds to Main;
 - a permanently retired identity must not create a fresh usable profile. Login remains on the Login screen and shows the non-retryable `PROFILE RETIRED · JUST NOW` global toast defined by Login BDD 1.11.

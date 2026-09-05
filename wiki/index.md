@@ -65,7 +65,7 @@ Screen-specific entry point: [Screens, BDD, and UI sources](../SCREENS.md)
 - [Autonomous build readiness](./operations/autonomous-build-readiness.md) — ordered human setup batches that let the coordinator build with minimal interruption.
 - [Human prerequisites](./operations/human-prerequisites.md) — early account, secret, privileged-toolchain, emulator, and agent-capability checkpoints.
 - [Expo account and project setup](./operations/expo-account-and-project-setup.md) — owner sequence for Expo ownership, EAS linking, tokens, and build evidence.
-- [Google OAuth and Firebase setup](./operations/google-oauth-and-firebase-setup.md) — owner sequence for dedicated Google/Firebase projects, native clients, callbacks, and secret handoff.
+- [Firebase email/password setup](./operations/firebase-email-password-setup.md) — owner sequence for Firebase project setup, email/password provider configuration, and secret handoff.
 - [Meta developer and Threads API setup](./operations/meta-threads-api-setup.md) — owner sequence for the Threads use case, callbacks, scopes, test users, and server credentials.
 - [OpenRouter key and budget guard](./operations/openrouter-key-and-budget-guard.md) — owner sequence for dedicated inference credentials, prepaid funding, and independent spend caps.
 
@@ -78,6 +78,7 @@ Screen-specific entry point: [Screens, BDD, and UI sources](../SCREENS.md)
 - [Referenced product conversation](../raw/conversations/assess-small-bets-legality.md)
 - [Claude product-flow artifact](../raw/designs/claude-product-flow.md)
 - [Claude Design export](../raw/designs/thinkso-claude-export.md) — preserved source files and interpretation warning.
+- [Firebase email/password design archive](../raw/designs/thinkso-login-email-password-2026-09-04.md) — current Login and Create Account visual sources, source manifest, and preserved Register-name mismatch.
 - [LLM Wiki pattern](../raw/references/llm-wiki-pattern.md)
 - [AutoMobile](../raw/references/automobile.md) — selected MCP source for agent-driven native mobile interaction.
 - [GitHub native stacked pull requests](../raw/references/github-native-stacked-pull-requests.md) — official preview, CLI, management, merge, and CI references.

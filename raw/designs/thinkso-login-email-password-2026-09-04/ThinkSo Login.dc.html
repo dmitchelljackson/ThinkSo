@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="ext-resource-dependency" content="./ios-frame.jsx" data-resource-id="./ios-frame.jsx" />
+</helmet>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Archivo+Narrow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#efece6;font-family:'Archivo Narrow',system-ui,sans-serif}
+a{color:#22346e}a:hover{color:#3b56a8}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 'Archivo Narrow',system-ui,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:34px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 'Archivo Narrow',system-ui,sans-serif;color:rgba(0,0,0,.55)}
+.dv-opt:target .dv-oid{background:#22346e;color:#fff}
+.dv-next{margin:24px 0 0;font:12px/1.5 'Archivo Narrow',system-ui,sans-serif;color:rgba(0,0,0,.5)}
+</style></helmet>
+
+<section class="dv-turn" id="t7">
+<div class="dv-thd"><a class="dv-tid" href="#t7">7</a><span class="dv-tname">ThinkSo — login screen, torn-out notebook page (iPhone, portrait)</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="7a" data-screen-label="7a Torn-out notebook page">
+<div class="dv-olabel"><a class="dv-oid" href="#7a">7a</a>Right-hand page, ripped along the left edge, controls on the table</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+  <div style="position:absolute;inset:0;overflow:hidden;background:linear-gradient(90deg, #a56f43 0 33.3%, #9a663c 33.3% 66.6%, #a06a40 66.6% 100%)">
+
+    <div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg, rgba(58,30,10,.34) 0 2.5px, rgba(0,0,0,0) 2.5px 134px), repeating-linear-gradient(90deg, rgba(255,228,186,.14) 2.5px 4px, rgba(0,0,0,0) 4px 134px)"></div>
+    <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 402 874" preserveAspectRatio="none" aria-hidden="true"><g stroke="rgba(64,34,12,.2)" stroke-width="2" fill="none" stroke-linecap="round"><path d="M52 -20 C 40 200, 66 460, 46 900"></path><path d="M84 -20 C 96 240, 72 520, 92 900"></path><path d="M184 -20 C 172 180, 196 480, 176 900"></path><path d="M226 -20 C 238 260, 214 560, 232 900"></path><path d="M318 -20 C 306 220, 330 500, 310 900"></path></g><g stroke="rgba(255,228,186,.13)" stroke-width="1.5" fill="none" stroke-linecap="round"><path d="M66 -20 C 54 210, 80 470, 60 900"></path><path d="M204 -20 C 216 250, 192 540, 210 900"></path><path d="M336 -20 C 324 230, 348 510, 328 900"></path></g></svg>
+
+    <div style="position:absolute;left:0;right:0;top:0;height:{{ paperHeight }}px;filter:drop-shadow(0 5px 0 rgba(58,30,10,.2)) drop-shadow(0 14px 18px rgba(40,16,2,.3));clip-path:polygon(3.4% 0, 1.2% 2.4%, 3% 4.6%, .8% 7%, 2.6% 9.4%, .5% 11.8%, 3.2% 14%, 1% 16.4%, 2.8% 18.8%, .6% 21.2%, 3.4% 23.4%, 1.2% 25.8%, 3% 28.2%, .8% 30.6%, 2.6% 33%, .5% 35.2%, 3.2% 37.6%, 1% 40%, 2.8% 42.4%, .6% 44.6%, 3.4% 47%, 1.2% 49.4%, 3% 51.8%, .8% 54%, 2.6% 56.4%, .5% 58.8%, 3.2% 61.2%, 1% 63.4%, 2.8% 65.8%, .6% 68.2%, 3.4% 70.6%, 1.2% 72.8%, 3% 75.2%, .8% 77.6%, 2.6% 80%, .5% 82.2%, 3.2% 84.6%, 1% 87%, 2.8% 89.4%, .6% 91.6%, 3.4% 94%, 1.2% 96.4%, 2.4% 98.2%, 100% 100%, 100% 0)">
+      <div style="position:absolute;inset:0;background:#f7f4ea"></div>
+
+      <div style="position:absolute;inset:0;opacity:.9;background:radial-gradient(circle at 50% 50%, rgba(126,106,70,.13) 0 .5px, rgba(0,0,0,0) .8px) 0 0/7px 7px, radial-gradient(circle at 50% 50%, rgba(255,255,255,.9) 0 .5px, rgba(0,0,0,0) .8px) 3px 4px/7px 7px, radial-gradient(circle at 50% 50%, rgba(126,106,70,.09) 0 .6px, rgba(0,0,0,0) 1px) 5px 2px/11px 13px, radial-gradient(circle at 50% 50%, rgba(126,106,70,.07) 0 .6px, rgba(0,0,0,0) 1px) 2px 9px/17px 19px"></div>
+
+      <div style="position:absolute;left:0;right:0;top:217px;bottom:0;background:repeating-linear-gradient(180deg, rgba(64,96,164,.14) 0 1px, rgba(0,0,0,0) 1px 34px)"></div>
+      <div style="position:absolute;left:44px;top:0;bottom:0;width:1.5px;background:rgba(178,66,58,.24)"></div>
+
+      <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 402 {{ paperHeight }}" preserveAspectRatio="none" aria-hidden="true">
+        <g fill="none" stroke-linecap="butt">
+          <path d="M8 262 L 128 282 L 262 254 L 402 276" stroke="rgba(118,96,58,.2)" stroke-width="1.4"></path>
+          <path d="M8 264.6 L 128 284.6 L 262 256.6 L 402 278.6" stroke="rgba(255,255,255,.95)" stroke-width="1.4"></path>
+          <path d="M6 448 L 146 426 L 288 454 L 402 434" stroke="rgba(118,96,58,.17)" stroke-width="1.3"></path>
+          <path d="M6 450.6 L 146 428.6 L 288 456.6 L 402 436.6" stroke="rgba(255,255,255,.85)" stroke-width="1.3"></path>
+          <path d="M296 232 L 310 330 L 288 424" stroke="rgba(118,96,58,.13)" stroke-width="1.2"></path>
+          <path d="M298.6 232 L 312.6 330 L 290.6 424" stroke="rgba(255,255,255,.7)" stroke-width="1.2"></path>
+          <path d="M96 {{ paperHeight }} L 82 512 L 104 476" stroke="rgba(118,96,58,.12)" stroke-width="1.2"></path>
+          <path d="M98.6 {{ paperHeight }} L 84.6 512 L 106.6 476" stroke="rgba(255,255,255,.65)" stroke-width="1.2"></path>
+        </g>
+      </svg>
+
+      <div style="position:absolute;left:22px;bottom:22px;width:16px;height:16px;border-radius:50%;background:#9a663c;box-shadow:inset 0 2px 3px rgba(40,16,2,.6), 0 1px 0 rgba(255,255,255,.85)"></div>
+
+      <div style="position:relative;height:100%;box-sizing:border-box;padding:96px 34px 30px 62px;display:flex;flex-direction:column;align-items:center">
+        <div style="font-family:'Caveat',cursive;font-weight:700;font-size:76px;line-height:1;white-space:nowrap;color:#1e3068;text-shadow:0 0 1.2px rgba(30,48,104,.45)">ThinkSo<span style="display:inline-block;transform:rotate(6deg) translateY(-3px);margin-left:2px">!?</span></div>
+        <svg width="196" height="15" viewBox="0 0 176 14" style="margin-top:2px;transform:rotate(-1.4deg)" aria-hidden="true"><path d="M3 8 C40 3, 96 12, 172 5" stroke="#1e3068" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".8"></path></svg>
+
+        <div style="margin-top:38px;width:100%;display:flex;align-items:flex-end;gap:14px;height:34px">
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="font-family:'Caveat',cursive;font-size:26px;line-height:32px;color:#1e3068">you</div></div>
+          <div style="font-size:11px;font-weight:600;letter-spacing:.22em;line-height:32px;text-transform:uppercase;color:rgba(40,32,25,.42)">vs</div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="font-family:'Caveat',cursive;font-size:26px;line-height:32px;color:#1e3068">them</div></div>
+        </div>
+
+        <div style="margin-top:34px;max-width:250px;text-align:center;font-size:16.5px;line-height:34px;text-wrap:pretty;color:rgba(40,32,25,.78)">One of you is wrong. Write it down. We&rsquo;ll keep the receipts.</div>
+        <sc-if value="{{ showHow }}" hint-placeholder-val="{{ true }}"><a href="#7a" style="margin-top:34px;font-family:'Caveat',cursive;font-size:23px;line-height:32px;color:#22346e;text-decoration-line:underline;text-decoration-style:wavy;text-underline-offset:4px;transform:rotate(-1deg)">How it works</a></sc-if>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:26px;right:26px;bottom:104px;display:flex;flex-direction:column;gap:12px">
+      <button style="all:unset;box-sizing:border-box;cursor:pointer;height:52px;border-radius:11px;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;gap:9px;font-family:system-ui,-apple-system,sans-serif;font-size:17px;font-weight:600;box-shadow:0 2px 6px rgba(20,8,2,.34)" style-active="transform:scale(.985);opacity:.86">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><ellipse cx="12" cy="15.2" rx="7.6" ry="7"></ellipse><path d="M12.2 8.1c-.2-2.6 1.8-4.7 4.4-5-0 2.7-1.9 4.9-4.4 5z"></path></svg>
+        Continue with Apple</button>
+      <button style="all:unset;box-sizing:border-box;cursor:pointer;height:52px;border-radius:11px;background:#fff;color:#3c4043;border:1px solid #dadce0;display:flex;align-items:center;justify-content:center;gap:11px;font-family:system-ui,-apple-system,sans-serif;font-size:16px;font-weight:600;box-shadow:0 2px 6px rgba(20,8,2,.28)" style-active="transform:scale(.985);background:#f4f4f5">
+        <svg width="19" height="19" viewBox="0 0 36 36" aria-hidden="true"><g fill="none" stroke-width="6.5"><circle cx="18" cy="18" r="12.5" stroke="#4285F4" stroke-dasharray="19 60" transform="rotate(-40 18 18)"></circle><circle cx="18" cy="18" r="12.5" stroke="#34A853" stroke-dasharray="19 60" transform="rotate(50 18 18)"></circle><circle cx="18" cy="18" r="12.5" stroke="#FBBC05" stroke-dasharray="19 60" transform="rotate(140 18 18)"></circle><circle cx="18" cy="18" r="12.5" stroke="#EA4335" stroke-dasharray="19 60" transform="rotate(-130 18 18)"></circle></g><rect x="17.5" y="14.8" width="12" height="6.4" fill="#4285F4"></rect></svg>
+        Continue with Google</button>
+    </div>
+
+    <div style="position:absolute;left:0;right:0;bottom:52px;display:flex;justify-content:center;gap:18px;font-size:12.5px;letter-spacing:.04em;color:rgba(255,240,218,.82);text-shadow:0 1px 2px rgba(30,12,2,.5)">
+      <a href="#7a" style="color:inherit;text-decoration-line:underline;text-underline-offset:3px">Terms</a>
+      <span style="opacity:.5">&middot;</span>
+      <a href="#7a" style="color:inherit;text-decoration-line:underline;text-underline-offset:3px">Privacy</a>
+    </div>
+  </div>
+</x-import>
+</div>
+
+</div>
+<p class="dv-next">Try next: &ldquo;rougher tear&rdquo; &middot; &ldquo;stronger creases&rdquo; &middot; &ldquo;show the screen after login&rdquo;</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;paperHeight&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:580,&quot;min&quot;:420,&quot;max&quot;:660,&quot;step&quot;:1,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Paper&quot;},&quot;showHow&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      paperHeight: this.props.paperHeight ?? 580,
+      showHow: this.props.showHow ?? true,
+    };
+  }
+}
+</script>
+</body>
+</html>
