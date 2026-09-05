@@ -2,6 +2,10 @@
 
 This is an append-only history of material wiki operations.
 
+## [2026-09-04] implement and verify | Executable mobile/API/database skeleton
+
+Implemented the T-010 foundation across the monorepo: Expo Router and the Obsidian/TanStack presenter seam, generated OpenAPI transport, FastAPI/Dishka services, async Postgres/Alembic persistence, PgQueuer worker and scheduler entrypoints, Compose health checks, and CI-equivalent gates. Verified unit and integration tests, live container startup, OpenAPI drift, secret hygiene, Android and iOS Hermes exports, and native simulator loading on both platforms. Moved the dependency graph out of Expo Router's route directory after native smoke exposed its file-based-routing warning.
+
 ## [2026-09-04] convention | Focused pull-request presentation
 
 Locked pull-request titles to `[T-NNN] Simple title` and reduced the standard body to ticket, changes, test instructions, UI screenshots when relevant, and brief notes. General wiki and planning changes that do not belong to a ticket are committed separately to `main`; ticket-specific documentation remains with its feature pull request.
