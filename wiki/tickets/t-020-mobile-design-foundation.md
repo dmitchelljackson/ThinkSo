@@ -7,7 +7,7 @@
 | Type / status | `ENABLING` / `IN_REVIEW` |
 | Owner review | `APPROVED 2026-09-05` |
 | Stack position / predecessor | `020` / T-010 |
-| Branch / PR | `stack/020-mobile-design-foundation` / — |
+| Branch / PR | `stack/020-mobile-design-foundation` / [#4](https://github.com/dmitchelljackson/ThinkSo/pull/4) |
 
 ## Outcome
 
@@ -53,6 +53,10 @@ Login and Threads can be built from tested responsive ThinkSo primitives instead
 
 `2026-09-05 | UI_VERIFIER | PASS | pending coordinator commit | The owner reviewed the catalog on the configured iOS and Android simulators and approved the visual foundation, Loading S motion, restrained pressed colors, illustration consolidation, neutral send-it drawing, official Threads treatment, and native loading spinner.`
 
+`2026-09-05 | COORDINATOR | CHECKS_PASS | 57187f7a25f50c528f22962d4bceb928bcfc2cf6 | Root format/lint/type/unit checks, repository hygiene and Gitleaks, Markdown links, OpenAPI drift, diff checks, and native owner review pass.`
+
+`2026-09-05 | COORDINATOR | STACK_SUBMITTED | 57187f7a25f50c528f22962d4bceb928bcfc2cf6 | Published review-ready PR #4 against main with the required ticket-prefixed title; GitHub Actions started.`
+
 ## Observations and decisions
 
 - The catalog intentionally includes the current 36 app-owned drawings at the owner's request. This is an approved scope addition to review reusable visual assets together; no later-screen behavior or product composites moved into T-020.
@@ -64,6 +68,6 @@ Login and Threads can be built from tested responsive ThinkSo primitives instead
 ## Final handoff
 
 - **Delivered:** responsive native visual primitives, global toast/loading hosts, bundled fonts, Threads-branded authorization control, app drawing inventory, and `/catalog` review route.
-- **Candidate / PR:** pending coordinator commit and pull-request creation.
+- **Candidate / PR:** reviewed code candidate `57187f7a25f50c528f22962d4bceb928bcfc2cf6`; [PR #4](https://github.com/dmitchelljackson/ThinkSo/pull/4).
 - **Evidence:** 26 mobile tests; typecheck/lint/format; Android `ThinkSo_API_36` and compact iOS `ThinkSo-iPhone-17` native catalog review; owner visual approval.
 - **Limitations:** Login and Connect Threads behavior remains in T-030 and T-050. Rotation may be locked later if a production screen proves unusable in landscape.
