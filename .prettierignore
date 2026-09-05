@@ -1,0 +1,17 @@
+# Preserved source material and wiki prose have their own editorial formatting.
+raw/
+wiki/
+docs/
+SCREENS.md
+AGENTS.md
+README.md
+CONTRIBUTING.md
+COPYRIGHT.md
+
+# Generated, binary, and dependency trees.
+node_modules/
+pnpm-lock.yaml
+apps/mobile/ios/
+apps/mobile/android/
+coverage/
+dist/

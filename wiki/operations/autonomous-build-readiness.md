@@ -14,7 +14,7 @@ Complete this batch once. After it passes, the coordinator can build the reposit
 
 ### A-1 macOS developer authorization
 
-- [x] In Terminal, accept the Xcode license: `sudo xcodebuild -license accept`.
+- [ ] In Terminal, accept the Xcode license: `sudo xcodebuild -license accept`.
 - [ ] Launch Xcode once, allow first-run components to install, and install at least one current iOS Simulator runtime.
 - [ ] Resolve any macOS administrator or privacy prompts that block Xcode, Git, Homebrew, Simulator, Android Studio, or terminal automation.
 
@@ -22,9 +22,9 @@ Complete this batch once. After it passes, the coordinator can build the reposit
 
 ### A-2 Android and iOS virtual devices
 
-- [ ] Launch Android Studio once and finish its SDK setup.
-- [ ] Install the Android SDK/platform tools and create one supported Android virtual device.
-- [ ] Boot the Android emulator once and verify it reaches the launcher.
+- [x] Complete Android SDK first-run setup; the command-line SDK is sufficient and Android Studio is not a prerequisite for the current agent workflow.
+- [x] Install the Android SDK/platform tools and create one supported Android virtual device (`ThinkSo_API_36`, Pixel 8, Android 16/API 36).
+- [x] Boot the Android emulator once and verify it reaches the launcher (`emulator-5556`, verified 2026-09-04).
 - [ ] Boot the iOS Simulator once and verify it reaches the home screen.
 
 Agents own normal simulator/emulator use after this first-run setup. Paid Apple membership is not needed for these simulator checks.
@@ -37,11 +37,11 @@ Agents own normal simulator/emulator use after this first-run setup. Paid Apple 
 
 ### A-4 GitHub account authorization
 
-- [ ] Ensure the intended GitHub owner account may create a public repository and run Actions.
-- [ ] Authenticate GitHub CLI interactively with `gh auth login`.
-- [ ] Complete any browser, two-factor, or organization authorization GitHub requests.
+- [x] Ensure the intended GitHub owner account may create a public repository and run Actions.
+- [x] Authenticate GitHub CLI interactively with `gh auth login`.
+- [x] Complete any browser, two-factor, or organization authorization GitHub requests.
 
-After A-1 and A-4, the agent owns upgrading GitHub CLI to version 2.90.0 or later, installing `github/gh-stack`, verifying `gh stack`, auditing the public tree, creating the ThinkSo repository, and configuring CI. The currently installed CLI is 2.83.1 and is too old for GitHub's documented native stack workflow.
+GitHub CLI 2.100.0 and `github/gh-stack` 0.1.1 are installed and verified. The public repository is connected, and the coordinator owns the native stack and CI from this point forward.
 
 ### A-5 Expo owner account
 

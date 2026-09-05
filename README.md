@@ -6,7 +6,7 @@ ThinkSo turns a casual claim into an immutable social contract. One person creat
 
 The product loop is simple: **write it down → put it on the record → sign it → wait → judgment → receipt.**
 
-> **Project status:** product behavior, UX, system architecture, and the full-stack delivery plan are specified. The React Native and backend foundations are the next implementation milestone. The images below are design concepts, not production screenshots.
+> **Project status:** product behavior, UX, system architecture, and the full-stack delivery plan are specified. Deterministic monorepo tooling and CI are under review in the first stacked PR; the executable React Native/FastAPI skeleton follows next. The images below are design concepts, not production screenshots.
 
 [Browse the screens and acceptance criteria](./SCREENS.md) · [Read the product overview](./wiki/product/overview.md) · [See the implementation backlog](./wiki/tickets/index.md)
 
@@ -85,7 +85,26 @@ ThinkSo/
 | Contract | FastAPI OpenAPI → generated TypeScript types and `openapi-fetch` transport |
 | Quality | Ruff, mypy, pytest, ESLint, Prettier, TypeScript, Jest, GitHub Actions |
 
-Runtime versions and a few foundation choices remain proposals until the first scaffolding review. See the [foundation configuration review](./wiki/delivery/foundation-configuration-review.md) for the exact status of each choice.
+Runtime versions and foundation choices are approved and locked. See the [foundation configuration review](./wiki/delivery/foundation-configuration-review.md) for the exact decisions and compatibility evidence.
+
+## Local development
+
+The repository pins Node, pnpm, Python, uv, and `just`. From a clean checkout:
+
+```sh
+corepack enable
+pnpm install --frozen-lockfile
+uv sync --directory services/api --locked --dev
+just check
+just backend-format
+just backend-lint
+just backend-typecheck
+just backend-test
+just links-check
+just hygiene
+```
+
+`just --list` is the command menu. T-000 intentionally contains setup-aware placeholders for application tests; T-010 replaces those skips with the executable Expo and FastAPI projects. Docker services are validated with `docker compose config --quiet`, and `just container-build` builds the API image.
 
 ## Engineering approach
 
@@ -118,6 +137,6 @@ The MVP is deliberately narrow: no feed, discovery, friends list, stats dashboar
 
 ## Repository status and access
 
-The public repository is live at <https://github.com/dmitchelljackson/ThinkSo>. Product implementation begins with the reviewed foundation configuration and executable skeleton.
+The public repository is live at <https://github.com/dmitchelljackson/ThinkSo>. Product implementation is proceeding as a native GitHub PR stack, beginning with repository governance and the executable skeleton.
 
 ThinkSo is **source-available, not open source**. Copyright © 2026 Mitchell Jackson; all rights are reserved. GitHub-native viewing and forking remain subject to GitHub's Terms of Service, but no general permission is granted to use, modify, distribute, or commercialize the project. See [COPYRIGHT.md](./COPYRIGHT.md) and [CONTRIBUTING.md](./CONTRIBUTING.md).

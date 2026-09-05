@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-thinkso}
+      POSTGRES_USER: ${POSTGRES_USER:-thinkso}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
+    command:
+      ['python', '-c', "print('ThinkSo API placeholder: no HTTP application is configured yet')"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://thinkso:local-development-only@postgres:5432/thinkso}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+
+  worker:
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
+    command: ['python', '-c', "print('ThinkSo worker placeholder: no jobs are configured yet')"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
+    command:
+      ['python', '-c', "print('ThinkSo scheduler placeholder: no schedules are configured yet')"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres-data:

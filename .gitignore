@@ -4,12 +4,25 @@
 .idea/
 .vscode/
 *.swp
+.fleet/
+
+# Package-manager state and local tooling caches
+.pnpm-store/
+.yarn/
+.npm/
+.cache/
+.turbo/
+.nx/
 
 # Local environment and credentials
 .env
 .env.*
 !.env.example
 !.env.*.example
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.*.example
 *.key
 *.pem
 *.p12
@@ -24,6 +37,7 @@ npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.tsbuildinfo
 
 # Python
 .venv/
@@ -38,6 +52,7 @@ apps/mobile/android/
 apps/mobile/ios/
 build/
 DerivedData/
+*.xcuserstate
 
 # Local databases and runtime artifacts
 *.db
@@ -46,3 +61,6 @@ DerivedData/
 *.log
 tmp/
 temp/
+test-results/
+playwright-report/
+screenshots/
