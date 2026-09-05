@@ -2,6 +2,10 @@
 
 This is an append-only history of material wiki operations.
 
+## [2026-09-05] implement and verify | Mobile design foundation
+
+Implemented and owner-reviewed the T-020 React Native visual foundation: semantic tokens, verified bundled typography, responsive safe-area document composition, account-form controls, finite action states, application-scoped filing-error/loading feedback, dialog and acknowledgment controls, the animated Loading S, and a catalog of current app-owned drawings. The Threads authorization control follows Meta's official icon/clear-space guidance and uses a neutral native spinner during provider activity so ThinkSo and Threads branding are not mixed.
+
 ## [2026-09-04] stack | T-010 executable foundation
 
 Published review-ready stacked PR #2 for the executable mobile/API/database foundation. Independent review found and verified the repair of one runtime DTO-validation gap. All 12 GitHub Actions checks passed; AutoMobile exercised the Android health refresh against the live API, and the iOS Simulator loaded the same bundle. The reviewed code candidate is `eea2ac87785bb2e40e190be7932a796037981817`; only ticket and wiki status bookkeeping followed it.

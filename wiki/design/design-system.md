@@ -130,6 +130,7 @@ Font files, supported weights, fallback behavior, and licenses must be verified 
 
 - Account-access email/password fields use the shared native form primitives. Historical Apple/Google buttons in older exports are not implemented.
 - The Threads connect control follows Threads branding and has its own disabled state.
+- **LOCKED:** the Threads connect control uses the official Threads icon with at least one-quarter-icon-width clear space, preserves its shape, and pairs it with the action label rather than modifying the official lockup. Its busy state uses a neutral native spinner—not the ThinkSo Loading S—so the two brands are not mixed inside one control.
 - Green `ACCEPT` and outlined `REJECT` invitation stickers are product-specific action surfaces, not ordinary `ActionButton` variants.
 - The press-and-hold retirement control is behaviorally distinct from a normal destructive button.
 - Doodles with different meanings should be assets/compositions, not variants of an over-generalized doodle component.
@@ -163,3 +164,17 @@ Each shared component requires:
 - screenshots on at least one compact iOS phone and one representative Android phone;
 - screen-level tests proving Login and Connect Threads satisfy their BDD criteria;
 - no production dependency on the Claude export runtime or web CSS.
+
+## T-020 implementation evidence
+
+The first native foundation lives under [`apps/mobile/src/design-system`](../../apps/mobile/src/design-system/). It uses semantic tokens from `tokens.ts`, `DocumentScreen` with safe-area insets and a centered `maxWidth` column, and finite document, interaction, loading, toast, and dialog primitives. The development catalog is available at the Expo Router `/catalog` route and intentionally contains no Firebase or Threads behavior.
+
+Typography is bundled through the pinned `@expo-google-fonts/spectral`, `@expo-google-fonts/courier-prime`, and `@expo-google-fonts/gloria-hallelujah` packages. These wrappers are MIT licensed and their font files are SIL Open Font License 1.1; each role has a system fallback in native styles. No raw export HTML, CSS, device frame, or runtime is imported. Exact spacing and responsive breakpoints remain intentionally derived from content and the bounded 720-point column rather than the 393 × 852 preview.
+
+The native loading mark preserves the source's fourteen hand-drawn strokes, sequential draw, hold, reverse erase, and blank reset. **LOCKED deviation (owner review, 2026-09-04):** it does not perform the source concept's 180-degree rotation; the non-rotating motion was preferred in native review.
+
+**LOCKED native interaction (owner review, 2026-09-04):** ordinary action buttons remain stationary when pressed. Feedback is a restrained tonal change only: black gains a slight blue cast, secondary paper gains a faint blue-gray fill and border, and destructive red darkens slightly. Pressing must not translate or scale the control.
+
+The `/catalog` drawing section renders the animated Loading S and 36 named, app-owned illustrations and hand-drawn marks extracted from the current screen sources. Near-identical screen-specific underline paths are normalized to shared single, double, and red underline primitives. Standard navigation glyphs and provider-owned Apple, Google, and Threads logos are deliberately excluded from the illustration inventory. The send-it pencil/fire drawing uses neutral ink so it cannot be mistaken for a destructive action.
+
+The distinct Threads connect control follows [Meta's current official Threads brand guidance](https://www.meta.com/brand/resources/instagram/threads/): use the supplied icon without alteration, retain minimum clear space equal to one quarter of its width, and preserve the official lockup's relationship when the lockup itself is used. ThinkSo uses the standalone icon beside its separate `Connect Threads` action label, with sufficient clear space. A native spinner matching the disabled label replaces the icon while authorization is busy.
