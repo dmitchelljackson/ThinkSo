@@ -2,6 +2,10 @@
 
 This is an append-only history of material wiki operations.
 
+## [2026-09-04] convention | Focused pull-request presentation
+
+Locked pull-request titles to `[T-NNN] Simple title` and reduced the standard body to ticket, changes, test instructions, UI screenshots when relevant, and brief notes. General wiki and planning changes that do not belong to a ticket are committed separately to `main`; ticket-specific documentation remains with its feature pull request.
+
 ## [2026-09-04] update | Firebase authentication plan and revised UI sources
 
 Replaced the Apple/Google-first authentication plan with Firebase email/password authentication and a separate password-recovery slice. Added the revised login and registration design archive, updated the affected BDDs, API and data contracts, architecture, operations guides, ticket map, known issues, and screen indexes. These general planning changes were committed directly to `main` so implementation pull requests remain focused on their ticket-specific behavior.
