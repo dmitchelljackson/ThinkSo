@@ -2,10 +2,10 @@ import { existsSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 
 const checks = [
-  ['mobile', 'apps/mobile/jest.config.ts', ['pnpm', '--filter', '@thinkso/mobile', 'test']],
+  ['mobile', 'apps/mobile/jest.config.js', ['pnpm', '--filter', '@thinkso/mobile', 'test']],
   [
     'API client',
-    'packages/api-client/jest.config.ts',
+    'packages/api-client/jest.config.js',
     ['pnpm', '--filter', '@thinkso/api-client', 'test'],
   ],
 ];

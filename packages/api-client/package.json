@@ -2,11 +2,29 @@
   "name": "@thinkso/api-client",
   "version": "0.0.0",
   "private": true,
-  "description": "Generated OpenAPI client (foundation placeholder)",
+  "description": "Generated OpenAPI client",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "openapi-fetch": "0.17.0"
+  },
+  "devDependencies": {
+    "@types/jest": "29.5.14",
+    "jest": "29.7.0",
+    "openapi-typescript": "7.13.0",
+    "ts-jest": "29.4.6",
+    "typescript": "5.9.2"
+  },
   "scripts": {
+    "generate": "openapi-typescript ../../services/api/openapi.json -o src/generated.ts",
     "format:check": "prettier --check --ignore-unknown --no-error-on-unmatched-pattern 'src/**/*.{js,jsx,ts,tsx,json}'",
     "lint": "eslint --max-warnings=0 --no-error-on-unmatched-pattern 'src/**/*.{js,jsx,ts,tsx}'",
-    "typecheck": "node -e \"console.log('SKIP API client typecheck: generated source is not present yet')\"",
-    "test": "node -e \"console.log('SKIP API client tests: generated client is not present yet')\""
+    "typecheck": "tsc --noEmit",
+    "test": "jest --runInBand"
   }
 }

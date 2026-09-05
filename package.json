@@ -16,10 +16,12 @@
     "test": "node scripts/run-tests.mjs",
     "hygiene": "node scripts/hygiene.mjs",
     "links:check": "node scripts/check-markdown-links.mjs",
-    "openapi:check": "node scripts/check-openapi.mjs"
+    "openapi:check": "node scripts/check-openapi.mjs",
+    "openapi:generate": "uv run --locked --directory services/api python scripts/generate_openapi.py && pnpm --filter @thinkso/api-client generate && pnpm exec prettier --write services/api/openapi.json packages/api-client/src/generated.ts"
   },
   "devDependencies": {
     "@eslint/js": "9.35.0",
+    "@typescript-eslint/parser": "8.69.0",
     "eslint": "9.35.0",
     "eslint-config-prettier": "10.1.8",
     "globals": "16.3.0",

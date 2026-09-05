@@ -105,7 +105,11 @@ jobs:
           just-version: 1.58.0
       - run: uv python install
       - run: uv sync --directory services/api --locked --dev
+        env:
+          DATABASE_URL: postgresql+psycopg://thinkso:thinkso-test-only@localhost:5432/thinkso_test
       - run: just backend-integration
+        env:
+          DATABASE_URL: postgresql+psycopg://thinkso:thinkso-test-only@localhost:5432/thinkso_test
 
   openapi:
     name: OpenAPI drift
@@ -122,6 +126,12 @@ jobs:
       - uses: extractions/setup-just@v4
         with:
           just-version: 1.58.0
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: 0.9.21
+          enable-cache: true
+      - run: uv python install
+      - run: uv sync --directory services/api --locked --dev
       - run: pnpm install --frozen-lockfile
       - run: just openapi-drift
 
