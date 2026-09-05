@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
-import { Text, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { View } from 'react-native';
 import {
   AccountFormFields,
   AcknowledgmentControl,
@@ -12,18 +13,39 @@ import {
   FormHeader,
   HandwrittenAnnotation,
   IconButton,
+  Inline,
   LoadingS,
   NoticeDialog,
   Rule,
   Stamp,
   StatusLabel,
+  ThinkSoText,
+  ThinkSoThemeProvider,
   ThreadsConnectButton,
   appDrawingLabel,
   appDrawingNames,
+  useThinkSoTheme,
+  type ThemeMode,
 } from './';
-import { colors, typography } from './tokens';
+import { spacing } from './tokens';
 
 export function CatalogScreen() {
+  const [themeMode, setThemeMode] = useState<ThemeMode>('light');
+  return (
+    <ThinkSoThemeProvider mode={themeMode}>
+      <CatalogContent themeMode={themeMode} onThemeModeChange={setThemeMode} />
+    </ThinkSoThemeProvider>
+  );
+}
+
+function CatalogContent({
+  themeMode,
+  onThemeModeChange,
+}: {
+  themeMode: ThemeMode;
+  onThemeModeChange: (mode: ThemeMode) => void;
+}) {
+  const { colors, dark } = useThinkSoTheme();
   const [acknowledged, setAcknowledged] = useState(false);
   const [toastVisible, setToastVisible] = useState(true);
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -31,6 +53,7 @@ export function CatalogScreen() {
   const [password, setPassword] = useState('');
   return (
     <DocumentScreen testID="design-catalog">
+      <StatusBar style={dark ? 'light' : 'dark'} />
       <FormHeader
         eyebrow="THINKSO · FOUNDATION CATALOG"
         reference="TS-FOUNDATION"
@@ -38,12 +61,24 @@ export function CatalogScreen() {
       />
       <EditorialHeading underline>Visual foundation</EditorialHeading>
       <HandwrittenAnnotation>small rules, big consequences</HandwrittenAnnotation>
+      <ClauseHeading label="THEME">Appearance</ClauseHeading>
+      <Inline>
+        {(['light', 'dark', 'system'] as const).map((mode) => (
+          <ActionButton
+            key={mode}
+            variant={themeMode === mode ? 'primary' : 'secondary'}
+            onPress={() => onThemeModeChange(mode)}
+          >
+            {mode}
+          </ActionButton>
+        ))}
+      </Inline>
       <ClauseHeading label="CLAUSE 1">Document primitives</ClauseHeading>
       <StatusLabel tone="blue">Enabled state</StatusLabel>
-      <Text style={styles.body}>
+      <ThinkSoText>
         Warm paper, editorial headings, administrative labels, and restrained ink accents are shared
         without importing a screen's behavior.
-      </Text>
+      </ThinkSoText>
       <Rule />
       <ViewRow>
         <ActionButton onPress={() => undefined}>Primary action</ActionButton>
@@ -70,6 +105,9 @@ export function CatalogScreen() {
       />
       <Stamp>FINAL</Stamp>
       <LoadingS testID="catalog-loading" label="Loading preview" />
+      <ActionButton variant="secondary" onPress={() => setToastVisible(true)}>
+        Show filing error
+      </ActionButton>
       {toastVisible && (
         <FilingErrorToast
           testID="catalog-toast"
@@ -100,19 +138,21 @@ export function CatalogScreen() {
       />
       <Rule />
       <ClauseHeading label="CLAUSE 2">Drawings</ClauseHeading>
-      <Text style={styles.body}>
+      <ThinkSoText>
         App-owned illustrations and hand-drawn marks from the current screen sources.
-      </Text>
+      </ThinkSoText>
       <View style={styles.drawingGrid}>
-        <View style={styles.drawingCard}>
+        <DrawingCard colors={colors}>
           <LoadingS size={44} label="Loading S" />
-          <Text style={styles.drawingLabel}>Loading S</Text>
-        </View>
+          <ThinkSoText variant="label">Loading S</ThinkSoText>
+        </DrawingCard>
         {appDrawingNames.map((name) => (
-          <View key={name} style={styles.drawingCard}>
+          <DrawingCard key={name} colors={colors}>
             <AppDrawing name={name} />
-            <Text style={styles.drawingLabel}>{appDrawingLabel(name)}</Text>
-          </View>
+            <ThinkSoText variant="label" style={styles.drawingLabel}>
+              {appDrawingLabel(name)}
+            </ThinkSoText>
+          </DrawingCard>
         ))}
       </View>
     </DocumentScreen>
@@ -120,35 +160,42 @@ export function CatalogScreen() {
 }
 
 function ViewRow({ children }: { children: ReactNode }) {
-  return <View style={styles.row}>{children}</View>;
+  return <Inline>{children}</Inline>;
+}
+
+function DrawingCard({
+  children,
+  colors,
+}: {
+  children: ReactNode;
+  colors: { rule: string; raisedPaper: string };
+}) {
+  return (
+    <View
+      style={[
+        styles.drawingCard,
+        { borderColor: colors.rule, backgroundColor: colors.raisedPaper },
+      ]}
+    >
+      {children}
+    </View>
+  );
 }
 
 const styles = {
-  row: {
+  drawingGrid: {
     flexDirection: 'row' as const,
-    alignItems: 'center' as const,
     flexWrap: 'wrap' as const,
-    gap: 8,
+    gap: spacing.md,
   },
-  body: { color: colors.ink, fontFamily: typography.administrative, fontSize: 15, lineHeight: 24 },
-  drawingGrid: { flexDirection: 'row' as const, flexWrap: 'wrap' as const, gap: 10 },
   drawingCard: {
     width: '48%' as const,
     minHeight: 142,
     borderWidth: 1,
-    borderColor: colors.rule,
-    backgroundColor: colors.raisedPaper,
-    padding: 12,
+    padding: spacing.md,
     alignItems: 'center' as const,
     justifyContent: 'space-between' as const,
-    gap: 10,
+    gap: spacing.md,
   },
-  drawingLabel: {
-    color: colors.ink,
-    fontFamily: typography.administrativeBold,
-    fontSize: 10,
-    letterSpacing: 1.2,
-    textAlign: 'center' as const,
-    textTransform: 'uppercase' as const,
-  },
+  drawingLabel: { textAlign: 'center' as const },
 };

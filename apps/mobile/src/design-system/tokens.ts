@@ -1,24 +1,7 @@
-export const colors = {
-  canvas: '#e6e3db',
-  paper: '#f4f2ec',
-  raisedPaper: '#fdfcf8',
-  checkboxPaper: '#fffdf7',
-  ink: '#14171f',
-  inkPressed: '#202437',
-  blueInk: '#2438c9',
-  blueInkDark: '#1b2a8f',
-  redInk: '#b0442f',
-  redInkPressed: '#9e3c2a',
-  redInkDark: '#8f3423',
-  filingError: '#f4ccd4',
-  approvalGreen: '#2f9e52',
-  mutedInk: 'rgba(20,23,31,0.62)',
-  rule: 'rgba(20,23,31,0.28)',
-  secondaryPressed: '#ecebf2',
-  providerDisabledInk: 'rgba(20,23,31,0.4)',
-} as const;
+import type { TextStyle } from 'react-native';
 
 export const spacing = {
+  none: 0,
   xs: 4,
   sm: 8,
   md: 12,
@@ -28,13 +11,65 @@ export const spacing = {
   xxxl: 48,
 } as const;
 
-export const radii = { square: 0, control: 2, dialog: 4 } as const;
+export type SpacingToken = keyof typeof spacing;
 
-export const typography = {
+export const radii = { square: 0, control: 2, dialog: 4, provider: 12 } as const;
+
+export const sizes = {
+  minimumTouchTarget: 44,
+  actionHeight: 48,
+  providerActionHeight: 54,
+  contentMaxWidth: 720,
+} as const;
+
+export const motion = { quick: 120, standard: 180, deliberate: 280 } as const;
+
+export const fontFamilies = {
   editorial: 'Spectral_400Regular',
   administrative: 'CourierPrime_400Regular',
   administrativeBold: 'CourierPrime_700Bold',
   annotation: 'GloriaHallelujah_400Regular',
 } as const;
+
+export const textStyles = {
+  display: {
+    fontFamily: fontFamilies.editorial,
+    fontSize: 42,
+    lineHeight: 48,
+    letterSpacing: -0.6,
+  },
+  heading: {
+    fontFamily: fontFamilies.editorial,
+    fontSize: 26,
+    lineHeight: 32,
+    letterSpacing: -0.2,
+  },
+  body: { fontFamily: fontFamilies.administrative, fontSize: 15, lineHeight: 24 },
+  label: {
+    fontFamily: fontFamilies.administrativeBold,
+    fontSize: 11,
+    lineHeight: 16,
+    letterSpacing: 1.4,
+    textTransform: 'uppercase',
+  },
+  reference: {
+    fontFamily: fontFamilies.administrative,
+    fontSize: 11,
+    lineHeight: 16,
+    letterSpacing: 1.4,
+    textTransform: 'uppercase',
+  },
+  action: {
+    fontFamily: fontFamilies.administrativeBold,
+    fontSize: 12,
+    lineHeight: 16,
+    letterSpacing: 1.8,
+    textTransform: 'uppercase',
+  },
+  annotation: { fontFamily: fontFamilies.annotation, fontSize: 17, lineHeight: 25 },
+  caption: { fontFamily: fontFamilies.administrative, fontSize: 11, lineHeight: 16 },
+} as const satisfies Record<string, TextStyle>;
+
+export type TextRole = keyof typeof textStyles;
 
 export const hitSlop = { top: 8, right: 8, bottom: 8, left: 8 } as const;

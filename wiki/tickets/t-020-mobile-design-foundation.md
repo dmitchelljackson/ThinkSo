@@ -5,7 +5,7 @@
 | Field | Value |
 |---|---|
 | Type / status | `ENABLING` / `IN_REVIEW` |
-| Owner review | `APPROVED 2026-09-05` |
+| Owner review | `CHANGES REQUESTED 2026-09-05 — approve after theme/atom review` |
 | Stack position / predecessor | `020` / T-010 |
 | Branch / PR | `stack/020-mobile-design-foundation` / [#4](https://github.com/dmitchelljackson/ThinkSo/pull/4) |
 
@@ -44,6 +44,8 @@ Login and Threads can be built from tested responsive ThinkSo primitives instead
 - [x] Shared toast/loading behavior is testable at application scope.
 - [x] Login/Create Account can use Firebase email/password controls without forcing account-form behavior into visual primitives.
 - [x] Font licensing and committed assets are safe for a public repository.
+- [x] Complete text roles, spacing/radius/size/motion scales, and layout atoms are centralized and typed.
+- [x] Light and dark semantic palettes share one typed contract; production follows system appearance.
 
 ## Activity log
 
@@ -57,6 +59,10 @@ Login and Threads can be built from tested responsive ThinkSo primitives instead
 
 `2026-09-05 | COORDINATOR | STACK_SUBMITTED | 57187f7a25f50c528f22962d4bceb928bcfc2cf6 | Published review-ready PR #4 against main with the required ticket-prefixed title; GitHub Actions started.`
 
+`2026-09-05 | OWNER | CHANGES_REQUESTED | 57187f7a25f50c528f22962d4bceb928bcfc2cf6 | Required complete text styles, semantic light/dark themes, and shared spacing/layout atoms before PR approval.`
+
+`2026-09-05 | IMPLEMENTER | FIXED | pending coordinator commit | Added typed light/dark themes with system selection, complete ThinkSoText roles and semantic tones, shared spacing/radius/size/motion tokens, Stack/Inline/Spacer atoms, theme-aware primitives and health surface, catalog theme controls, and palette contract tests.`
+
 ## Observations and decisions
 
 - The catalog intentionally includes the current 36 app-owned drawings at the owner's request. This is an approved scope addition to review reusable visual assets together; no later-screen behavior or product composites moved into T-020.
@@ -64,10 +70,13 @@ Login and Threads can be built from tested responsive ThinkSo primitives instead
 - The Loading S preserves sequential drawing and erasure but does not rotate.
 - The Threads control uses Meta's official standalone icon with the required clear space. Its busy state uses a native spinner matching the disabled label instead of the ThinkSo Loading S.
 - `DocumentScreen` uses safe-area padding, scrollable content, keyboard avoidance, and a centered 720-point maximum-width phone composition for larger displays.
+- The application follows the OS light/dark preference. The catalog can force light, dark, or system mode so both palettes can be reviewed without changing device settings.
+- Text variants own complete family/size/line-height/tracking/case styles. Screens select semantic variants and tones rather than rebuilding typography.
+- Android native review found the first dark palette coherent across document surfaces, ordinary/provider/destructive controls, disabled/loading states, fields, status bar, and filing-error toast. Exact palette tuning remains owner-reviewable without changing component contracts.
 
 ## Final handoff
 
 - **Delivered:** responsive native visual primitives, global toast/loading hosts, bundled fonts, Threads-branded authorization control, app drawing inventory, and `/catalog` review route.
 - **Candidate / PR:** reviewed code candidate `57187f7a25f50c528f22962d4bceb928bcfc2cf6`; [PR #4](https://github.com/dmitchelljackson/ThinkSo/pull/4).
-- **Evidence:** 26 mobile tests; typecheck/lint/format; Android `ThinkSo_API_36` and compact iOS `ThinkSo-iPhone-17` native catalog review; owner visual approval.
+- **Evidence:** 29 mobile tests; typecheck/lint/format; Android `ThinkSo_API_36` light/dark native catalog review; earlier compact iOS `ThinkSo-iPhone-17` foundation review. Final owner approval remains pending for the new theme/atom pass.
 - **Limitations:** Login and Connect Threads behavior remains in T-030 and T-050. Rotation may be locked later if a production screen proves unusable in landscape.

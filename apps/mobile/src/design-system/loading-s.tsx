@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Animated, Easing, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
-import { colors } from './tokens';
+import { useThinkSoTheme } from './theme';
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
@@ -99,7 +99,7 @@ export function LoadingS({
   label = 'Loading',
   testID,
   size = 28,
-  ink = colors.blueInk,
+  ink,
   strokeWidth = 3.4,
   speed = 1,
 }: {
@@ -110,6 +110,8 @@ export function LoadingS({
   strokeWidth?: number;
   speed?: number;
 }) {
+  const { colors } = useThinkSoTheme();
+  const resolvedInk = ink ?? colors.blueInk;
   const strokes = useRef(STROKES.map(() => new Animated.Value(0))).current;
 
   useEffect(() => {
@@ -162,7 +164,7 @@ export function LoadingS({
               key={stroke.d}
               d={stroke.d}
               fill="none"
-              stroke={ink}
+              stroke={resolvedInk}
               strokeWidth={strokeWidth * WOBBLE[index]![5]}
               strokeLinecap="round"
               opacity={strokes[index]!.interpolate({

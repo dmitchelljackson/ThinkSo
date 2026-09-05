@@ -19,44 +19,50 @@ This page is the canonical implementation guide for shared mobile visual foundat
 
 ## Foundation tokens
 
-The names below are **DERIVED**. The color values and font families repeat throughout the export, but final token naming, exact opacity ramps, installed font files, and platform rendering must be validated in the app.
+These tokens are the implementation boundary for screen code. Screens consume semantic roles and shared scales; they do not choose raw hex colors, font metrics, or one-off spacing values. The current values are **DERIVED** and may be tuned after native review without changing component APIs.
 
 ### Color roles
 
-| Role | Export evidence | Intended use |
-|---|---:|---|
-| canvas | `#e6e3db` | outer/warm environmental background where visible |
-| paper | `#f4f2ec` | primary screen surface |
-| raised-paper | `#fdfcf8` | cards, dialogs, contract panels |
-| checkbox-paper | `#fffdf7` | small paper controls |
-| ink | `#14171f` | primary text, rules, dark actions |
-| blue-ink | `#2438c9` | pen marks, links, active accents |
-| blue-ink-dark | `#1b2a8f` | pressed/darker blue accent |
-| red-ink | `#b0442f` | warnings, destructive actions, consequence accents |
-| red-ink-dark | `#8f3423` | destructive held/pressed state |
-| filing-error | `#f4ccd4` | global error-toast paper |
-| approval-green | `#2f9e52` | affirmative invitation sticker only |
+| Role | Light | Dark | Intended use |
+|---|---:|---:|---|
+| canvas | `#e6e3db` | `#101014` | outer/warm environmental background where visible |
+| paper | `#f4f2ec` | `#18181d` | primary screen surface |
+| raised-paper | `#fdfcf8` | `#232329` | cards, dialogs, contract panels |
+| checkbox-paper | `#fffdf7` | `#292930` | small paper controls |
+| ink | `#14171f` | `#f1eee6` | primary text and rules |
+| blue-ink | `#2438c9` | `#8798ff` | pen marks, links, active accents |
+| red-ink | `#b0442f` | `#ff856f` | warnings, destructive actions, consequence accents |
+| filing-error | `#f4ccd4` | `#512d36` | global error-toast paper |
+| approval-green | `#2f9e52` | `#70d58c` | affirmative invitation sticker only |
 
-Do not scatter opacity-adjusted hex/RGBA literals through screens. Define a small semantic text/rule opacity scale alongside these roles once native rendering is evaluated.
+`ThinkSoThemeProvider` follows the OS appearance by default and may be forced to light or dark in tests and the catalog. Every palette implements the same typed semantic color contract, including muted ink, rules, pressed states, provider colors, and modal scrim. Components read the active theme with `useThinkSoTheme`; screen code must not branch on theme names merely to choose colors.
 
-### Type roles
+### Text styles
 
-| Role | Family evidence | Use |
+`ThinkSoText` is the default text atom. Its `variant` selects a complete style—not merely a font—and its `tone` selects a semantic theme color. Existing specialized primitives use the same centralized style objects internally.
+
+| Variant | Family | Size / line | Use |
 |---|---|---|
-| editorial | Spectral | primary headings, contract titles, emphatic legal copy |
-| administrative | Courier Prime | labels, body copy, metadata, buttons, form language |
-| annotation | Gloria Hallelujah | sparse handwritten notes only |
-| provider-native | platform/provider requirement | Threads authorization and other external-provider controls where required |
+| `display` | Spectral | 42 / 48 | primary screen titles and emphatic legal copy |
+| `heading` | Spectral | 26 / 32 | section and contract headings |
+| `body` | Courier Prime | 15 / 24 | ordinary copy and form language |
+| `label` | Courier Prime Bold | 11 / 16, uppercase/tracked | administrative labels and state names |
+| `reference` | Courier Prime | 11 / 16, uppercase/tracked | record IDs and document metadata |
+| `action` | Courier Prime Bold | 12 / 16, uppercase/tracked | ThinkSo action labels |
+| `annotation` | Gloria Hallelujah | 17 / 25 | sparse handwritten notes only |
+| `caption` | Courier Prime | 11 / 16 | supporting metadata and hints |
 
-Font files, supported weights, fallback behavior, and licenses must be verified during implementation. Do not allow a missing weight to silently synthesize a visibly wrong face. Support native text scaling without letting essential controls clip.
+Provider-native controls intentionally retain provider/platform typography. Icon glyph geometry and oversized stamps/checkmarks may specialize a base role, but ordinary screen copy must use one of the variants above. The bundled font files and supported weights are verified; do not silently synthesize missing weights.
 
-### Spacing, shape, and motion
+### Spacing, shape, size, and motion
 
-- **DERIVED:** create a small spacing scale based on repeated 4/8-ish increments rather than preserving every exported pixel value.
+- **DERIVED:** shared spacing tokens are `none: 0`, `xs: 4`, `sm: 8`, `md: 12`, `lg: 16`, `xl: 24`, `xxl: 32`, and `xxxl: 48`.
+- **DERIVED:** use `Stack`, `Inline`, and `Spacer` for common layout rhythm. Direct flex layout remains appropriate for unique screen composition, but its gaps and padding should still use the scale.
+- **DERIVED:** radii are semantic and finite: square, control, dialog, and provider. Shared sizes define the 44-point minimum touch target, action/provider heights, and 720-point maximum content width.
 - **DERIVED:** thin square document rules and near-square cards are the default; rounded shapes are reserved for provider-native controls, sticker-like actions, or specifically approved elements.
 - **LOCKED:** the loading S and filing-error toast are recurring global patterns.
-- **LOCKED:** state refreshes use brief, restrained fades and layout transitions; do not animate whole documents dramatically. Exact durations remain open. Respect reduced-motion settings when production accessibility work begins.
-- **OPEN:** exact spacing scale, type ramp, radii, shadows, animation durations, and breakpoints.
+- **LOCKED:** state refreshes use brief, restrained fades and layout transitions; do not animate whole documents dramatically. Shared motion durations are 120, 180, and 280 ms. Respect reduced-motion settings when production accessibility work begins.
+- **OPEN:** final visual tuning of the first-pass dark palette and whether additional elevation/shadow tokens are justified by real screens.
 
 ## Shared components to extract
 

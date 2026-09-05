@@ -505,3 +505,7 @@ Specified that Apple and Google buttons both remain visible and disabled during 
 ## [2026-08-31] initialize | ThinkSo internal wiki
 
 Created the monorepo-ready ThinkSo workspace, separated raw source pointers from synthesized wiki pages, migrated the engineering handoff, and added the Login Screen BDD specification.
+
+## [2026-09-05] decision | Mobile theme and foundation atoms
+
+Standardized complete mobile text roles, semantic text tones, spacing, radii, shared sizes, motion durations, and Stack/Inline/Spacer layout atoms. Locked production to follow the OS light/dark appearance through a typed theme contract; the catalog can force either palette for review. The initial dark palette is an intentionally rough native-reviewed baseline that may be tuned without changing screen or component APIs.

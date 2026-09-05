@@ -12,8 +12,11 @@ import {
   actionButtonVisualStyle,
   DocumentScreen,
   FilingErrorToast,
+  Inline,
   LoadingS,
   NoticeDialog,
+  Spacer,
+  Stack,
   ThreadsConnectButton,
   shouldDismissToastSwipe,
 } from './';
@@ -39,6 +42,24 @@ describe('native visual foundation primitives', () => {
     );
     expect(await view.findByTestId('document')).toBeTruthy();
     expect(await view.findByTestId('loading')).toBeTruthy();
+  });
+
+  it('applies the shared layout rhythm through typed atoms', async () => {
+    const view = await render(
+      <Stack testID="stack" gap="xl">
+        <Inline testID="inline" gap="md" wrap={false}>
+          <Spacer testID="spacer" size="sm" />
+        </Inline>
+      </Stack>,
+    );
+    expect(StyleSheet.flatten(view.getByTestId('stack').props.style)).toMatchObject({ gap: 24 });
+    expect(StyleSheet.flatten(view.getByTestId('inline').props.style)).toMatchObject({
+      flexDirection: 'row',
+      gap: 12,
+    });
+    expect(
+      StyleSheet.flatten(view.getByTestId('spacer', { includeHiddenElements: true }).props.style),
+    ).toMatchObject({ width: 8, height: 8 });
   });
 
   it('supports finite action states and does not call disabled actions', async () => {

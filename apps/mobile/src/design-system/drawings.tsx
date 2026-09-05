@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
-import { colors } from './tokens';
+import { useThinkSoTheme, type ThemeColors } from './theme';
 
 type Tone = 'blue' | 'red' | 'ink' | 'muted' | 'paper';
 type PathMark = {
@@ -474,7 +474,7 @@ export type AppDrawingName = keyof typeof drawings;
 export const appDrawingNames = Object.keys(drawings) as AppDrawingName[];
 export const appDrawingLabel = (name: AppDrawingName) => drawings[name].label;
 
-function toneColor(tone: Tone | 'none') {
+function toneColor(colors: ThemeColors, tone: Tone | 'none') {
   if (tone === 'none') return 'none';
   if (tone === 'red') return colors.redInk;
   if (tone === 'ink') return colors.ink;
@@ -492,6 +492,7 @@ export function AppDrawing({
   width?: number;
   testID?: string;
 }) {
+  const { colors } = useThinkSoTheme();
   const drawing = drawings[name];
   const [, , viewWidth, viewHeight] = drawing.viewBox;
   return (
@@ -503,8 +504,8 @@ export function AppDrawing({
       <Svg width="100%" height="100%" viewBox={drawing.viewBox.join(' ')}>
         {(drawing.marks as readonly (PathMark | CircleMark)[]).map((mark, index) => {
           const common = {
-            stroke: toneColor(mark.stroke ?? 'blue'),
-            fill: toneColor(mark.fill ?? 'none'),
+            stroke: toneColor(colors, mark.stroke ?? 'blue'),
+            fill: toneColor(colors, mark.fill ?? 'none'),
             strokeWidth: mark.width ?? 2,
             opacity: mark.opacity ?? 1,
             strokeLinecap: 'round' as const,
