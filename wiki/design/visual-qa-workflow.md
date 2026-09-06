@@ -14,7 +14,13 @@ The implementer must:
 4. Repeat until material visual differences are resolved or recorded as an intentional responsive/platform adaptation.
 5. Return comparison evidence and any remaining deviations to the coordinator.
 
-The repository should provide a repeatable Playwright-based comparison command rather than relying on manually arranged browser windows. Generated comparison artifacts are temporary verification evidence unless a ticket explicitly requires committed documentation.
+Use the repeatable Playwright comparison command rather than manually arranging browser windows:
+
+```sh
+pnpm visual:compare --source "raw/designs/<archive>/<screen>.dc.html" --name <screen> --url http://localhost:8081/
+```
+
+Pass `--action "CREATE ACCOUNT"` when the target state is reached through a visible button. The command renders the exported design and Expo Web at 393 × 852, forces light mode for comparison, and writes design, implementation, side-by-side, and overlay captures under the ignored `screenshots/visual/<screen>/` directory. Generated comparison artifacts are temporary verification evidence unless a ticket explicitly requires committed documentation.
 
 Expo Web is an iteration surface, not proof of native correctness. It does not reliably expose native font metrics, safe-area behavior, keyboards, system dialogs, platform controls, or other Android/iOS differences.
 
