@@ -1,11 +1,17 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { Animated } from 'react-native';
 import { SafeAreaProvider, type Metrics } from 'react-native-safe-area-context';
-import { AccountAccessScreen } from './AccountAccessScreen';
+import { AccountAccessScreen, accountAccessAllowsScroll } from './AccountAccessScreen';
 
 const mockOnEvent = jest.fn();
-let mockPresenterState = {
-  mode: 'login' as const,
+let mockPresenterState: {
+  mode: 'login' | 'register';
+  email: string;
+  password: string;
+  busy: boolean;
+  onEvent: typeof mockOnEvent;
+} = {
+  mode: 'login',
   email: '',
   password: '',
   busy: false,
@@ -54,6 +60,27 @@ describe('AccountAccessScreen', () => {
     expect(screen.getByRole('button', { name: 'CREATE ACCOUNT' })).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: 'TERMS OF SERVICE' }));
     expect(mockOnEvent).toHaveBeenCalledWith({ type: 'placeholderPressed' });
+  });
+
+  it('keeps ordinary phone layouts fixed and only enables overflow when needed', () => {
+    expect(accountAccessAllowsScroll(874, false)).toBe(false);
+    expect(accountAccessAllowsScroll(800, false)).toBe(false);
+    expect(accountAccessAllowsScroll(759, false)).toBe(true);
+    expect(accountAccessAllowsScroll(874, true)).toBe(true);
+  });
+
+  it('renders the locked registration fields without inventing a name field', async () => {
+    mockPresenterState = { ...mockPresenterState, mode: 'register' };
+    await render(
+      <SafeAreaProvider initialMetrics={metrics}>
+        <AccountAccessScreen />
+      </SafeAreaProvider>,
+    );
+    expect(screen.getByLabelText('Email')).toBeTruthy();
+    expect(screen.getByLabelText('Password')).toBeTruthy();
+    expect(screen.queryByLabelText('Name for the record')).toBeNull();
+    expect(screen.getByRole('button', { name: 'CREATE ACCOUNT' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'LOG IN' })).toBeTruthy();
   });
 
   it('disables every action and shows the separate loading S while submitting', async () => {

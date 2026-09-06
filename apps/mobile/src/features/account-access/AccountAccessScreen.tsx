@@ -1,16 +1,15 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Keyboard, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   AccountFormFields,
+  ActionButton,
   AppDrawing,
   DocumentScreen,
   EditorialHeading,
   FilingErrorToast,
   FormHeader,
-  Inline,
   LoadingS,
-  Rule,
-  Stack,
   ThinkSoText,
   hitSlop,
   spacing,
@@ -22,79 +21,35 @@ export function AccountAccessScreen() {
   const state = useAccountAccessPresenter();
   const { colors } = useThinkSoTheme();
   const insets = useSafeAreaInsets();
+  const { height } = useWindowDimensions();
+  const keyboardVisible = useKeyboardVisible();
   const registering = state.mode === 'register';
+  const allowScroll = accountAccessAllowsScroll(height, keyboardVisible);
+
   return (
     <View style={styles.root}>
-      <DocumentScreen testID="account-access-screen">
+      <DocumentScreen
+        testID="account-access-screen"
+        scroll={allowScroll}
+        contentContainerStyle={styles.document}
+      >
         <FormHeader
           eyebrow={registering ? 'THINKSO · NEW ACCOUNT' : 'THINKSO · ACCOUNT ACCESS'}
           reference={registering ? 'UNASSIGNED' : 'TS-000421'}
           formNumber={registering ? 'FORM 001-A' : 'FORM 001'}
         />
 
-        {registering ? <RegisterIntroduction /> : <LoginIntroduction />}
+        {registering ? (
+          <RegisterContent state={state} />
+        ) : (
+          <LoginContent state={state} colors={colors} />
+        )}
 
-        <View style={[styles.formCard, { borderColor: colors.rule }]}>
-          {!registering && (
-            <Inline gap="md">
-              <View style={[styles.scales, { borderColor: colors.rule }]}>
-                <AppDrawing name="legalScales" width={34} />
-              </View>
-              <ThinkSoText variant="label">Sign in to accept the terms</ThinkSoText>
-            </Inline>
-          )}
-          <AccountFormFields
-            mode={state.mode}
-            email={state.email}
-            password={state.password}
-            {...(state.emailError ? { emailError: state.emailError } : {})}
-            {...(state.passwordError ? { passwordError: state.passwordError } : {})}
-            onEmailChange={(value) => state.onEvent({ type: 'emailChanged', value })}
-            onPasswordChange={(value) => state.onEvent({ type: 'passwordChanged', value })}
-            onSubmit={() => state.onEvent({ type: 'submitPressed' })}
-            busy={state.busy}
-            submitLabel={registering ? 'CREATE ACCOUNT' : 'LOG IN'}
-            submitTestID="account-submit"
-          />
-          {state.formError && (
-            <ThinkSoText testID="account-form-error" accessibilityRole="alert" tone="red">
-              {state.formError}
-            </ThinkSoText>
-          )}
-          {state.busy && <LoadingS testID="account-loading" label="Account access in progress" />}
-          {!registering && (
-            <TextAction
-              label="FORGOT IT"
-              disabled={state.busy}
-              onPress={() => state.onEvent({ type: 'forgotPasswordPressed' })}
-            />
-          )}
-          <Stack gap="sm" style={styles.centered}>
-            <ThinkSoText variant="caption" tone="muted">
-              {registering ? 'Already on file?' : 'No account on file?'}
-            </ThinkSoText>
-            <TextAction
-              label={registering ? 'LOG IN' : 'CREATE ACCOUNT'}
-              disabled={state.busy}
-              onPress={() => state.onEvent({ type: 'switchModePressed' })}
-            />
-          </Stack>
-        </View>
-
-        <Rule />
-        <ThinkSoText variant="caption" tone="muted">
-          By {registering ? 'registering' : 'continuing'}, you agree to the ThinkSo
-        </ThinkSoText>
-        <Inline gap="lg">
-          {['HOW IT WORKS', 'TERMS OF SERVICE', 'PRIVACY POLICY'].map((label) => (
-            <TextAction
-              key={label}
-              label={label}
-              disabled={state.busy}
-              onPress={() => state.onEvent({ type: 'placeholderPressed' })}
-            />
-          ))}
-        </Inline>
+        <AccountFooter
+          registering={registering}
+          busy={state.busy}
+          onPlaceholder={() => state.onEvent({ type: 'placeholderPressed' })}
+        />
       </DocumentScreen>
 
       {state.toast && (
@@ -115,64 +70,258 @@ export function AccountAccessScreen() {
   );
 }
 
-function LoginIntroduction() {
+export function accountAccessAllowsScroll(height: number, keyboardVisible: boolean) {
+  return keyboardVisible || height < 760;
+}
+
+type PresenterState = ReturnType<typeof useAccountAccessPresenter>;
+
+function LoginContent({
+  state,
+  colors,
+}: {
+  state: PresenterState;
+  colors: ReturnType<typeof useThinkSoTheme>['colors'];
+}) {
   return (
-    <Stack gap="xl">
-      <Inline gap="sm" wrap={false} style={styles.wordmarkRow}>
-        <AppDrawing name="marginLightning" width={34} />
-        <EditorialHeading underline>ThinkSo</EditorialHeading>
-        <AppDrawing name="punctuation" width={34} />
-      </Inline>
-      <Stack gap="xs" style={styles.centered}>
-        <ThinkSoText>One of you is wrong.</ThinkSoText>
-        <ThinkSoText>Write it down. We’ll call it. Keep the receipts.</ThinkSoText>
-      </Stack>
-      <Inline gap="lg" style={styles.partyRow}>
-        <ThinkSoText variant="heading">YOU</ThinkSoText>
-        <ThinkSoText variant="reference" tone="blue">
+    <>
+      <View style={styles.loginHero}>
+        <View style={styles.lightning}>
+          <AppDrawing name="marginLightning" width={38} />
+        </View>
+        <View style={styles.accessStar}>
+          <AppDrawing name="accessStar" width={48} />
+        </View>
+        <View style={styles.wordmark}>
+          <ThinkSoText style={styles.wordmarkText}>ThinkSo</ThinkSoText>
+          <View style={styles.wordmarkUnderline}>
+            <AppDrawing name="doubleUnderline" width={190} />
+          </View>
+          <View style={styles.punctuation}>
+            <AppDrawing name="punctuation" width={34} />
+          </View>
+        </View>
+      </View>
+
+      <View style={[styles.parties, { borderTopColor: colors.rule }]}>
+        <Party label="YOU" caption="FIRST PARTY" colors={colors} />
+        <ThinkSoText variant="reference" tone="blue" style={styles.vs}>
           VS
         </ThinkSoText>
-        <ThinkSoText variant="heading">THEM</ThinkSoText>
-      </Inline>
-    </Stack>
+        <Party label="THEM" caption="SECOND PARTY" colors={colors} />
+      </View>
+
+      <View style={styles.loginStatement}>
+        <View style={styles.skull}>
+          <AppDrawing name="skullAndCrossbones" width={48} />
+        </View>
+        <View style={styles.angryFace}>
+          <AppDrawing name="angryFace" width={42} />
+        </View>
+        <ThinkSoText>One of you is wrong.</ThinkSoText>
+        <ThinkSoText style={styles.statementCopy}>
+          Write it down. We’ll call it.{`\n`}Keep the receipts.
+        </ThinkSoText>
+        <View style={styles.receiptsUnderline}>
+          <AppDrawing name="doubleUnderline" width={128} />
+        </View>
+      </View>
+
+      <View style={styles.noBackingOut}>
+        <View>
+          <ThinkSoText variant="annotation" tone="blue" style={styles.noBackingText}>
+            no backing out
+          </ThinkSoText>
+          <AppDrawing name="doubleUnderline" width={150} />
+        </View>
+        <AppDrawing name="noBackingOutArrow" width={58} />
+        <AppDrawing name="flame" width={38} />
+      </View>
+
+      <View style={[styles.loginFormCard, { borderColor: colors.rule }]}>
+        {state.busy && (
+          <View style={styles.loginLoading}>
+            <LoadingS testID="account-loading" label="Account access in progress" size={20} />
+          </View>
+        )}
+        <View style={styles.formLead}>
+          <View style={[styles.scales, { borderColor: colors.rule }]}>
+            <AppDrawing name="legalScales" width={32} />
+          </View>
+          <ThinkSoText variant="label">Sign in to accept the terms</ThinkSoText>
+        </View>
+        <AccountFormFields
+          mode={state.mode}
+          email={state.email}
+          password={state.password}
+          {...(state.emailError ? { emailError: state.emailError } : {})}
+          {...(state.passwordError ? { passwordError: state.passwordError } : {})}
+          onEmailChange={(value) => state.onEvent({ type: 'emailChanged', value })}
+          onPasswordChange={(value) => state.onEvent({ type: 'passwordChanged', value })}
+          onForgotPassword={() => state.onEvent({ type: 'forgotPasswordPressed' })}
+          onSubmit={() => state.onEvent({ type: 'submitPressed' })}
+          busy={state.busy}
+          submitLabel="LOG IN"
+          submitTestID="account-submit"
+        />
+        {state.formError && (
+          <ThinkSoText testID="account-form-error" accessibilityRole="alert" tone="red">
+            {state.formError}
+          </ThinkSoText>
+        )}
+        <View style={styles.modeSwitch}>
+          <ThinkSoText variant="caption" tone="muted">
+            No account on file?
+          </ThinkSoText>
+          <TextAction
+            label="CREATE ACCOUNT"
+            disabled={state.busy}
+            tone="muted"
+            onPress={() => state.onEvent({ type: 'switchModePressed' })}
+          />
+        </View>
+      </View>
+    </>
   );
 }
 
-function RegisterIntroduction() {
+function RegisterContent({ state }: { state: PresenterState }) {
+  const { colors } = useThinkSoTheme();
   return (
-    <Stack gap="lg">
-      <Inline gap="md" wrap={false} style={styles.registrationHeading}>
-        <View style={styles.registrationCopy}>
-          <ThinkSoText variant="reference" tone="muted">
-            APPLICATION FOR
-          </ThinkSoText>
-          <EditorialHeading underline>Standing</EditorialHeading>
+    <>
+      <View style={styles.registrationIntro}>
+        <ThinkSoText variant="reference" tone="muted">
+          APPLICATION FOR
+        </ThinkSoText>
+        <EditorialHeading underline>Standing</EditorialHeading>
+        <ThinkSoText tone="muted" style={styles.registrationCopy}>
+          Once you’re on the record, everything you agree to is on the record too.
+        </ThinkSoText>
+        <View style={styles.registrationHorn}>
+          <AppDrawing name="registrationHorn" width={120} />
         </View>
-        <AppDrawing name="registrationHorn" width={118} />
-      </Inline>
-      <ThinkSoText tone="muted">
-        Once you’re on the record, everything you agree to is on the record too.
-      </ThinkSoText>
-      <Inline gap="md" wrap={false}>
-        <AppDrawing name="startledRegistrant" width={88} />
-        <Stack gap="xs" style={styles.registrationCopy}>
-          <ThinkSoText variant="annotation" tone="blue">
-            you if you click this
+      </View>
+
+      <View style={[styles.registrationFields, { borderColor: colors.rule }]}>
+        <AccountFormFields
+          mode={state.mode}
+          email={state.email}
+          password={state.password}
+          {...(state.emailError ? { emailError: state.emailError } : {})}
+          {...(state.passwordError ? { passwordError: state.passwordError } : {})}
+          onEmailChange={(value) => state.onEvent({ type: 'emailChanged', value })}
+          onPasswordChange={(value) => state.onEvent({ type: 'passwordChanged', value })}
+          onSubmit={() => state.onEvent({ type: 'submitPressed' })}
+          busy={state.busy}
+          showSubmit={false}
+          submitLabel="CREATE ACCOUNT"
+        />
+        {state.formError && (
+          <ThinkSoText testID="account-form-error" accessibilityRole="alert" tone="red">
+            {state.formError}
           </ThinkSoText>
-          <AppDrawing name="registrationArrow" width={120} />
-        </Stack>
-      </Inline>
-    </Stack>
+        )}
+      </View>
+
+      <View style={styles.registrationIllustration}>
+        <AppDrawing name="startledRegistrant" width={112} />
+        <View style={styles.registrationAnnotation}>
+          <ThinkSoText variant="annotation" tone="blue" style={styles.youIfClick}>
+            you if you{`\n`}click this
+          </ThinkSoText>
+          <AppDrawing name="registrationArrow" width={142} />
+        </View>
+      </View>
+
+      <View style={styles.registrationAction}>
+        {state.busy && (
+          <View style={styles.registrationLoading}>
+            <LoadingS testID="account-loading" label="Account access in progress" size={20} />
+          </View>
+        )}
+        <ActionButton
+          testID="account-submit"
+          disabled={state.busy}
+          onPress={() => state.onEvent({ type: 'submitPressed' })}
+        >
+          CREATE ACCOUNT
+        </ActionButton>
+        <View style={styles.modeSwitch}>
+          <ThinkSoText variant="caption" tone="muted">
+            Already on file?
+          </ThinkSoText>
+          <TextAction
+            label="LOG IN"
+            disabled={state.busy}
+            tone="muted"
+            onPress={() => state.onEvent({ type: 'switchModePressed' })}
+          />
+        </View>
+      </View>
+    </>
+  );
+}
+
+function Party({
+  label,
+  caption,
+  colors,
+}: {
+  label: string;
+  caption: string;
+  colors: ReturnType<typeof useThinkSoTheme>['colors'];
+}) {
+  return (
+    <View style={styles.party}>
+      <ThinkSoText variant="heading" style={styles.partyName}>
+        {label}
+      </ThinkSoText>
+      <View style={[styles.partyRule, { borderColor: colors.mutedInk }]} />
+      <ThinkSoText variant="reference" tone="muted" style={styles.partyCaption}>
+        {caption}
+      </ThinkSoText>
+    </View>
+  );
+}
+
+function AccountFooter({
+  registering,
+  busy,
+  onPlaceholder,
+}: {
+  registering: boolean;
+  busy: boolean;
+  onPlaceholder: () => void;
+}) {
+  const { colors } = useThinkSoTheme();
+  return (
+    <View style={[styles.footer, { borderTopColor: colors.rule }]}>
+      {!registering && (
+        <View style={styles.footerPen}>
+          <AppDrawing name="penAndBurst" width={54} />
+        </View>
+      )}
+      <ThinkSoText variant="caption" tone="muted">
+        By {registering ? 'registering' : 'continuing'}, you agree to the ThinkSo
+      </ThinkSoText>
+      <View style={styles.footerLinks}>
+        {['HOW IT WORKS', 'TERMS OF SERVICE', 'PRIVACY POLICY'].map((label) => (
+          <TextAction key={label} label={label} disabled={busy} onPress={onPlaceholder} />
+        ))}
+      </View>
+    </View>
   );
 }
 
 function TextAction({
   label,
   disabled,
+  tone = 'blue',
   onPress,
 }: {
   label: string;
   disabled: boolean;
+  tone?: 'blue' | 'muted';
   onPress: () => void;
 }) {
   return (
@@ -184,22 +333,125 @@ function TextAction({
       onPress={onPress}
       style={({ pressed }) => [pressed && !disabled && styles.pressed, disabled && styles.disabled]}
     >
-      <ThinkSoText variant="action" tone="blue">
+      <ThinkSoText variant="action" tone={tone === 'blue' ? 'blue' : 'muted'}>
         {label}
       </ThinkSoText>
     </Pressable>
   );
 }
 
+function useKeyboardVisible() {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const show = Keyboard.addListener('keyboardDidShow', () => setVisible(true));
+    const hide = Keyboard.addListener('keyboardDidHide', () => setVisible(false));
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, []);
+  return visible;
+}
+
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  wordmarkRow: { justifyContent: 'center' },
-  partyRow: { justifyContent: 'space-around' },
-  centered: { alignItems: 'center' },
-  formCard: { borderWidth: 1, padding: spacing.lg, gap: spacing.lg },
-  scales: { borderWidth: 1, padding: spacing.xs },
-  registrationHeading: { justifyContent: 'space-between', alignItems: 'flex-start' },
-  registrationCopy: { flex: 1 },
+  document: { flexGrow: 1, gap: 0 },
+  loginHero: {
+    minHeight: 94,
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  wordmark: { position: 'relative', flexDirection: 'row', alignItems: 'flex-start' },
+  wordmarkText: {
+    fontFamily: 'Spectral_400Regular',
+    fontSize: 56,
+    lineHeight: 60,
+    letterSpacing: -0.8,
+  },
+  wordmarkUnderline: { position: 'absolute', left: 1, bottom: -8 },
+  lightning: { position: 'absolute', left: 0, bottom: 4, transform: [{ rotate: '-6deg' }] },
+  punctuation: { marginTop: -2, marginLeft: 3 },
+  accessStar: { position: 'absolute', right: -6, top: 7 },
+  parties: {
+    minHeight: 76,
+    borderTopWidth: 1,
+    paddingTop: 14,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.md,
+  },
+  party: { flex: 1, alignItems: 'center', gap: 4 },
+  partyName: { fontFamily: 'CourierPrime_700Bold', fontSize: 21, lineHeight: 26 },
+  partyRule: { width: '100%', height: 1, borderBottomWidth: 1, borderStyle: 'dashed' },
+  partyCaption: { fontSize: 8, lineHeight: 12, letterSpacing: 1.1 },
+  vs: { paddingTop: 14 },
+  loginStatement: {
+    minHeight: 96,
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 2,
+  },
+  statementCopy: { textAlign: 'center' },
+  skull: { position: 'absolute', left: -9, top: 10, transform: [{ rotate: '-8deg' }] },
+  angryFace: { position: 'absolute', right: -5, top: 9, transform: [{ rotate: '5deg' }] },
+  receiptsUnderline: { position: 'absolute', right: 38, bottom: 3 },
+  noBackingOut: {
+    flexGrow: 1,
+    minHeight: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingLeft: spacing.sm,
+    gap: 4,
+    transform: [{ rotate: '-3deg' }],
+  },
+  noBackingText: { lineHeight: 22 },
+  loginFormCard: {
+    position: 'relative',
+    borderWidth: 1,
+    padding: 14,
+    gap: 10,
+  },
+  formLead: { minHeight: 34, flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  scales: { borderWidth: 1, padding: 3 },
+  loginLoading: { position: 'absolute', right: 2, top: -40 },
+  modeSwitch: { alignItems: 'center', gap: 6 },
+  registrationIntro: {
+    minHeight: 140,
+    position: 'relative',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  registrationCopy: { maxWidth: '78%', marginTop: spacing.sm },
+  registrationHorn: { position: 'absolute', right: -4, top: 5, transform: [{ rotate: '-4deg' }] },
+  registrationFields: {
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    paddingVertical: 14,
+  },
+  registrationIllustration: {
+    flexGrow: 1,
+    minHeight: 126,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  registrationAnnotation: { flex: 1, alignItems: 'center' },
+  youIfClick: { alignSelf: 'flex-start', transform: [{ rotate: '-2deg' }] },
+  registrationAction: { position: 'relative', gap: 10 },
+  registrationLoading: { position: 'absolute', right: 2, top: -43 },
+  footer: {
+    minHeight: 64,
+    position: 'relative',
+    borderTopWidth: 1,
+    marginTop: 14,
+    paddingTop: 10,
+    gap: 5,
+  },
+  footerLinks: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, flexWrap: 'wrap' },
+  footerPen: { position: 'absolute', right: 2, bottom: -3, transform: [{ rotate: '4deg' }] },
   pressed: { opacity: 0.7 },
   disabled: { opacity: 0.45 },
   toast: {

@@ -153,11 +153,13 @@ export function FormHeader({
   return (
     <View style={styles.header} accessibilityRole="header">
       <View style={styles.headerLine}>
-        <Text style={styles.eyebrow}>{eyebrow}</Text>
-        <Text style={styles.reference}>{reference}</Text>
+        <View style={styles.headerIdentity}>
+          <Text style={styles.eyebrow}>{eyebrow}</Text>
+          <Text style={styles.reference}>{reference}</Text>
+        </View>
+        <Text style={styles.formNumber}>{formNumber}</Text>
       </View>
       <View style={styles.rule} />
-      <Text style={styles.formNumber}>{formNumber}</Text>
     </View>
   );
 }
@@ -581,8 +583,10 @@ export type FirebaseAccountFormBoundary = {
   passwordError?: string;
   onEmailChange: (email: string) => void;
   onPasswordChange: (password: string) => void;
+  onForgotPassword?: () => void;
   onSubmit: () => void;
   busy?: boolean;
+  showSubmit?: boolean;
   submitLabel: string;
   submitTestID?: string;
 };
@@ -595,8 +599,10 @@ export function AccountFormFields({
   passwordError,
   onEmailChange,
   onPasswordChange,
+  onForgotPassword,
   onSubmit,
   busy = false,
+  showSubmit = true,
   submitLabel,
   submitTestID,
 }: FirebaseAccountFormBoundary) {
@@ -605,51 +611,69 @@ export function AccountFormFields({
   const [showPassword, setShowPassword] = useState(false);
   return (
     <View style={styles.form}>
-      <Text style={styles.fieldLabel}>EMAIL</Text>
-      <TextInput
-        testID="account-email"
-        accessibilityLabel="Email"
-        autoCapitalize="none"
-        autoComplete="email"
-        keyboardType="email-address"
-        editable={!busy}
-        value={email}
-        onChangeText={onEmailChange}
-        placeholder="you@somewhere.com"
-        placeholderTextColor={colors.mutedInk}
-        style={styles.input}
-      />
+      <View style={styles.fieldGroup}>
+        <Text style={styles.fieldLabel}>EMAIL</Text>
+        <TextInput
+          testID="account-email"
+          accessibilityLabel="Email"
+          autoCapitalize="none"
+          autoComplete="email"
+          keyboardType="email-address"
+          editable={!busy}
+          value={email}
+          onChangeText={onEmailChange}
+          placeholder="you@somewhere.com"
+          placeholderTextColor={colors.mutedInk}
+          style={styles.input}
+        />
+      </View>
       {emailError && (
         <Text accessibilityRole="alert" style={styles.fieldError}>
           {emailError}
         </Text>
       )}
-      <View style={styles.passwordLabel}>
-        <Text style={styles.fieldLabel}>PASSWORD</Text>
-        <Pressable
-          accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
-          accessibilityRole="button"
-          accessibilityState={{ disabled: busy }}
-          disabled={busy}
-          hitSlop={hitSlop}
-          onPress={() => setShowPassword((value) => !value)}
-        >
-          <Text style={styles.link}>{showPassword ? 'HIDE' : 'SHOW'}</Text>
-        </Pressable>
+      <View style={styles.fieldGroup}>
+        <View style={styles.passwordLabel}>
+          <Text style={styles.fieldLabel}>PASSWORD</Text>
+          {onForgotPassword && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityState={{ disabled: busy }}
+              disabled={busy}
+              hitSlop={hitSlop}
+              onPress={onForgotPassword}
+            >
+              <Text style={styles.link}>FORGOT IT</Text>
+            </Pressable>
+          )}
+        </View>
+        <View style={styles.passwordInputWrap}>
+          <TextInput
+            testID="account-password"
+            accessibilityLabel="Password"
+            autoCapitalize="none"
+            autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
+            editable={!busy}
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={onPasswordChange}
+            placeholder="••••••••"
+            placeholderTextColor={colors.mutedInk}
+            style={[styles.input, styles.passwordInput]}
+          />
+          <Pressable
+            accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: busy }}
+            disabled={busy}
+            hitSlop={hitSlop}
+            onPress={() => setShowPassword((value) => !value)}
+            style={styles.passwordToggle}
+          >
+            <Text style={styles.link}>{showPassword ? 'HIDE' : 'SHOW'}</Text>
+          </Pressable>
+        </View>
       </View>
-      <TextInput
-        testID="account-password"
-        accessibilityLabel="Password"
-        autoCapitalize="none"
-        autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
-        editable={!busy}
-        secureTextEntry={!showPassword}
-        value={password}
-        onChangeText={onPasswordChange}
-        placeholder="••••••••"
-        placeholderTextColor={colors.mutedInk}
-        style={styles.input}
-      />
       {passwordError && (
         <Text accessibilityRole="alert" style={styles.fieldError}>
           {passwordError}
@@ -658,13 +682,15 @@ export function AccountFormFields({
       {mode === 'register' && !passwordError && (
         <Text style={styles.fieldHint}>Eight characters minimum.</Text>
       )}
-      <ActionButton
-        {...(submitTestID ? { testID: submitTestID } : {})}
-        disabled={busy}
-        onPress={onSubmit}
-      >
-        {submitLabel}
-      </ActionButton>
+      {showSubmit && (
+        <ActionButton
+          {...(submitTestID ? { testID: submitTestID } : {})}
+          disabled={busy}
+          onPress={onSubmit}
+        >
+          {submitLabel}
+        </ActionButton>
+      )}
     </View>
   );
 }
@@ -743,6 +769,7 @@ function createPrimitiveStyles(colors: ThemeColors) {
       alignItems: 'baseline',
       gap: spacing.md,
     },
+    headerIdentity: { flex: 1, gap: 3 },
     eyebrow: {
       color: colors.mutedInk,
       ...textStyles.label,
@@ -752,7 +779,6 @@ function createPrimitiveStyles(colors: ThemeColors) {
       ...textStyles.reference,
     },
     formNumber: {
-      alignSelf: 'flex-end',
       color: colors.mutedInk,
       ...textStyles.reference,
     },
@@ -904,7 +930,8 @@ function createPrimitiveStyles(colors: ThemeColors) {
       gap: spacing.md,
       flexWrap: 'wrap',
     },
-    form: { gap: spacing.md },
+    form: { gap: spacing.sm },
+    fieldGroup: { gap: spacing.xs },
     fieldLabel: {
       color: colors.mutedInk,
       ...textStyles.label,
@@ -921,6 +948,9 @@ function createPrimitiveStyles(colors: ThemeColors) {
       ...textStyles.body,
     },
     passwordLabel: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    passwordInputWrap: { position: 'relative', justifyContent: 'center' },
+    passwordInput: { paddingRight: 72 },
+    passwordToggle: { position: 'absolute', right: spacing.md },
     link: {
       color: colors.blueInkDark,
       ...textStyles.label,

@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Type / status | `PRODUCT` / `CHANGES_REQUESTED` |
+| Type / status | `PRODUCT` / `VERIFYING` |
 | Owner review | `CHANGES_REQUESTED 2026-09-06` |
 | Stack position / predecessor | `030` / T-020 |
 | Branch / PR | `stack/030-firebase-email-password-login` / [#5](https://github.com/dmitchelljackson/ThinkSo/pull/5) |
@@ -48,8 +48,8 @@ A new or returning user can create or access a ThinkSo profile with Firebase ema
 - [x] Repeated login reuses the active profile; identity collisions and retired signals follow the locked model.
 - [x] Access/refresh credentials and plaintext passwords are never logged or exposed to the UI model.
 - [x] Firebase Admin validation rejects malformed, expired, wrong-project, or retired identities.
-- [ ] Expo Web Login and Create Account renders are compared side by side with their authoritative exports at matching phone viewports and material mismatches are repaired.
-- [ ] The repaired candidate is captured on Android and iOS and compared side by side with the same source designs.
+- [x] Expo Web Login and Create Account renders are compared side by side with their authoritative exports at matching phone viewports and material mismatches are repaired.
+- [x] The repaired candidate is captured on Android and iOS and compared side by side with the same source designs.
 
 ## Activity log
 
@@ -69,12 +69,17 @@ A new or returning user can create or access a ThinkSo profile with Firebase ema
 
 `2026-09-06 | OWNER | FINDING | ee0a67f | UI-001: Login designs do not visually match the authoritative exports. Reopened T-030 for the mandatory Expo Web comparison loop and final Android/iOS side-by-side verification.`
 
+`2026-09-06 | IMPLEMENTER | FIXED | pending coordinator commit | Rebuilt Login and Create Account around the authoritative exported compositions, retained the locked email/password and action behavior, and removed idle-screen scrolling on ordinary phone heights.`
+
+`2026-09-06 | UI_VERIFIER | PASS | pending coordinator commit | Expo Web was compared at the source viewport; Android API 36 and iOS 26.5 rendered the repaired Login and Create Account layouts. AutoMobile swipe checks left every element at the same bounds on both idle screens.`
+
 ## Observations and decisions
 
 - Email confirmation is deferred from MVP; see [known issues](../product/known-issues.md).
 - **DERIVED:** Firebase revocation uses a five-minute per-user Admin epoch check. This slice persists and tests the required timestamps/policy; T-040 implements authenticated-request enforcement.
 - Firebase Auth state is memory-only; ThinkSo's access and rotating refresh credentials are the sole persisted device session. T-040 owns restore, refresh, and local-first logout.
 - Forgot Password remains an inert Login affordance in this slice. T-035 supplies its dialog and Firebase recovery behavior.
+- Login and Create Account do not scroll at ordinary phone heights. Overflow scrolling is enabled only while the keyboard is visible or below the compact-height threshold, preventing clipped controls without making the default document draggable.
 
 ## Superseded handoff
 
