@@ -1,3 +1,3 @@
-import { HealthScreen } from '../features/health/HealthScreen';
+import { AccountAccessScreen } from '../features/account-access/AccountAccessScreen';
 
-export default HealthScreen;
+export default AccountAccessScreen;
