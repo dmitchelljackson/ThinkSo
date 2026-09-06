@@ -7,7 +7,7 @@
 | Type / status | `PRODUCT` / `VERIFYING` |
 | Owner review | `AUTHORIZED 2026-09-05` |
 | Stack position / predecessor | `030` / T-020 |
-| Branch / PR | `stack/030-firebase-email-password-login` / — |
+| Branch / PR | `stack/030-firebase-email-password-login` / [#5](https://github.com/dmitchelljackson/ThinkSo/pull/5) |
 
 ## Outcome
 
@@ -60,6 +60,8 @@ A new or returning user can create or access a ThinkSo profile with Firebase ema
 
 `2026-09-06 | COORDINATOR | VERIFYING | pending coordinator commit | Mobile/unit/backend/integration/container/hygiene/link gates pass. Final generated-contract drift and GitHub Actions evidence follow the candidate commit.`
 
+`2026-09-06 | COORDINATOR | STACK_SUBMITTED | 3ab5dee | Published review-ready PR #5 against main with the required ticket-prefixed title; GitHub Actions started.`
+
 ## Observations and decisions
 
 - Email confirmation is deferred from MVP; see [known issues](../product/known-issues.md).
@@ -70,6 +72,6 @@ A new or returning user can create or access a ThinkSo profile with Firebase ema
 ## Final handoff
 
 - **Delivered:** native Login/Create Account, Firebase credential effects, `POST /v1/auth/login`, identity/session tables, secure token storage, and Threads-gate routing.
-- **Candidate / PR:** pending coordinator commit and stack submission.
+- **Candidate / PR:** implementation candidate `3ab5dee`; [PR #5](https://github.com/dmitchelljackson/ThinkSo/pull/5).
 - **Evidence:** 45 mobile tests plus API-client tests; Python unit/integration and Firebase emulator contract tests; Android and iOS native registration smokes; container, hygiene, and documentation-link checks.
 - **Limitations:** email verification and password recovery are deferred; T-040 supplies session restoration/rotation and request-time Firebase revocation enforcement; production Firebase smoke testing remains owner-controlled.
