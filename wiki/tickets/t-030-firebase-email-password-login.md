@@ -4,8 +4,8 @@
 
 | Field | Value |
 |---|---|
-| Type / status | `PRODUCT` / `STACKED` |
-| Owner review | `AUTHORIZED 2026-09-05` |
+| Type / status | `PRODUCT` / `CHANGES_REQUESTED` |
+| Owner review | `CHANGES_REQUESTED 2026-09-06` |
 | Stack position / predecessor | `030` / T-020 |
 | Branch / PR | `stack/030-firebase-email-password-login` / [#5](https://github.com/dmitchelljackson/ThinkSo/pull/5) |
 
@@ -18,6 +18,7 @@ A new or returning user can create or access a ThinkSo profile with Firebase ema
 - [Login BDD 1.1–1.7 and 1.12–1.13](../behavior/login-screen-bdd.md#11-display-login-mode)
 - [Login UI — ThinkSo Access Form](<../../raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Access Form.dc.html>)
 - [Create Account UI — ThinkSo Register](<../../raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Register.dc.html>) — omit the raw `Name for the record` field; public identity comes from Threads.
+- [Mobile visual QA workflow](../design/visual-qa-workflow.md)
 - [Firebase email/password setup](../operations/firebase-email-password-setup.md)
 - [`POST /auth/login`](../api/api-specification.md#post-authlogin)
 - [Users, identities, and sessions](../data/data-model-and-state-machines.md#users)
@@ -47,6 +48,8 @@ A new or returning user can create or access a ThinkSo profile with Firebase ema
 - [x] Repeated login reuses the active profile; identity collisions and retired signals follow the locked model.
 - [x] Access/refresh credentials and plaintext passwords are never logged or exposed to the UI model.
 - [x] Firebase Admin validation rejects malformed, expired, wrong-project, or retired identities.
+- [ ] Expo Web Login and Create Account renders are compared side by side with their authoritative exports at matching phone viewports and material mismatches are repaired.
+- [ ] The repaired candidate is captured on Android and iOS and compared side by side with the same source designs.
 
 ## Activity log
 
@@ -64,6 +67,8 @@ A new or returning user can create or access a ThinkSo profile with Firebase ema
 
 `2026-09-06 | COORDINATOR | CHECKS_PASS | b0dc1c5 | Every GitHub Actions job passed: mobile, backend, Postgres/Firebase integration, generated OpenAPI drift, container build, and repository hygiene.`
 
+`2026-09-06 | OWNER | FINDING | ee0a67f | UI-001: Login designs do not visually match the authoritative exports. Reopened T-030 for the mandatory Expo Web comparison loop and final Android/iOS side-by-side verification.`
+
 ## Observations and decisions
 
 - Email confirmation is deferred from MVP; see [known issues](../product/known-issues.md).
@@ -71,9 +76,11 @@ A new or returning user can create or access a ThinkSo profile with Firebase ema
 - Firebase Auth state is memory-only; ThinkSo's access and rotating refresh credentials are the sole persisted device session. T-040 owns restore, refresh, and local-first logout.
 - Forgot Password remains an inert Login affordance in this slice. T-035 supplies its dialog and Firebase recovery behavior.
 
-## Final handoff
+## Superseded handoff
 
 - **Delivered:** native Login/Create Account, Firebase credential effects, `POST /v1/auth/login`, identity/session tables, secure token storage, and Threads-gate routing.
 - **Candidate / PR:** implementation candidate `3ab5dee`; [PR #5](https://github.com/dmitchelljackson/ThinkSo/pull/5).
 - **Evidence:** 45 mobile tests plus API-client tests; Python unit/integration and Firebase emulator contract tests; Android and iOS native registration smokes; container, hygiene, documentation-link, generated-contract, and GitHub Actions checks.
 - **Limitations:** email verification and password recovery are deferred; T-040 supplies session restoration/rotation and request-time Firebase revocation enforcement; production Firebase smoke testing remains owner-controlled.
+
+This handoff is superseded by UI-001 until the visual repair and both stages of the visual QA workflow pass on a new candidate.
