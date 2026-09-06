@@ -4,8 +4,8 @@
 
 | Field | Value |
 |---|---|
-| Type / status | `ENABLING` / `IN_REVIEW` |
-| Owner review | `CHANGES REQUESTED 2026-09-05 — approve after theme/atom review` |
+| Type / status | `ENABLING` / `MERGED` |
+| Owner review | `APPROVED AND MERGED 2026-09-05` |
 | Stack position / predecessor | `020` / T-010 |
 | Branch / PR | `stack/020-mobile-design-foundation` / [#4](https://github.com/dmitchelljackson/ThinkSo/pull/4) |
 
@@ -64,6 +64,8 @@ Login and Threads can be built from tested responsive ThinkSo primitives instead
 `2026-09-05 | IMPLEMENTER | FIXED | 94d8bf1a0d57d4806d528714680db0efa74b810e | Added typed light/dark themes with system selection, complete ThinkSoText roles and semantic tones, shared spacing/radius/size/motion tokens, Stack/Inline/Spacer atoms, theme-aware primitives and health surface, catalog theme controls, and palette contract tests.`
 
 `2026-09-05 | COORDINATOR | CHECKS_PASS | 94d8bf1a0d57d4806d528714680db0efa74b810e | Root checks, hygiene and secret scan, links, OpenAPI drift, Android light/dark review, and every GitHub Actions job passed for the theme/atom revision.`
+
+`2026-09-05 | OWNER | MERGED | f0be38a | Approved the theme/atom revision and merged PR #4 into main.`
 
 ## Observations and decisions
 

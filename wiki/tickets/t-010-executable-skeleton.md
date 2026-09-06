@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Type / status | `ENABLING` / `STACKED` |
+| Type / status | `ENABLING` / `MERGED` |
 | Owner review | `APPROVED 2026-09-04` |
 | Stack position / predecessor | `010` / T-000 |
 | Branch / PR | `stack/010-executable-skeleton` / [#2](https://github.com/dmitchelljackson/ThinkSo/pull/2) |
