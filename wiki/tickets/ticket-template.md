@@ -99,6 +99,7 @@ Only the product owner may change locked acceptance behavior. Workers may propos
 | Local required checks | `NOT_STARTED` | — | — |
 | GitHub Actions | `NOT_STARTED` | — | — |
 | Independent code review | `NOT_STARTED` | — | — |
+| Expo Web visual comparison | `NOT_STARTED` or `N/A` | — | — |
 | AutoMobile UI verification | `NOT_STARTED` or `N/A` | — | — |
 | Documentation/public-content audit | `NOT_STARTED` | — | — |
 

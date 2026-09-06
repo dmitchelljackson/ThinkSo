@@ -14,7 +14,7 @@ Read the root `AGENTS.md`, `wiki/index.md`, [harness](./harness.md), [ticket tra
 2. Own the shared stack checkout and maintain exactly one write-active implementer on it.
 3. Confirm the checkout is clean. Create the first branch with `gh stack init --base main <branch>` and each later branch from the verified tip with `gh stack add <branch>`. Always supply arguments and flags required to avoid interactive prompts.
 4. Spawn implementers, code reviewers, and UI verifiers with `gpt-5.6-luna` by default. Use high reasoning for implementation/review and medium for UI verification.
-5. After the implementer returns its uncommitted work, inspect the diff, persist its ticket report, and create the candidate commit. Run `gh stack submit --auto` to push and create/update the native draft PR stack. Then freeze the checkout and run CI-equivalent checks, independent code review, and required AutoMobile verification concurrently when resources allow.
+5. After the implementer returns its uncommitted work, inspect the diff, persist its ticket report, and create the candidate commit. For UI work, require Expo Web comparison evidence under the [mobile visual QA workflow](../design/visual-qa-workflow.md). Run `gh stack submit --auto` to push and create/update the native draft PR stack. Then freeze the checkout and run CI-equivalent checks, independent code review, and required AutoMobile verification concurrently when resources allow.
 6. Send blocking findings back to the same implementer. A changed candidate invalidates affected review, tests, and UI evidence; rerun them.
 7. Permit escalation to `gpt-5.6-terra` only under the model policy in the harness. Record the role, reason, and outcome in ticket history.
 8. Once all gates pass, verify stack structure with `gh stack view --json`, mark the PR ready for review, mark the ticket `STACKED`, and dispatch the next ticket without waiting for human PR review.
@@ -37,5 +37,6 @@ Every worker receives:
 - base branch, target branch, expected PR base, and candidate SHA if verifying;
 - allowed write scope;
 - required commands and evidence;
+- the [mobile visual QA workflow](../design/visual-qa-workflow.md) for every UI-affecting task;
 - known human prerequisites and whether they are satisfied;
 - instruction to report `PASS`, `CHANGES_REQUESTED`, `BLOCKED_HUMAN`, or `BLOCKED_TECHNICAL` with concise evidence.

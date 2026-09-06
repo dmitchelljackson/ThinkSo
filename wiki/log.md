@@ -2,6 +2,10 @@
 
 This is an append-only history of material wiki operations.
 
+## [2026-09-06] decision | Two-stage mobile visual QA
+
+Locked visual review for every mobile UI ticket to two stages: Expo Web/Playwright side-by-side comparison with the authoritative design during fast implementation iteration, followed by Android and iOS side-by-side native verification against the same source. Added the canonical workflow and made it required context for coordinator, implementer, and UI-verifier dispatches and a required ticket gate.
+
 ## [2026-09-05] implement and verify | Mobile design foundation
 
 Implemented and owner-reviewed the T-020 React Native visual foundation: semantic tokens, verified bundled typography, responsive safe-area document composition, account-form controls, finite action states, application-scoped filing-error/loading feedback, dialog and acknowledgment controls, the animated Loading S, and a catalog of current app-owned drawings. The Threads authorization control follows Meta's official icon/clear-space guidance and uses a neutral native spinner during provider activity so ThinkSo and Threads branding are not mixed.

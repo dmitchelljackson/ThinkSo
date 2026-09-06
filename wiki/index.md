@@ -11,6 +11,7 @@ Screen-specific entry point: [Screens, BDD, and UI sources](../SCREENS.md)
 
 - [Screens and behavior](./design/screens-and-behavior.md) — screen inventory and state-specific UX descriptions.
 - [Design system](./design/design-system.md) — shared visual tokens, component boundaries, responsive rules, and extraction order.
+- [Mobile visual QA workflow](./design/visual-qa-workflow.md) — mandatory Expo Web iteration and Android/iOS side-by-side design verification.
 
 ## Behavior
 

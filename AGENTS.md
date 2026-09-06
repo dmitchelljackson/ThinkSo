@@ -6,6 +6,8 @@ Maintain this repository as a durable, compounding internal wiki for the ThinkSo
 
 Start screen-oriented work from [`SCREENS.md`](./SCREENS.md), which links each BDD and its exported UI sources. Start broader product/engineering work from [`wiki/index.md`](./wiki/index.md).
 
+Every task that creates or materially changes mobile UI must also follow the two-stage [`mobile visual QA workflow`](./wiki/design/visual-qa-workflow.md): Expo Web comparison during iteration, followed by Android and iOS side-by-side verification against the same design source.
+
 ## Knowledge layers
 
 1. `raw/` contains immutable sources or source pointers. Never silently rewrite a source to match the wiki.

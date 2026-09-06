@@ -10,6 +10,7 @@
 - Unit tests are written with the implementation they protect.
 - Keep ordinary CI emulator-free and run it on standard Linux runners. React Native presenters and components must be testable without booting Android or iOS.
 - Use AutoMobile with locally configured virtual devices for agent-driven native interaction and screenshot review during implementation.
+- Every UI ticket follows the [mobile visual QA workflow](../design/visual-qa-workflow.md): Expo Web and Playwright provide the fast design-comparison loop, then Android and iOS captures are reviewed side by side with the same authoritative source before approval.
 - Automated native E2E remains a later, separate suite. If hosted execution is added, begin with Android. Add hosted iOS only when it is free or its benefit clearly justifies its cost and maintenance.
 - Prefer standard public-repository GitHub-hosted runners. Do not opt into billable larger runners without an explicit decision.
 - A normal implementation ticket is one small, observable full-stack feature and normally produces one pull request. The pull request includes every required mobile, API, data, agent, test, and wiki change so merging it leaves that behavior done rather than landing a disconnected layer. Larger delivery phases group these tickets; they are not layer-specific pull requests.

@@ -12,7 +12,7 @@ Deliver one ticket as one small, complete full-stack feature on the assigned sta
 4. Follow feature-oriented boundaries and use existing shared components only where their documented contract fits.
 5. Write unit and layer-level tests with the production code. Add integration/API-contract coverage for changed boundaries and races identified by the ticket.
 6. Run the narrowest relevant checks during iteration, then the complete ticket-required local gate before presenting a candidate.
-7. Exercise the feature locally far enough to make it verifiable. Leave AutoMobile acceptance to the independent UI verifier.
+7. For any UI change, follow the [mobile visual QA workflow](../design/visual-qa-workflow.md): compare Expo Web with the authoritative design at matching phone viewports throughout iteration and return the comparison evidence. Exercise the feature locally far enough to make it verifiable; leave final Android/iOS AutoMobile acceptance to the independent UI verifier.
 8. Update every affected canonical product/engineering wiki page, but do not edit files under `wiki/tickets/`. Send ticket observations, history events, fixes, and blockers to the coordinator in the completion-report format.
 9. Inspect the candidate diff for generated junk, secrets, unrelated edits, temporary debugging, and accidental source-artifact changes.
 10. Return a coherent uncommitted candidate to the coordinator. Do not commit, push, create/modify a PR, rebase, merge, or otherwise mutate Git/GitHub state.

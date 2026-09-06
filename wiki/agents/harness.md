@@ -11,7 +11,7 @@ Build ThinkSo as a deep, reviewable stack of small full-stack pull requests. Hum
 - [Code reviewer](./code-reviewer.md) — independently reviews one immutable candidate diff.
 - [UI verifier](./ui-verifier.md) — exercises one immutable candidate build through AutoMobile.
 
-These files are durable role prompts. A dispatched task also receives its ticket path, base branch, target branch, expected PR base, and candidate SHA where applicable.
+These files are durable role prompts. A dispatched task also receives its ticket path, base branch, target branch, expected PR base, and candidate SHA where applicable. Every UI dispatch also receives the mandatory [mobile visual QA workflow](../design/visual-qa-workflow.md).
 
 ## Ticket communication
 
@@ -70,6 +70,7 @@ A candidate becomes `STACKED` only when:
 - formatting, linting, typing, generated-client drift, and relevant container checks pass;
 - independent code review has no unresolved blocking findings;
 - required AutoMobile scenarios pass with recorded evidence, or the ticket explicitly has no native UI surface;
+- UI tickets include Expo Web comparison evidence from implementation plus Android and iOS side-by-side design verification under the mobile visual QA workflow;
 - the ticket and affected wiki pages describe the implementation and any deviations;
 - no secret or unsuitable private material appears in the diff.
 
