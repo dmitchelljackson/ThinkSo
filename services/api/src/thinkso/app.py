@@ -10,6 +10,7 @@ from fastapi import FastAPI
 from thinkso.config import Settings, get_settings
 from thinkso.di import providers
 from thinkso.features.health.transport import router as health_router
+from thinkso.features.identity.transport import router as identity_router
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -27,6 +28,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app = FastAPI(title=configured.app_name, version=configured.app_version, lifespan=lifespan)
     app.state.settings = configured
     app.include_router(health_router, prefix="/v1")
+    app.include_router(identity_router, prefix="/v1")
     setup_dishka(container, app)
     return app
 

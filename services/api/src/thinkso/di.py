@@ -1,12 +1,18 @@
 """Dishka application/request/job composition root."""
 
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Iterator
 
 from dishka import Provider, Scope, provide
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
 from thinkso.config import Settings, get_settings
 from thinkso.db import create_engine, create_session_factory, session_scope
+from thinkso.features.identity.application import IdentityRepository, IdentityService
+from thinkso.features.identity.firebase import (
+    AdminFirebaseIdentityVerifier,
+    FirebaseIdentityVerifier,
+)
+from thinkso.features.identity.persistence import SqlIdentityRepository
 
 
 class ApplicationProvider(Provider):
@@ -32,6 +38,14 @@ class ApplicationProvider(Provider):
     def session_factory(self, engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
         return create_session_factory(engine)
 
+    @provide
+    def firebase_verifier(self, settings: Settings) -> Iterator[FirebaseIdentityVerifier]:
+        verifier = AdminFirebaseIdentityVerifier(settings)
+        try:
+            yield verifier
+        finally:
+            verifier.close()
+
 
 class RequestProvider(Provider):
     scope = Scope.REQUEST
@@ -42,6 +56,16 @@ class RequestProvider(Provider):
     ) -> AsyncIterator[AsyncSession]:
         async for session in session_scope(factory):
             yield session
+
+    @provide
+    def identity_repository(self, session: AsyncSession) -> IdentityRepository:
+        return SqlIdentityRepository(session)
+
+    @provide
+    def identity_service(
+        self, verifier: FirebaseIdentityVerifier, repository: IdentityRepository
+    ) -> IdentityService:
+        return IdentityService(verifier, repository)
 
 
 def providers(settings: Settings | None = None) -> list[Provider]:

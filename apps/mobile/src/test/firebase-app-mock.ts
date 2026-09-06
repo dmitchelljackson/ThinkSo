@@ -1,0 +1,9 @@
+export class FirebaseError extends Error {
+  public constructor(public readonly code: string) {
+    super(code);
+  }
+}
+
+export const initializeApp = jest.fn(() => ({}));
+export const getApp = jest.fn(() => ({}));
+export const getApps = jest.fn(() => []);

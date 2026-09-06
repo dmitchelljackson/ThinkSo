@@ -1,6 +1,49 @@
 {
   "components": {
     "schemas": {
+      "ErrorDetail": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "details": {
+            "additionalProperties": true,
+            "title": "Details",
+            "type": "object"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": ["code", "message", "details"],
+        "title": "ErrorDetail",
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorDetail"
+          }
+        },
+        "required": ["error"],
+        "title": "ErrorResponse",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
       "HealthResponse": {
         "additionalProperties": false,
         "properties": {
@@ -26,6 +69,132 @@
         "required": ["status", "service", "version", "checked_at"],
         "title": "HealthResponse",
         "type": "object"
+      },
+      "LoginRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "firebase_id_token": {
+            "maxLength": 8192,
+            "minLength": 1,
+            "title": "Firebase Id Token",
+            "type": "string"
+          }
+        },
+        "required": ["firebase_id_token"],
+        "title": "LoginRequest",
+        "type": "object"
+      },
+      "LoginResponse": {
+        "properties": {
+          "access_token": {
+            "title": "Access Token",
+            "type": "string"
+          },
+          "expires_in": {
+            "title": "Expires In",
+            "type": "integer"
+          },
+          "onboarding_complete": {
+            "title": "Onboarding Complete",
+            "type": "boolean"
+          },
+          "refresh_token": {
+            "title": "Refresh Token",
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserResponse"
+          }
+        },
+        "required": ["access_token", "refresh_token", "expires_in", "user", "onboarding_complete"],
+        "title": "LoginResponse",
+        "type": "object"
+      },
+      "SocialIdentityResponse": {
+        "properties": {
+          "profile_url": {
+            "title": "Profile Url",
+            "type": "string"
+          },
+          "provider": {
+            "const": "threads",
+            "title": "Provider",
+            "type": "string"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": ["provider", "username", "profile_url"],
+        "title": "SocialIdentityResponse",
+        "type": "object"
+      },
+      "UserResponse": {
+        "properties": {
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_retired": {
+            "title": "Is Retired",
+            "type": "boolean"
+          },
+          "social_identity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SocialIdentityResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": ["id", "display_name", "is_retired", "social_identity"],
+        "title": "UserResponse",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError",
+        "type": "object"
       }
     }
   },
@@ -35,6 +204,75 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/v1/auth/login": {
+      "post": {
+        "operationId": "login_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Exchange a Firebase identity token",
+        "tags": ["authentication"]
+      }
+    },
     "/v1/health": {
       "get": {
         "operationId": "health_v1_health_get",
