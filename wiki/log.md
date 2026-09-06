@@ -2,6 +2,10 @@
 
 This is an append-only history of material wiki operations.
 
+## [2026-09-05] implement and verify | Mobile design foundation
+
+Implemented and owner-reviewed the T-020 React Native visual foundation: semantic tokens, verified bundled typography, responsive safe-area document composition, account-form controls, finite action states, application-scoped filing-error/loading feedback, dialog and acknowledgment controls, the animated Loading S, and a catalog of current app-owned drawings. The Threads authorization control follows Meta's official icon/clear-space guidance and uses a neutral native spinner during provider activity so ThinkSo and Threads branding are not mixed.
+
 ## [2026-09-04] stack | T-010 executable foundation
 
 Published review-ready stacked PR #2 for the executable mobile/API/database foundation. Independent review found and verified the repair of one runtime DTO-validation gap. All 12 GitHub Actions checks passed; AutoMobile exercised the Android health refresh against the live API, and the iOS Simulator loaded the same bundle. The reviewed code candidate is `eea2ac87785bb2e40e190be7932a796037981817`; only ticket and wiki status bookkeeping followed it.
@@ -501,3 +505,7 @@ Specified that Apple and Google buttons both remain visible and disabled during 
 ## [2026-08-31] initialize | ThinkSo internal wiki
 
 Created the monorepo-ready ThinkSo workspace, separated raw source pointers from synthesized wiki pages, migrated the engineering handoff, and added the Login Screen BDD specification.
+
+## [2026-09-05] decision | Mobile theme and foundation atoms
+
+Standardized complete mobile text roles, semantic text tones, spacing, radii, shared sizes, motion durations, and Stack/Inline/Spacer layout atoms. Locked production to follow the OS light/dark appearance through a typed theme contract; the catalog can force either palette for review. The initial dark palette is an intentionally rough native-reviewed baseline that may be tuned without changing screen or component APIs.

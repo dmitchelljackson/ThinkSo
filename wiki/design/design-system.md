@@ -19,44 +19,50 @@ This page is the canonical implementation guide for shared mobile visual foundat
 
 ## Foundation tokens
 
-The names below are **DERIVED**. The color values and font families repeat throughout the export, but final token naming, exact opacity ramps, installed font files, and platform rendering must be validated in the app.
+These tokens are the implementation boundary for screen code. Screens consume semantic roles and shared scales; they do not choose raw hex colors, font metrics, or one-off spacing values. The current values are **DERIVED** and may be tuned after native review without changing component APIs.
 
 ### Color roles
 
-| Role | Export evidence | Intended use |
-|---|---:|---|
-| canvas | `#e6e3db` | outer/warm environmental background where visible |
-| paper | `#f4f2ec` | primary screen surface |
-| raised-paper | `#fdfcf8` | cards, dialogs, contract panels |
-| checkbox-paper | `#fffdf7` | small paper controls |
-| ink | `#14171f` | primary text, rules, dark actions |
-| blue-ink | `#2438c9` | pen marks, links, active accents |
-| blue-ink-dark | `#1b2a8f` | pressed/darker blue accent |
-| red-ink | `#b0442f` | warnings, destructive actions, consequence accents |
-| red-ink-dark | `#8f3423` | destructive held/pressed state |
-| filing-error | `#f4ccd4` | global error-toast paper |
-| approval-green | `#2f9e52` | affirmative invitation sticker only |
+| Role | Light | Dark | Intended use |
+|---|---:|---:|---|
+| canvas | `#e6e3db` | `#101014` | outer/warm environmental background where visible |
+| paper | `#f4f2ec` | `#18181d` | primary screen surface |
+| raised-paper | `#fdfcf8` | `#232329` | cards, dialogs, contract panels |
+| checkbox-paper | `#fffdf7` | `#292930` | small paper controls |
+| ink | `#14171f` | `#f1eee6` | primary text and rules |
+| blue-ink | `#2438c9` | `#8798ff` | pen marks, links, active accents |
+| red-ink | `#b0442f` | `#ff856f` | warnings, destructive actions, consequence accents |
+| filing-error | `#f4ccd4` | `#512d36` | global error-toast paper |
+| approval-green | `#2f9e52` | `#70d58c` | affirmative invitation sticker only |
 
-Do not scatter opacity-adjusted hex/RGBA literals through screens. Define a small semantic text/rule opacity scale alongside these roles once native rendering is evaluated.
+`ThinkSoThemeProvider` follows the OS appearance by default and may be forced to light or dark in tests and the catalog. Every palette implements the same typed semantic color contract, including muted ink, rules, pressed states, provider colors, and modal scrim. Components read the active theme with `useThinkSoTheme`; screen code must not branch on theme names merely to choose colors.
 
-### Type roles
+### Text styles
 
-| Role | Family evidence | Use |
+`ThinkSoText` is the default text atom. Its `variant` selects a complete style—not merely a font—and its `tone` selects a semantic theme color. Existing specialized primitives use the same centralized style objects internally.
+
+| Variant | Family | Size / line | Use |
 |---|---|---|
-| editorial | Spectral | primary headings, contract titles, emphatic legal copy |
-| administrative | Courier Prime | labels, body copy, metadata, buttons, form language |
-| annotation | Gloria Hallelujah | sparse handwritten notes only |
-| provider-native | platform/provider requirement | Threads authorization and other external-provider controls where required |
+| `display` | Spectral | 42 / 48 | primary screen titles and emphatic legal copy |
+| `heading` | Spectral | 26 / 32 | section and contract headings |
+| `body` | Courier Prime | 15 / 24 | ordinary copy and form language |
+| `label` | Courier Prime Bold | 11 / 16, uppercase/tracked | administrative labels and state names |
+| `reference` | Courier Prime | 11 / 16, uppercase/tracked | record IDs and document metadata |
+| `action` | Courier Prime Bold | 12 / 16, uppercase/tracked | ThinkSo action labels |
+| `annotation` | Gloria Hallelujah | 17 / 25 | sparse handwritten notes only |
+| `caption` | Courier Prime | 11 / 16 | supporting metadata and hints |
 
-Font files, supported weights, fallback behavior, and licenses must be verified during implementation. Do not allow a missing weight to silently synthesize a visibly wrong face. Support native text scaling without letting essential controls clip.
+Provider-native controls intentionally retain provider/platform typography. Icon glyph geometry and oversized stamps/checkmarks may specialize a base role, but ordinary screen copy must use one of the variants above. The bundled font files and supported weights are verified; do not silently synthesize missing weights.
 
-### Spacing, shape, and motion
+### Spacing, shape, size, and motion
 
-- **DERIVED:** create a small spacing scale based on repeated 4/8-ish increments rather than preserving every exported pixel value.
+- **DERIVED:** shared spacing tokens are `none: 0`, `xs: 4`, `sm: 8`, `md: 12`, `lg: 16`, `xl: 24`, `xxl: 32`, and `xxxl: 48`.
+- **DERIVED:** use `Stack`, `Inline`, and `Spacer` for common layout rhythm. Direct flex layout remains appropriate for unique screen composition, but its gaps and padding should still use the scale.
+- **DERIVED:** radii are semantic and finite: square, control, dialog, and provider. Shared sizes define the 44-point minimum touch target, action/provider heights, and 720-point maximum content width.
 - **DERIVED:** thin square document rules and near-square cards are the default; rounded shapes are reserved for provider-native controls, sticker-like actions, or specifically approved elements.
 - **LOCKED:** the loading S and filing-error toast are recurring global patterns.
-- **LOCKED:** state refreshes use brief, restrained fades and layout transitions; do not animate whole documents dramatically. Exact durations remain open. Respect reduced-motion settings when production accessibility work begins.
-- **OPEN:** exact spacing scale, type ramp, radii, shadows, animation durations, and breakpoints.
+- **LOCKED:** state refreshes use brief, restrained fades and layout transitions; do not animate whole documents dramatically. Shared motion durations are 120, 180, and 280 ms. Respect reduced-motion settings when production accessibility work begins.
+- **OPEN:** final visual tuning of the first-pass dark palette and whether additional elevation/shadow tokens are justified by real screens.
 
 ## Shared components to extract
 
@@ -130,6 +136,7 @@ Font files, supported weights, fallback behavior, and licenses must be verified 
 
 - Account-access email/password fields use the shared native form primitives. Historical Apple/Google buttons in older exports are not implemented.
 - The Threads connect control follows Threads branding and has its own disabled state.
+- **LOCKED:** the Threads connect control uses the official Threads icon with at least one-quarter-icon-width clear space, preserves its shape, and pairs it with the action label rather than modifying the official lockup. Its busy state uses a neutral native spinner—not the ThinkSo Loading S—so the two brands are not mixed inside one control.
 - Green `ACCEPT` and outlined `REJECT` invitation stickers are product-specific action surfaces, not ordinary `ActionButton` variants.
 - The press-and-hold retirement control is behaviorally distinct from a normal destructive button.
 - Doodles with different meanings should be assets/compositions, not variants of an over-generalized doodle component.
@@ -163,3 +170,17 @@ Each shared component requires:
 - screenshots on at least one compact iOS phone and one representative Android phone;
 - screen-level tests proving Login and Connect Threads satisfy their BDD criteria;
 - no production dependency on the Claude export runtime or web CSS.
+
+## T-020 implementation evidence
+
+The first native foundation lives under [`apps/mobile/src/design-system`](../../apps/mobile/src/design-system/). It uses semantic tokens from `tokens.ts`, `DocumentScreen` with safe-area insets and a centered `maxWidth` column, and finite document, interaction, loading, toast, and dialog primitives. The development catalog is available at the Expo Router `/catalog` route and intentionally contains no Firebase or Threads behavior.
+
+Typography is bundled through the pinned `@expo-google-fonts/spectral`, `@expo-google-fonts/courier-prime`, and `@expo-google-fonts/gloria-hallelujah` packages. These wrappers are MIT licensed and their font files are SIL Open Font License 1.1; each role has a system fallback in native styles. No raw export HTML, CSS, device frame, or runtime is imported. Exact spacing and responsive breakpoints remain intentionally derived from content and the bounded 720-point column rather than the 393 × 852 preview.
+
+The native loading mark preserves the source's fourteen hand-drawn strokes, sequential draw, hold, reverse erase, and blank reset. **LOCKED deviation (owner review, 2026-09-04):** it does not perform the source concept's 180-degree rotation; the non-rotating motion was preferred in native review.
+
+**LOCKED native interaction (owner review, 2026-09-04):** ordinary action buttons remain stationary when pressed. Feedback is a restrained tonal change only: black gains a slight blue cast, secondary paper gains a faint blue-gray fill and border, and destructive red darkens slightly. Pressing must not translate or scale the control.
+
+The `/catalog` drawing section renders the animated Loading S and 36 named, app-owned illustrations and hand-drawn marks extracted from the current screen sources. Near-identical screen-specific underline paths are normalized to shared single, double, and red underline primitives. Standard navigation glyphs and provider-owned Apple, Google, and Threads logos are deliberately excluded from the illustration inventory. The send-it pencil/fire drawing uses neutral ink so it cannot be mistaken for a destructive action.
+
+The distinct Threads connect control follows [Meta's current official Threads brand guidance](https://www.meta.com/brand/resources/instagram/threads/): use the supplied icon without alteration, retain minimum clear space equal to one quarter of its width, and preserve the official lockup's relationship when the lockup itself is used. ThinkSo uses the standalone icon beside its separate `Connect Threads` action label, with sufficient clear space. A native spinner matching the disabled label replaces the icon while authorization is busy.
