@@ -576,21 +576,29 @@ export function NoticeDialog({
 export type FirebaseAccountFormBoundary = {
   email: string;
   password: string;
+  mode?: 'login' | 'register';
+  emailError?: string;
+  passwordError?: string;
   onEmailChange: (email: string) => void;
   onPasswordChange: (password: string) => void;
   onSubmit: () => void;
   busy?: boolean;
   submitLabel: string;
+  submitTestID?: string;
 };
 
 export function AccountFormFields({
   email,
   password,
+  mode = 'login',
+  emailError,
+  passwordError,
   onEmailChange,
   onPasswordChange,
   onSubmit,
   busy = false,
   submitLabel,
+  submitTestID,
 }: FirebaseAccountFormBoundary) {
   const { colors } = useThinkSoTheme();
   const styles = usePrimitiveStyles();
@@ -611,9 +619,17 @@ export function AccountFormFields({
         placeholderTextColor={colors.mutedInk}
         style={styles.input}
       />
+      {emailError && (
+        <Text accessibilityRole="alert" style={styles.fieldError}>
+          {emailError}
+        </Text>
+      )}
       <View style={styles.passwordLabel}>
         <Text style={styles.fieldLabel}>PASSWORD</Text>
         <Pressable
+          accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: busy }}
           disabled={busy}
           hitSlop={hitSlop}
           onPress={() => setShowPassword((value) => !value)}
@@ -625,7 +641,7 @@ export function AccountFormFields({
         testID="account-password"
         accessibilityLabel="Password"
         autoCapitalize="none"
-        autoComplete="password"
+        autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
         editable={!busy}
         secureTextEntry={!showPassword}
         value={password}
@@ -634,7 +650,19 @@ export function AccountFormFields({
         placeholderTextColor={colors.mutedInk}
         style={styles.input}
       />
-      <ActionButton disabled={busy} loading={busy} onPress={onSubmit}>
+      {passwordError && (
+        <Text accessibilityRole="alert" style={styles.fieldError}>
+          {passwordError}
+        </Text>
+      )}
+      {mode === 'register' && !passwordError && (
+        <Text style={styles.fieldHint}>Eight characters minimum.</Text>
+      )}
+      <ActionButton
+        {...(submitTestID ? { testID: submitTestID } : {})}
+        disabled={busy}
+        onPress={onSubmit}
+      >
         {submitLabel}
       </ActionButton>
     </View>
@@ -881,6 +909,8 @@ function createPrimitiveStyles(colors: ThemeColors) {
       color: colors.mutedInk,
       ...textStyles.label,
     },
+    fieldError: { color: colors.redInk, ...textStyles.caption },
+    fieldHint: { color: colors.mutedInk, ...textStyles.caption },
     input: {
       minHeight: 48,
       borderWidth: 1,
