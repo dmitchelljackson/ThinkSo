@@ -24,7 +24,7 @@ The coordinator maintains this table as tickets are created and advanced.
 | 000 | [T-000 Repository governance and deterministic tooling](./t-000-repository-governance.md) | Enabling | `DRAFT` | `main` | — |
 | 010 | [T-010 Boot the mobile/API/database skeleton](./t-010-executable-skeleton.md) | Enabling | `MERGED` | T-000 | [#2](https://github.com/dmitchelljackson/ThinkSo/pull/2) |
 | 020 | [T-020 Establish the mobile visual foundation](./t-020-mobile-design-foundation.md) | Enabling | `MERGED` | T-010 | [#4](https://github.com/dmitchelljackson/ThinkSo/pull/4) |
-| 030 | [T-030 Authenticate with Firebase email/password and issue ThinkSo sessions](./t-030-firebase-email-password-login.md) | Product | `VERIFYING` | T-020 | [#5](https://github.com/dmitchelljackson/ThinkSo/pull/5) |
+| 030 | [T-030 Authenticate with Firebase email/password and issue ThinkSo sessions](./t-030-firebase-email-password-login.md) | Product | `STACKED` | T-020 | [#5](https://github.com/dmitchelljackson/ThinkSo/pull/5) |
 | 035 | [T-035 Recover a Firebase password](./t-035-password-recovery.md) | Product | `DRAFT` | T-030 | — |
 | 040 | [T-040 Restore sessions and provide local-first sign-out](./t-040-session-recovery-and-account.md) | Product | `DRAFT` | T-035 | — |
 | 050 | [T-050 Require and maintain a Threads connection](./t-050-threads-connection.md) | Product | `DRAFT` | T-040 | — |
