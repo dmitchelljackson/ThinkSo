@@ -6,12 +6,14 @@ import { AccountAccessScreen, accountAccessAllowsScroll } from './AccountAccessS
 const mockOnEvent = jest.fn();
 let mockPresenterState: {
   mode: 'login' | 'register';
+  displayName: string;
   email: string;
   password: string;
   busy: boolean;
   onEvent: typeof mockOnEvent;
 } = {
   mode: 'login',
+  displayName: '',
   email: '',
   password: '',
   busy: false,
@@ -41,6 +43,7 @@ describe('AccountAccessScreen', () => {
     mockOnEvent.mockReset();
     mockPresenterState = {
       mode: 'login',
+      displayName: '',
       email: '',
       password: '',
       busy: false,
@@ -48,7 +51,7 @@ describe('AccountAccessScreen', () => {
     };
   });
 
-  it('renders the locked Login controls and leaves placeholders inert', async () => {
+  it('renders the locked Login controls and dispatches placeholder actions', async () => {
     await render(
       <SafeAreaProvider initialMetrics={metrics}>
         <AccountAccessScreen />
@@ -58,18 +61,24 @@ describe('AccountAccessScreen', () => {
     expect(screen.getByLabelText('Password')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'LOG IN' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'CREATE ACCOUNT' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'HOW IT WORKS' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'TERMS OF SERVICE' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'PRIVACY POLICY' })).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: 'FORGOT IT' }));
+    expect(mockOnEvent).toHaveBeenCalledWith({ type: 'forgotPasswordPressed' });
     await fireEvent.press(screen.getByRole('button', { name: 'TERMS OF SERVICE' }));
+    expect(mockOnEvent).toHaveBeenCalledWith({ type: 'placeholderPressed' });
+    await fireEvent.press(screen.getByRole('button', { name: 'PRIVACY POLICY' }));
     expect(mockOnEvent).toHaveBeenCalledWith({ type: 'placeholderPressed' });
   });
 
   it('keeps ordinary phone layouts fixed and only enables overflow when needed', () => {
-    expect(accountAccessAllowsScroll(874, false)).toBe(false);
-    expect(accountAccessAllowsScroll(800, false)).toBe(false);
-    expect(accountAccessAllowsScroll(759, false)).toBe(true);
-    expect(accountAccessAllowsScroll(874, true)).toBe(true);
+    expect(accountAccessAllowsScroll(874)).toBe(false);
+    expect(accountAccessAllowsScroll(800)).toBe(false);
+    expect(accountAccessAllowsScroll(759)).toBe(true);
   });
 
-  it('renders the locked registration fields without inventing a name field', async () => {
+  it('renders the required registration identity fields', async () => {
     mockPresenterState = { ...mockPresenterState, mode: 'register' };
     await render(
       <SafeAreaProvider initialMetrics={metrics}>
@@ -78,7 +87,7 @@ describe('AccountAccessScreen', () => {
     );
     expect(screen.getByLabelText('Email')).toBeTruthy();
     expect(screen.getByLabelText('Password')).toBeTruthy();
-    expect(screen.queryByLabelText('Name for the record')).toBeNull();
+    expect(screen.getByLabelText('Name for the record')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'CREATE ACCOUNT' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'LOG IN' })).toBeTruthy();
   });

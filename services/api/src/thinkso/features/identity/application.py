@@ -8,6 +8,7 @@ from typing import Protocol
 from uuid import UUID, uuid4
 
 from thinkso.features.identity.domain import (
+    DisplayNameRequired,
     FirebaseIdentity,
     IdentityConflict,
     RetiredProfile,
@@ -27,6 +28,7 @@ class IdentityRepository(Protocol):
         self,
         identity: FirebaseIdentity,
         normalized_email: str,
+        display_name: str | None,
         session_id: UUID,
         family_id: UUID,
         access_token_hash: str,
@@ -49,12 +51,14 @@ class IdentityService:
     async def login(self, firebase_id_token: str) -> SessionCredentials:
         identity = await self._verifier.verify(firebase_id_token)
         normalized_email = normalize_email(identity.email)
+        display_name = normalize_display_name(identity.display_name)
         now = self._clock()
         access_token = secrets.token_urlsafe(32)
         refresh_token = secrets.token_urlsafe(48)
         user = await self._repository.login(
             identity=identity,
             normalized_email=normalized_email,
+            display_name=display_name,
             session_id=uuid4(),
             family_id=uuid4(),
             access_token_hash=hash_token(access_token),
@@ -78,6 +82,15 @@ def normalize_email(email: str) -> str:
     return normalized
 
 
+def normalize_display_name(display_name: str | None) -> str | None:
+    if display_name is None:
+        return None
+    normalized = " ".join(display_name.split())
+    if not normalized or len(normalized) > 80:
+        raise DisplayNameRequired
+    return normalized
+
+
 def hash_token(token: str) -> str:
     return hashlib.sha256(token.encode("utf-8")).hexdigest()
 
@@ -97,6 +110,7 @@ __all__ = [
     "REFRESH_ABSOLUTE_LIFETIME",
     "REFRESH_IDLE_LIFETIME",
     "IdentityConflict",
+    "DisplayNameRequired",
     "IdentityRepository",
     "IdentityService",
     "RetiredProfile",
@@ -104,4 +118,5 @@ __all__ = [
     "firebase_revocation_check_is_stale",
     "firebase_session_is_revoked",
     "normalize_email",
+    "normalize_display_name",
 ]

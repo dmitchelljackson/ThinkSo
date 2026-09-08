@@ -55,7 +55,7 @@ const config: ExpoConfig & { newArchEnabled: boolean; jsEngine: 'hermes' } = {
   },
   experiments: { typedRoutes: true },
   ios: { bundleIdentifier: 'com.thinkso.app', supportsTablet: true },
-  android: { package: 'com.thinkso.app' },
+  android: { package: 'com.thinkso.app', softwareKeyboardLayoutMode: 'pan' },
   web: { bundler: 'metro' },
   plugins: ['expo-router', 'expo-secure-store'],
 };

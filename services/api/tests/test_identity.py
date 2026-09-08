@@ -9,6 +9,7 @@ from thinkso.features.identity.application import (
     firebase_revocation_check_is_stale,
     firebase_session_is_revoked,
     hash_token,
+    normalize_display_name,
     normalize_email,
 )
 from thinkso.features.identity.domain import FirebaseIdentity, RetiredProfile, User
@@ -17,7 +18,9 @@ from thinkso.features.identity.domain import FirebaseIdentity, RetiredProfile, U
 class FakeVerifier:
     async def verify(self, _token: str) -> FirebaseIdentity:
         instant = datetime(2026, 9, 5, tzinfo=UTC)
-        return FirebaseIdentity("firebase-user", " User@Example.COM ", instant, instant)
+        return FirebaseIdentity(
+            "firebase-user", " User@Example.COM ", " Mitchell  Jackson ", instant, instant
+        )
 
 
 class RecordingRepository:
@@ -29,6 +32,7 @@ class RecordingRepository:
         self,
         identity: FirebaseIdentity,
         normalized_email: str,
+        display_name: str | None,
         session_id: UUID,
         family_id: UUID,
         access_token_hash: str,
@@ -39,6 +43,7 @@ class RecordingRepository:
             {
                 "identity": identity,
                 "normalized_email": normalized_email,
+                "display_name": display_name,
                 "session_id": session_id,
                 "family_id": family_id,
                 "access_token_hash": access_token_hash,
@@ -52,7 +57,7 @@ class RecordingRepository:
             UUID("00000000-0000-0000-0000-000000000001"),
             "firebase-user",
             "user@example.com",
-            None,
+            display_name,
             None,
         )
 
@@ -69,6 +74,7 @@ async def test_login_normalizes_identity_and_issues_only_opaque_credentials() ->
     assert result.refresh_token != "firebase-token"
     call = repository.calls[0]
     assert call["normalized_email"] == "user@example.com"
+    assert call["display_name"] == "Mitchell Jackson"
     assert call["access_token_hash"] == hash_token(result.access_token)
     assert call["refresh_token_hash"] == hash_token(result.refresh_token)
     assert result.access_token not in str(call)
@@ -83,6 +89,10 @@ async def test_retired_identity_never_receives_credentials() -> None:
 
 def test_email_normalization_is_stable() -> None:
     assert normalize_email(" Person@Example.COM ") == "person@example.com"
+
+
+def test_display_name_normalization_is_stable() -> None:
+    assert normalize_display_name(" Mitchell   Jackson ") == "Mitchell Jackson"
 
 
 def test_firebase_revocation_policy_has_a_bounded_staleness_window() -> None:

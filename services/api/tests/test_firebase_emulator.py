@@ -19,6 +19,17 @@ pytestmark = pytest.mark.skipif(
 )
 
 
+async def set_display_name(client: httpx.AsyncClient, token: str, name: str) -> str:
+    response = await client.post(
+        "http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/accounts:update",
+        params={"key": "demo-key"},
+        json={"idToken": token, "displayName": name, "returnSecureToken": True},
+    )
+    response.raise_for_status()
+    assert response.json()["displayName"] == name
+    return token
+
+
 @pytest.mark.asyncio
 async def test_admin_verifies_emulator_token_and_rejects_garbage() -> None:
     email = f"agent-{uuid.uuid4()}@example.test"
@@ -29,7 +40,8 @@ async def test_admin_verifies_emulator_token_and_rejects_garbage() -> None:
             json={"email": email, "password": "test-password", "returnSecureToken": True},
         )
     response.raise_for_status()
-    token = response.json()["idToken"]
+    async with httpx.AsyncClient() as client:
+        token = await set_display_name(client, response.json()["idToken"], "Agent Tester")
     claims = jwt.decode(token, options={"verify_signature": False})
     verifier = AdminFirebaseIdentityVerifier(
         Settings(  # type: ignore[call-arg]
@@ -39,6 +51,7 @@ async def test_admin_verifies_emulator_token_and_rejects_garbage() -> None:
     try:
         identity = await verifier.verify(token)
         assert identity.email == email
+        assert identity.display_name == "Agent Tester"
         expired = jwt.encode(
             {**claims, "exp": datetime.now(UTC) - timedelta(minutes=1)},
             key="",
@@ -62,7 +75,8 @@ async def test_firebase_token_exchanges_end_to_end_and_reuses_profile() -> None:
             json={"email": email, "password": "test-password", "returnSecureToken": True},
         )
     signup.raise_for_status()
-    firebase_token = signup.json()["idToken"]
+    async with httpx.AsyncClient() as client:
+        firebase_token = await set_display_name(client, signup.json()["idToken"], "Agent Tester")
     settings = Settings(  # type: ignore[call-arg]
         _env_file=None, firebase_project_id="demo-thinkso"
     )
@@ -92,7 +106,10 @@ async def test_firebase_token_exchanges_end_to_end_and_reuses_profile() -> None:
                 )
             deleted.raise_for_status()
             replacement.raise_for_status()
-            replacement_token = replacement.json()["idToken"]
+            async with httpx.AsyncClient() as firebase_client:
+                replacement_token = await set_display_name(
+                    firebase_client, replacement.json()["idToken"], "Replacement Tester"
+                )
             conflict = await client.post(
                 "/v1/auth/login", json={"firebase_id_token": replacement_token}
             )
@@ -136,6 +153,7 @@ async def test_firebase_token_exchanges_end_to_end_and_reuses_profile() -> None:
     assert conflict.status_code == 409
     assert retired.status_code == 403
     assert first.json()["user"]["id"] == second.json()["user"]["id"]
+    assert first.json()["user"]["display_name"] == "Agent Tester"
     assert first.json()["access_token"] != second.json()["access_token"]
     assert first.json()["access_token"] != firebase_token
     assert first.json()["refresh_token"] != firebase_token

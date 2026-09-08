@@ -9,6 +9,7 @@ from uuid import UUID
 class FirebaseIdentity:
     uid: str
     email: str
+    display_name: str | None
     auth_time: datetime
     tokens_valid_after: datetime
 
@@ -39,4 +40,8 @@ class RetiredProfile(Exception):
 
 
 class IdentityConflict(Exception):
+    pass
+
+
+class DisplayNameRequired(Exception):
     pass

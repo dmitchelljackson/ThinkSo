@@ -29,10 +29,15 @@ describe('account access mutation boundary', () => {
     const repository = { exchange: jest.fn(async () => session) };
     const mutation = new DefaultAccountMutations(firebase, repository).authenticate();
     await mutation.mutationFn?.(
-      { mode: 'register', email: 'a@b.com', password: 'password' } as never,
+      {
+        mode: 'register',
+        displayName: 'Mitchell',
+        email: 'a@b.com',
+        password: 'password',
+      } as never,
       {} as never,
     );
-    expect(firebase.register).toHaveBeenCalledTimes(1);
+    expect(firebase.register).toHaveBeenCalledWith('a@b.com', 'password', 'Mitchell');
     expect(repository.exchange).toHaveBeenCalledTimes(1);
     expect(repository.exchange).toHaveBeenCalledWith('firebase-token');
   });

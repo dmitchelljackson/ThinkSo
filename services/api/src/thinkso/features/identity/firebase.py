@@ -48,6 +48,7 @@ class AdminFirebaseIdentityVerifier:
             return FirebaseIdentity(
                 uid=uid,
                 email=email,
+                display_name=record.display_name,
                 auth_time=datetime.fromtimestamp(auth_time, UTC),
                 tokens_valid_after=datetime.fromtimestamp(valid_after_ms / 1000, UTC),
             )

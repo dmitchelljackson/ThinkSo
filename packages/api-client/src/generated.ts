@@ -161,6 +161,15 @@ export interface operations {
           'application/json': components['schemas']['LoginResponse'];
         };
       };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
       /** @description Unauthorized */
       401: {
         headers: {

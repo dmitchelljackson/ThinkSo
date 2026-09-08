@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from thinkso.features.identity.application import IdentityService
 from thinkso.features.identity.domain import (
+    DisplayNameRequired,
     IdentityConflict,
     InvalidFirebaseCredential,
     RetiredProfile,
@@ -59,6 +60,7 @@ router = APIRouter(prefix="/auth", tags=["authentication"])
     "/login",
     response_model=LoginResponse,
     responses={
+        400: {"model": ErrorResponse},
         401: {"model": ErrorResponse},
         403: {"model": ErrorResponse},
         409: {"model": ErrorResponse},
@@ -78,6 +80,8 @@ async def login(
         return problem(403, "profile_retired", "This profile was permanently retired.")
     except IdentityConflict:
         return problem(409, "identity_conflict", "This identity cannot be linked automatically.")
+    except DisplayNameRequired:
+        return problem(400, "display_name_required", "A name for the record is required.")
     return LoginResponse(
         access_token=session.access_token,
         refresh_token=session.refresh_token,

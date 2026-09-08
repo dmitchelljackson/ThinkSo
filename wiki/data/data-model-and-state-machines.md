@@ -7,7 +7,7 @@
 - `id`
 - unique Firebase UID linkage
 - normalized Firebase account email used as a private identity/recovery signal
-- nullable display name populated from the connected Threads profile rather than signup
+- ThinkSo display name supplied during signup (required for new profiles; the database remains nullable while legacy/local records are repaired)
 - `retired_at` nullable
 - timestamps
 
@@ -76,7 +76,7 @@ Maintain a durable append-only cost ledger keyed to the attributable user and op
 
 ### contracts
 
-Each agent proposal is a new immutable contract row in `PROPOSED`. Revisions never overwrite a prior proposal. Contract content includes title, `creator_display_name`, intended-opponent display, resolution contract, dates, state timestamps, and a nullable `terminal_at` used for CLOSED ordering. The creator label defaults from the connected Threads profile name or handle but may be changed by the minting agent for that proposal without changing the user profile. The resolution contract itself contains the official evidence sources or source hierarchy; do not persist a competing structured judgment-source field. Descriptive participant names are not identity constraints. Participant binding/state timestamps change through guarded transitions; the agreed contract text does not. Contract serialization also includes the creator's Threads handle and, after acceptance, the authenticated challenger's Threads handle. If a different link-holder accepts first, retain the intended-opponent text and display the authenticated challenger separately. Preserved public Contract history retains both bound participants' handles after retirement.
+Each agent proposal is a new immutable contract row in `PROPOSED`. Revisions never overwrite a prior proposal. Contract content includes title, `creator_display_name`, intended-opponent display, resolution contract, dates, state timestamps, and a nullable `terminal_at` used for CLOSED ordering. The creator label defaults from the ThinkSo account display name but may be changed by the minting agent for that proposal without changing the user profile. The resolution contract itself contains the official evidence sources or source hierarchy; do not persist a competing structured judgment-source field. Descriptive participant names are not identity constraints. Participant binding/state timestamps change through guarded transitions; the agreed contract text does not. Contract serialization also includes the creator's Threads handle and, after acceptance, the authenticated challenger's Threads handle. If a different link-holder accepts first, retain the intended-opponent text and display the authenticated challenger separately. Preserved public Contract history retains both bound participants' handles after retirement.
 
 ### consequences and consequence_destinations
 

@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { Keyboard, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   AccountFormFields,
@@ -22,16 +21,18 @@ export function AccountAccessScreen() {
   const { colors } = useThinkSoTheme();
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
-  const keyboardVisible = useKeyboardVisible();
   const registering = state.mode === 'register';
-  const allowScroll = accountAccessAllowsScroll(height, keyboardVisible);
+  const allowScroll = accountAccessAllowsScroll(height);
 
   return (
     <View style={styles.root}>
       <DocumentScreen
         testID="account-access-screen"
         scroll={allowScroll}
-        contentContainerStyle={styles.document}
+        contentContainerStyle={[
+          styles.document,
+          { paddingBottom: Math.max(spacing.sm, insets.bottom + spacing.xs) },
+        ]}
       >
         <FormHeader
           eyebrow={registering ? 'THINKSO · NEW ACCOUNT' : 'THINKSO · ACCOUNT ACCESS'}
@@ -70,8 +71,8 @@ export function AccountAccessScreen() {
   );
 }
 
-export function accountAccessAllowsScroll(height: number, keyboardVisible: boolean) {
-  return keyboardVisible || height < 760;
+export function accountAccessAllowsScroll(height: number) {
+  return height < 760;
 }
 
 type PresenterState = ReturnType<typeof useAccountAccessPresenter>;
@@ -93,9 +94,11 @@ function LoginContent({
           <AppDrawing name="accessStar" width={48} />
         </View>
         <View style={styles.wordmark}>
-          <ThinkSoText style={styles.wordmarkText}>ThinkSo</ThinkSoText>
-          <View style={styles.wordmarkUnderline}>
-            <AppDrawing name="doubleUnderline" width={190} />
+          <View style={styles.wordmarkLabel}>
+            <ThinkSoText style={styles.wordmarkText}>ThinkSo</ThinkSoText>
+            <View style={styles.wordmarkUnderline}>
+              <AppDrawing name="doubleUnderline" width={190} />
+            </View>
           </View>
           <View style={styles.punctuation}>
             <AppDrawing name="punctuation" width={34} />
@@ -119,23 +122,24 @@ function LoginContent({
           <AppDrawing name="angryFace" width={42} />
         </View>
         <ThinkSoText>One of you is wrong.</ThinkSoText>
-        <ThinkSoText style={styles.statementCopy}>
-          Write it down. We’ll call it.{`\n`}Keep the receipts.
-        </ThinkSoText>
-        <View style={styles.receiptsUnderline}>
-          <AppDrawing name="doubleUnderline" width={128} />
+        <ThinkSoText style={styles.statementCopy}>Write it down. We’ll call it.</ThinkSoText>
+        <View style={styles.receiptsPhrase}>
+          <ThinkSoText>Keep the receipts.</ThinkSoText>
+          <View style={styles.receiptsUnderline}>
+            <AppDrawing name="doubleUnderline" width={128} />
+          </View>
         </View>
       </View>
 
       <View style={styles.noBackingOut}>
-        <View>
+        <View style={styles.noBackingLabel}>
           <ThinkSoText variant="annotation" tone="blue" style={styles.noBackingText}>
             no backing out
           </ThinkSoText>
-          <AppDrawing name="doubleUnderline" width={150} />
+          <AppDrawing name="doubleUnderline" width={110} />
         </View>
-        <AppDrawing name="noBackingOutArrow" width={58} />
-        <AppDrawing name="flame" width={38} />
+        <AppDrawing name="noBackingOutArrow" width={43} />
+        <AppDrawing name="flame" width={28} />
       </View>
 
       <View style={[styles.loginFormCard, { borderColor: colors.rule }]}>
@@ -205,10 +209,13 @@ function RegisterContent({ state }: { state: PresenterState }) {
       <View style={[styles.registrationFields, { borderColor: colors.rule }]}>
         <AccountFormFields
           mode={state.mode}
+          displayName={state.displayName}
           email={state.email}
           password={state.password}
+          {...(state.displayNameError ? { displayNameError: state.displayNameError } : {})}
           {...(state.emailError ? { emailError: state.emailError } : {})}
           {...(state.passwordError ? { passwordError: state.passwordError } : {})}
+          onDisplayNameChange={(value) => state.onEvent({ type: 'displayNameChanged', value })}
           onEmailChange={(value) => state.onEvent({ type: 'emailChanged', value })}
           onPasswordChange={(value) => state.onEvent({ type: 'passwordChanged', value })}
           onSubmit={() => state.onEvent({ type: 'submitPressed' })}
@@ -298,15 +305,15 @@ function AccountFooter({
     <View style={[styles.footer, { borderTopColor: colors.rule }]}>
       {!registering && (
         <View style={styles.footerPen}>
-          <AppDrawing name="penAndBurst" width={54} />
+          <AppDrawing name="penAndBurst" width={34} />
         </View>
       )}
-      <ThinkSoText variant="caption" tone="muted">
+      <ThinkSoText variant="caption" tone="muted" style={styles.footerCaption}>
         By {registering ? 'registering' : 'continuing'}, you agree to the ThinkSo
       </ThinkSoText>
       <View style={styles.footerLinks}>
-        {['HOW IT WORKS', 'TERMS OF SERVICE', 'PRIVACY POLICY'].map((label) => (
-          <TextAction key={label} label={label} disabled={busy} onPress={onPlaceholder} />
+        {['TERMS OF SERVICE', 'PRIVACY POLICY'].map((label) => (
+          <TextAction key={label} label={label} disabled={busy} compact onPress={onPlaceholder} />
         ))}
       </View>
     </View>
@@ -316,11 +323,13 @@ function AccountFooter({
 function TextAction({
   label,
   disabled,
+  compact = false,
   tone = 'blue',
   onPress,
 }: {
   label: string;
   disabled: boolean;
+  compact?: boolean;
   tone?: 'blue' | 'muted';
   onPress: () => void;
 }) {
@@ -333,43 +342,37 @@ function TextAction({
       onPress={onPress}
       style={({ pressed }) => [pressed && !disabled && styles.pressed, disabled && styles.disabled]}
     >
-      <ThinkSoText variant="action" tone={tone === 'blue' ? 'blue' : 'muted'}>
+      <ThinkSoText
+        variant="action"
+        tone={tone === 'blue' ? 'blue' : 'muted'}
+        style={compact ? styles.compactAction : undefined}
+      >
         {label}
       </ThinkSoText>
     </Pressable>
   );
 }
 
-function useKeyboardVisible() {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const show = Keyboard.addListener('keyboardDidShow', () => setVisible(true));
-    const hide = Keyboard.addListener('keyboardDidHide', () => setVisible(false));
-    return () => {
-      show.remove();
-      hide.remove();
-    };
-  }, []);
-  return visible;
-}
-
 const styles = StyleSheet.create({
   root: { flex: 1 },
   document: { flexGrow: 1, gap: 0 },
   loginHero: {
-    minHeight: 94,
+    minHeight: 102,
     position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
   },
   wordmark: { position: 'relative', flexDirection: 'row', alignItems: 'flex-start' },
+  wordmarkLabel: { position: 'relative', alignItems: 'center' },
   wordmarkText: {
     fontFamily: 'Spectral_400Regular',
     fontSize: 56,
-    lineHeight: 60,
+    lineHeight: 70,
     letterSpacing: -0.8,
+    paddingTop: 2,
+    includeFontPadding: true,
   },
-  wordmarkUnderline: { position: 'absolute', left: 1, bottom: -8 },
+  wordmarkUnderline: { position: 'absolute', bottom: -8 },
   lightning: { position: 'absolute', left: 0, bottom: 4, transform: [{ rotate: '-6deg' }] },
   punctuation: { marginTop: -2, marginLeft: 3 },
   accessStar: { position: 'absolute', right: -6, top: 7 },
@@ -396,18 +399,19 @@ const styles = StyleSheet.create({
   statementCopy: { textAlign: 'center' },
   skull: { position: 'absolute', left: -9, top: 10, transform: [{ rotate: '-8deg' }] },
   angryFace: { position: 'absolute', right: -5, top: 9, transform: [{ rotate: '5deg' }] },
-  receiptsUnderline: { position: 'absolute', right: 38, bottom: 3 },
+  receiptsPhrase: { position: 'relative', alignItems: 'center' },
+  receiptsUnderline: { position: 'absolute', bottom: -8 },
   noBackingOut: {
     flexGrow: 1,
-    minHeight: 48,
+    minHeight: 32,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingLeft: spacing.sm,
-    gap: 4,
+    justifyContent: 'center',
+    gap: 3,
     transform: [{ rotate: '-3deg' }],
   },
-  noBackingText: { lineHeight: 22 },
+  noBackingLabel: { alignItems: 'center' },
+  noBackingText: { fontSize: 13, lineHeight: 18 },
   loginFormCard: {
     position: 'relative',
     borderWidth: 1,
@@ -443,15 +447,17 @@ const styles = StyleSheet.create({
   registrationAction: { position: 'relative', gap: 10 },
   registrationLoading: { position: 'absolute', right: 2, top: -43 },
   footer: {
-    minHeight: 64,
+    minHeight: 44,
     position: 'relative',
     borderTopWidth: 1,
-    marginTop: 14,
-    paddingTop: 10,
-    gap: 5,
+    marginTop: spacing.sm,
+    paddingTop: 6,
+    gap: 2,
   },
-  footerLinks: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, flexWrap: 'wrap' },
-  footerPen: { position: 'absolute', right: 2, bottom: -3, transform: [{ rotate: '4deg' }] },
+  footerCaption: { fontSize: 9, lineHeight: 12 },
+  footerLinks: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, flexWrap: 'wrap' },
+  footerPen: { position: 'absolute', right: 2, bottom: 0, transform: [{ rotate: '4deg' }] },
+  compactAction: { fontSize: 9, lineHeight: 12, letterSpacing: 1.2 },
   pressed: { opacity: 0.7 },
   disabled: { opacity: 0.45 },
   toast: {

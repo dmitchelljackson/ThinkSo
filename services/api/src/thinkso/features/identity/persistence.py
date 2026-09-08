@@ -13,6 +13,7 @@ from thinkso.features.identity.application import (
     REFRESH_IDLE_LIFETIME,
 )
 from thinkso.features.identity.domain import (
+    DisplayNameRequired,
     FirebaseIdentity,
     IdentityConflict,
     RetiredProfile,
@@ -28,6 +29,7 @@ class SqlIdentityRepository:
         self,
         identity: FirebaseIdentity,
         normalized_email: str,
+        display_name: str | None,
         session_id: UUID,
         family_id: UUID,
         access_token_hash: str,
@@ -60,6 +62,8 @@ class SqlIdentityRepository:
                 .one_or_none()
             )
             if row is None:
+                if display_name is None:
+                    raise DisplayNameRequired
                 email_owner = await self._session.scalar(
                     text("SELECT id FROM users WHERE normalized_email = :email"),
                     {"email": normalized_email},
@@ -74,19 +78,21 @@ class SqlIdentityRepository:
                             "(id, firebase_uid, normalized_email, display_name, "
                             "firebase_tokens_valid_after, firebase_revocation_checked_at, "
                             "retired_at, created_at, updated_at) VALUES "
-                            "(:id, :uid, :email, NULL, :valid_after, :now, NULL, :now, :now)"
+                            "(:id, :uid, :email, :display_name, :valid_after, :now, NULL, "
+                            ":now, :now)"
                         ),
                         {
                             "id": user_id,
                             "uid": identity.uid,
                             "email": normalized_email,
+                            "display_name": display_name,
                             "valid_after": identity.tokens_valid_after,
                             "now": now,
                         },
                     )
                 except IntegrityError as error:
                     raise IdentityConflict from error
-                user = User(user_id, identity.uid, normalized_email, None, None)
+                user = User(user_id, identity.uid, normalized_email, display_name, None)
             else:
                 if row["retired_at"] is not None:
                     raise RetiredProfile

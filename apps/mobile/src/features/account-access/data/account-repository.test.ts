@@ -7,7 +7,7 @@ const response = {
   expires_in: 86400,
   user: {
     id: '00000000-0000-0000-0000-000000000001',
-    display_name: null,
+    display_name: 'Mitchell',
     is_retired: false,
     social_identity: null,
   },
@@ -25,6 +25,7 @@ describe('account repository', () => {
     });
     expect(session.accessToken).toBe('access');
     expect(session.refreshToken).toBe('refresh');
+    expect(session.user.displayName).toBe('Mitchell');
     expect(save).toHaveBeenCalledWith(session);
   });
 

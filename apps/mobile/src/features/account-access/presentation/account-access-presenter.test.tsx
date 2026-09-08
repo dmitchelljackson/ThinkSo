@@ -132,8 +132,35 @@ describe('account access presenter', () => {
   });
 
   it('enforces the registration password minimum', () => {
-    expect(validate('register', 'user@example.com', 'short').password).toBeDefined();
-    expect(validate('register', 'user@example.com', 'long-enough').password).toBeUndefined();
+    expect(validate('register', 'user@example.com', 'short', 'Mitchell').password).toBeDefined();
+    expect(
+      validate('register', 'user@example.com', 'long-enough', 'Mitchell').password,
+    ).toBeUndefined();
+  });
+
+  it('requires and normalizes the registration display name', async () => {
+    expect(validate('register', 'user@example.com', 'long-enough').displayName).toBeDefined();
+    let received: AccountCommand | undefined;
+    const authenticate = jest.fn(async (command: AccountCommand) => {
+      received = command;
+      return session;
+    });
+    const dependencies = harness(authenticate);
+    const rendered = await renderHook(() => useAccountAccessPresenterImpl(dependencies), {
+      wrapper: dependencies.wrapper,
+    });
+    await act(async () => {
+      rendered.result.current.onEvent({ type: 'switchModePressed' });
+      rendered.result.current.onEvent({
+        type: 'displayNameChanged',
+        value: '  Mitchell   Jackson ',
+      });
+      rendered.result.current.onEvent({ type: 'emailChanged', value: 'user@example.com' });
+      rendered.result.current.onEvent({ type: 'passwordChanged', value: 'long-enough' });
+    });
+    await act(async () => rendered.result.current.onEvent({ type: 'submitPressed' }));
+    await waitFor(() => expect(dependencies.navigate).toHaveBeenCalledWith(session));
+    expect(received).toEqual(expect.objectContaining({ displayName: 'Mitchell Jackson' }));
   });
 
   it('switches to registration locally without starting account work', async () => {
@@ -146,4 +173,25 @@ describe('account access presenter', () => {
     expect(rendered.result.current.mode).toBe('register');
     expect(authenticate).not.toHaveBeenCalled();
   });
+
+  it.each(['forgotPasswordPressed', 'placeholderPressed'] as const)(
+    'shows a non-retryable not-yet-implemented toast for %s',
+    async (type) => {
+      const authenticate = jest.fn(async () => session);
+      const dependencies = harness(authenticate);
+      const rendered = await renderHook(() => useAccountAccessPresenterImpl(dependencies), {
+        wrapper: dependencies.wrapper,
+      });
+
+      await act(async () => rendered.result.current.onEvent({ type }));
+
+      expect(rendered.result.current.toast).toEqual({
+        header: 'NOT YET IMPLEMENTED · JUST NOW',
+        message: 'This feature is not yet implemented.',
+        action: 'DISMISS',
+        retryable: false,
+      });
+      expect(authenticate).not.toHaveBeenCalled();
+    },
+  );
 });
