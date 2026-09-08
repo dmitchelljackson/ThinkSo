@@ -79,7 +79,7 @@ Screen-specific entry point: [Screens, BDD, and UI sources](../SCREENS.md)
 - [Referenced product conversation](../raw/conversations/assess-small-bets-legality.md)
 - [Claude product-flow artifact](../raw/designs/claude-product-flow.md)
 - [Claude Design export](../raw/designs/thinkso-claude-export.md) — preserved source files and interpretation warning.
-- [Firebase email/password design archive](../raw/designs/thinkso-login-email-password-2026-09-04.md) — current Login and Create Account visual sources, source manifest, and preserved Register-name mismatch.
+- [Firebase email/password design archive](../raw/designs/thinkso-login-email-password-2026-09-04.md) — current Login and Create Account visual sources and source manifest.
 - [LLM Wiki pattern](../raw/references/llm-wiki-pattern.md)
 - [AutoMobile](../raw/references/automobile.md) — selected MCP source for agent-driven native mobile interaction.
 - [GitHub native stacked pull requests](../raw/references/github-native-stacked-pull-requests.md) — official preview, CLI, management, merge, and CI references.

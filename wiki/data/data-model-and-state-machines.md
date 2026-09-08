@@ -7,7 +7,7 @@
 - `id`
 - unique Firebase UID linkage
 - normalized Firebase account email used as a private identity/recovery signal
-- nullable display name populated from the connected Threads profile rather than signup
+- ThinkSo display name supplied during signup (required for new profiles; the database remains nullable while legacy/local records are repaired)
 - `retired_at` nullable
 - timestamps
 
@@ -19,7 +19,7 @@ Firebase Authentication owns email/password credentials, reset messages, and Fir
 
 When a profile is permanently retired, preserve tombstones for the Firebase UID, every normalized Firebase account email observed for it, and the Threads user ID. A future authentication or Threads connection that matches any tombstoned identifier is treated as the same retired user and cannot create or activate a profile. This is deliberate, proportionate deterrence for a low-stakes recreational product, not legal identity verification or guaranteed prevention of evasion. Because MVP skips email confirmation, the email signal alone is weaker and is documented as a known limitation.
 
-ThinkSo issues its own revocable sessions after the backend verifies a current Firebase ID token. The exact bridge from Firebase password-reset/account-change revocation to ThinkSo-session-family revocation is **OPEN** and blocks completion of T-030.
+ThinkSo issues its own revocable sessions after the backend verifies a current Firebase ID token. **DERIVED — Firebase revocation bridge:** authenticated ThinkSo access checks the database session on every request and refreshes the user's Firebase `tokens_valid_after` epoch through the Admin SDK when the stored check is five minutes old. If that epoch is newer than a session's Firebase authentication time, all ThinkSo session families for the user are revoked before the request proceeds. The five-minute cache bounds post-reset exposure without adding a Firebase network call to every request. T-030 records the two timestamps and tests the comparison/staleness policy; T-040 owns the authenticated-request and refresh enforcement path.
 
 Persist sessions with enough data to enforce the locked policy:
 
@@ -28,6 +28,8 @@ Persist sessions with enough data to enforce the locked policy:
 - refresh-token rotation/family identifier and previous-token grace expiry;
 - `last_refreshed_at`, 30-day idle expiry, and 180-day absolute expiry;
 - user/device association and creation/update timestamps.
+
+The user row also records the latest Firebase `tokens_valid_after` value and when it was last checked. Each ThinkSo session records the Firebase `auth_time` from the ID token that created it. Firebase credentials are never retained by the ThinkSo backend merely to perform this check.
 
 Access tokens have a 24-hour nominal lifetime, but every authenticated request also checks that the database session is active. Refresh exchanges rotate the credential atomically and may return the same previously created successor during the 30-second grace window; they must never fork one token family into multiple successors.
 
@@ -74,7 +76,7 @@ Maintain a durable append-only cost ledger keyed to the attributable user and op
 
 ### contracts
 
-Each agent proposal is a new immutable contract row in `PROPOSED`. Revisions never overwrite a prior proposal. Contract content includes title, `creator_display_name`, intended-opponent display, resolution contract, dates, state timestamps, and a nullable `terminal_at` used for CLOSED ordering. The creator label defaults from the connected Threads profile name or handle but may be changed by the minting agent for that proposal without changing the user profile. The resolution contract itself contains the official evidence sources or source hierarchy; do not persist a competing structured judgment-source field. Descriptive participant names are not identity constraints. Participant binding/state timestamps change through guarded transitions; the agreed contract text does not. Contract serialization also includes the creator's Threads handle and, after acceptance, the authenticated challenger's Threads handle. If a different link-holder accepts first, retain the intended-opponent text and display the authenticated challenger separately. Preserved public Contract history retains both bound participants' handles after retirement.
+Each agent proposal is a new immutable contract row in `PROPOSED`. Revisions never overwrite a prior proposal. Contract content includes title, `creator_display_name`, intended-opponent display, resolution contract, dates, state timestamps, and a nullable `terminal_at` used for CLOSED ordering. The creator label defaults from the ThinkSo account display name but may be changed by the minting agent for that proposal without changing the user profile. The resolution contract itself contains the official evidence sources or source hierarchy; do not persist a competing structured judgment-source field. Descriptive participant names are not identity constraints. Participant binding/state timestamps change through guarded transitions; the agreed contract text does not. Contract serialization also includes the creator's Threads handle and, after acceptance, the authenticated challenger's Threads handle. If a different link-holder accepts first, retain the intended-opponent text and display the authenticated challenger separately. Preserved public Contract history retains both bound participants' handles after retirement.
 
 ### consequences and consequence_destinations
 
