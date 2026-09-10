@@ -45,6 +45,8 @@ THINKSO_REVIEWER_ALLOW_MAIN_PUSH=1 node scripts/reviewer/github-app.mjs push-wik
 
 The helper must refuse any working-tree, staged, or outgoing commit change outside `wiki/reviewer/**`. It rebases the knowledge commit onto a newer `origin/main` before pushing. If that rebase conflicts, resolve the conflict according to the current reviewer rules and authorized feedback, but only inside `wiki/reviewer/**`; continue the rebase and rerun the helper. The commit message and updated knowledge must identify the processed PR and merge commit so repeated dispatch is idempotent. If there is no authorized actionable feedback, make no commit.
 
+The orchestrator removes the isolated worktree only after a successful run. If this role fails, report the preserved recovery path and leave its changes intact for diagnosis or retry.
+
 ## Completion report
 
 Return `LEARNED`, `NO_CHANGE`, or `BLOCKED_TECHNICAL`; include the PR, merge commit, authorized feedback considered, changed reviewer files, pushed commit SHA when applicable, and any clarification candidate.

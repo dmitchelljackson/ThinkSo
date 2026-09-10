@@ -10,6 +10,10 @@ Added separate post-push review and post-merge feedback skills. Both dispatch in
 
 Isolated post-merge learning in a temporary worktree fetched from `origin/main`. The feedback agent may rebase and resolve semantic conflicts within reviewer knowledge, while the App-authenticated push helper rejects working-tree, staged, or outgoing commit changes outside `wiki/reviewer/**` before updating `main`.
 
+## [2026-09-10] harden | Structured GitHub reviews
+
+Replaced free-form review-body posting with a guarded Python CLI under `wiki/reviewer/`. It validates the local PEM and GitHub App installation, exposes current PR patches, and atomically posts a real approve, request-changes, or comment review composed of a short summary and validated inline findings.
+
 ## [2026-09-06] decision | Two-stage mobile visual QA
 
 Locked visual review for every mobile UI ticket to two stages: Expo Web/Playwright side-by-side comparison with the authoritative design during fast implementation iteration, followed by Android and iOS side-by-side native verification against the same source. Added the canonical workflow and made it required context for coordinator, implementer, and UI-verifier dispatches and a required ticket gate.
