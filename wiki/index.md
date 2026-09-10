@@ -47,6 +47,7 @@ Screen-specific entry point: [Screens, BDD, and UI sources](../SCREENS.md)
 - [Coordinator prompt](./agents/coordinator.md) — backlog dispatch, Luna worker policy, native stack operations, verification, and restacking rules.
 - [Implementer prompt](./agents/implementer.md) — one-ticket full-stack implementation and PR contract.
 - [Code-reviewer prompt](./agents/code-reviewer.md) — independent candidate-diff review and finding severity rules.
+- [Review-feedback prompt](./agents/review-feedback.md) — authorized post-merge feedback learning and wiki-only mutation rules.
 - [UI-verifier prompt](./agents/ui-verifier.md) — AutoMobile native behavior and visual verification contract.
 - [Minting Agent BDD](./behavior/minting-agent-bdd.md) — numbered Given/When/Then acceptance criteria for clarification, research, official terms, timing, consequences, proposals, cancellation, and recovery.
 - [Judging Agent BDD](./behavior/judging-agent-bdd.md) — numbered Given/When/Then acceptance criteria for terms-controlled evidence, source hierarchy and quorum, retries, final verdicts, unresolved outcomes, publication handoff, and retirement.

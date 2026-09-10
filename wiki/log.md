@@ -2,6 +2,10 @@
 
 This is an append-only history of material wiki operations.
 
+## [2026-09-10] add | Local learning pull-request reviewer
+
+Added separate post-push review and post-merge feedback skills. Both dispatch invariant prompts that point to canonical wiki role files and change only the pull-request number. Locked review roles to the current affordable Sol model for OpenAI/Codex or Opus for Anthropic/Claude, excluding Luna, Astra, and Fable. The reviewer posts only `COMMENT` reviews through the ThinkSo Local Reviewer GitHub App; the feedback agent may commit only under `wiki/reviewer/**`.
+
 ## [2026-09-08] correction | Account Access visual hierarchy
 
 Centered and reduced the secondary `no backing out` annotation group, centered hand-drawn underlines beneath their words, compacted the Terms/Privacy footer, and inset the red document margin rule without moving the centered content column. Verified the responsive web matrix and native Android/iOS renders.
