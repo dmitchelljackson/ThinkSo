@@ -6,6 +6,10 @@ This is an append-only history of material wiki operations.
 
 Added separate post-push review and post-merge feedback skills. Both dispatch invariant prompts that point to canonical wiki role files and change only the pull-request number. Locked review roles to the current affordable Sol model for OpenAI/Codex or Opus for Anthropic/Claude, excluding Luna, Astra, and Fable. The reviewer posts only `COMMENT` reviews through the ThinkSo Local Reviewer GitHub App; the feedback agent may commit only under `wiki/reviewer/**`.
 
+## [2026-09-10] harden | Reviewer feedback integration
+
+Isolated post-merge learning in a temporary worktree fetched from `origin/main`. The feedback agent may rebase and resolve semantic conflicts within reviewer knowledge, while the App-authenticated push helper rejects working-tree, staged, or outgoing commit changes outside `wiki/reviewer/**` before updating `main`.
+
 ## [2026-09-08] correction | Account Access visual hierarchy
 
 Centered and reduced the secondary `no backing out` annotation group, centered hand-drawn underlines beneath their words, compacted the Terms/Privacy footer, and inset the red document margin rule without moving the centered content column. Verified the responsive web matrix and native Android/iOS renders.

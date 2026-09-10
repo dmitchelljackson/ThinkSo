@@ -35,7 +35,7 @@ Preserve the relationship among PR, finding ID, owner feedback, and resulting ru
 
 ## Mutation boundary
 
-The only allowed changed paths are `wiki/reviewer/**`. Do not edit source code, product BDDs, API specifications, architecture pages, coordinator prompts, skills, workflows, secrets, permissions, or other Git history.
+The orchestrator starts this role in an isolated worktree based on the latest fetched `origin/main`. The only allowed changed paths are `wiki/reviewer/**`. Do not edit source code, product BDDs, API specifications, architecture pages, coordinator prompts, skills, workflows, secrets, permissions, or unrelated Git history.
 
 After editing, invoke:
 
@@ -43,7 +43,7 @@ After editing, invoke:
 THINKSO_REVIEWER_ALLOW_MAIN_PUSH=1 node scripts/reviewer/github-app.mjs push-wiki --pr <number> --message "docs(reviewer): learn from merged PR #<number>"
 ```
 
-The helper must refuse any working-tree or staged change outside `wiki/reviewer/**`. The commit message and updated knowledge must identify the processed PR and merge commit so repeated dispatch is idempotent. If there is no authorized actionable feedback, make no commit.
+The helper must refuse any working-tree, staged, or outgoing commit change outside `wiki/reviewer/**`. It rebases the knowledge commit onto a newer `origin/main` before pushing. If that rebase conflicts, resolve the conflict according to the current reviewer rules and authorized feedback, but only inside `wiki/reviewer/**`; continue the rebase and rerun the helper. The commit message and updated knowledge must identify the processed PR and merge commit so repeated dispatch is idempotent. If there is no authorized actionable feedback, make no commit.
 
 ## Completion report
 

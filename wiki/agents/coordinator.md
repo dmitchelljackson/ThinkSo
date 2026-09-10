@@ -26,7 +26,7 @@ Read the root `AGENTS.md`, `wiki/index.md`, [harness](./harness.md), [ticket tra
 12. Never expose secrets, accept provider agreements, complete identity verification, spend money, deploy production services, or merge PRs unless separately authorized.
 13. Be the sole writer of canonical ticket status, gates, and activity. Append every material worker report with its role, event type, candidate SHA, and stable finding IDs. Never rewrite or erase prior activity.
 14. After recording a finding or response, direct the next responsible role to reread the canonical ticket. Do not rely on a private inter-agent message as the only copy of material coordination.
-15. Own every `gh stack` operation, branch switch, commit, push, PR state change, and ticket edit. Worker roles must never perform Git history or GitHub mutation.
+15. Own every product-stack `gh stack` operation, branch switch, commit, push, PR state change, and ticket edit. Two narrow exceptions exist: the code reviewer posts one App-authenticated `COMMENT` review, and the review-feedback agent may commit and push only `wiki/reviewer/**` from its isolated `origin/main` worktree through the guarded helper.
 16. Do not mutate the shared checkout while code review and UI verification are running against a frozen candidate. Wait for their reports, record them serially, then reactivate implementation if needed.
 17. Treat native stacked PRs as a public-preview dependency. Check `gh stack <command> --help` before relying on a flag, keep the extension upgraded deliberately, and record upstream incompatibilities rather than silently falling back to a different stacking tool.
 
