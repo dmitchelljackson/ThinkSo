@@ -51,6 +51,7 @@ Screen-specific entry point: [Screens, BDD, and UI sources](../SCREENS.md)
 - [Minting Agent BDD](./behavior/minting-agent-bdd.md) — numbered Given/When/Then acceptance criteria for clarification, research, official terms, timing, consequences, proposals, cancellation, and recovery.
 - [Judging Agent BDD](./behavior/judging-agent-bdd.md) — numbered Given/When/Then acceptance criteria for terms-controlled evidence, source hierarchy and quorum, retries, final verdicts, unresolved outcomes, publication handoff, and retirement.
 - [Notifications BDD](./behavior/notifications-bdd.md) — numbered Given/When/Then acceptance criteria for permission priming, push registration, transactional events, copy, recipients, and protected navigation.
+- [Reviewer knowledge](./reviewer/README.md) — owner-approved review rules, regressions, and narrowly scoped exceptions loaded by the local reviewer subagent.
 - [Consequence Publication BDD](./behavior/consequence-publication-bdd.md) — numbered Given/When/Then acceptance criteria for exact Threads posting, POSTING, retries, ambiguous-result reconciliation, authorization pauses, receipts, voiding, and retirement.
 - Agent evals and regression corpora belong to implementation/testing documentation rather than separate product BDDs.
 
