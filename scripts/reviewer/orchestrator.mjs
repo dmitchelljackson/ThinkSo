@@ -66,12 +66,18 @@ async function runFeedbackAgent(prompt) {
   git(['fetch', 'origin', 'main']);
   const temporaryRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'thinkso-feedback-'));
   const checkout = path.join(temporaryRoot, 'main');
+  let completed = false;
   try {
     git(['worktree', 'add', '--detach', checkout, 'origin/main']);
     await runAgent(prompt, 'workspace-write', checkout);
+    completed = true;
   } finally {
-    git(['worktree', 'remove', '--force', checkout]);
-    await fs.rm(temporaryRoot, { recursive: true, force: true });
+    if (completed) {
+      git(['worktree', 'remove', '--force', checkout]);
+      await fs.rm(temporaryRoot, { recursive: true, force: true });
+    } else {
+      console.error(`Feedback worktree preserved for recovery: ${checkout}`);
+    }
   }
 }
 

@@ -7,7 +7,7 @@ Independently review the pull request named in the dispatch prompt, then post on
 ## Required context
 
 1. Read the root `AGENTS.md` and `wiki/index.md`.
-2. Query the pull request through `node scripts/reviewer/github-app.mjs pr --pr <number>` and verify its current head SHA and base branch.
+2. Run `python3 wiki/reviewer/github_review.py doctor`, then query the pull request through `python3 wiki/reviewer/github_review.py pr --pr <number>` and verify its current head SHA and base branch.
 3. Read the pull request ticket and every relevant canonical BDD, API, data, design, architecture, and operations page linked by that ticket.
 4. Read every current file under `wiki/reviewer/`.
 5. Inspect the candidate diff against the pull request's immediate base.
@@ -30,25 +30,26 @@ This role requires the strongest affordable review model rather than the cheapes
 4. Treat missing required behavior, regressions, security/privacy failures, secret exposure, unsafe destructive behavior, broken state transitions, and tests that cannot catch the defect as blocking.
 5. Keep optional refactors, naming preferences, and speculative future improvements nonblocking. Do not expand MVP scope.
 6. If canonical sources conflict, report the contradiction instead of choosing silently.
-7. Cite each finding with a stable `CR-NNN` ID, severity, file and line, concrete failure mode, violated ticket/BDD/wiki rule, smallest acceptable correction, and confidence.
+7. Give each finding a stable `CR-NNN` ID and severity. Put the concrete failure mode, violated ticket/BDD/wiki rule, and smallest acceptable correction in an inline comment on the tightest relevant changed line. Keep the high-level review summary short and do not duplicate inline details there.
 8. If no blocking finding exists, say `PASS` and state the residual risks actually reviewed. Do not invent criticism to appear thorough.
 9. Do not edit the ticket or wiki. The implementer owns fixes; the post-merge feedback agent owns reviewer knowledge changes.
 
 ## GitHub posting
 
-Before posting, verify that the pull request head still matches the reviewed SHA and that no existing review contains the marker for that head. The review body must include:
+Submit exactly one atomic review with a short, single-paragraph summary and repeatable inline comments:
 
 ```text
-<!-- thinkso-reviewer:run pr=<number> head=<full-sha> -->
+python3 wiki/reviewer/github_review.py submit \
+  --pr <number> \
+  --commit <full-sha> \
+  --decision approve|request-changes|comment \
+  --summary "<short high-level summary>" \
+  --comment 'CR-001|P1|path/to/file|42|RIGHT|<detailed inline finding>'
 ```
 
-Pipe the final body to:
+Repeat `--comment` for each finding. Use `RIGHT` for an added or current-context line and `LEFT` for a deleted line. `P0` and `P1` findings require `request-changes`. A change-request review must include at least one inline comment. If a concern truly has no commentable changed line, mention it briefly as residual risk instead of manufacturing a location.
 
-```text
-node scripts/reviewer/github-app.mjs review --pr <number> --commit <full-sha> --body-stdin
-```
-
-The helper authenticates as the GitHub App from local configuration. Never use the owner's personal `gh` identity to post. Never approve, request changes, merge, push, edit files, change permissions, or expose credentials.
+The CLI validates configuration, PEM integrity and file permissions, App installation permissions, repository access, head freshness, duplicate runs, changed paths, and commentable diff lines before submitting. It adds the run marker automatically. Never use the owner's personal `gh` identity or bypass this CLI to post.
 
 ## Completion report
 

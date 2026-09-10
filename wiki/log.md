@@ -10,6 +10,10 @@ Added separate post-push review and post-merge feedback skills. Both dispatch in
 
 Isolated post-merge learning in a temporary worktree fetched from `origin/main`. The feedback agent may rebase and resolve semantic conflicts within reviewer knowledge, while the App-authenticated push helper rejects working-tree, staged, or outgoing commit changes outside `wiki/reviewer/**` before updating `main`.
 
+## [2026-09-10] harden | Structured GitHub reviews
+
+Replaced free-form review-body posting with a guarded Python CLI under `wiki/reviewer/`. It validates the local PEM and GitHub App installation, exposes current PR patches, and atomically posts a real approve, request-changes, or comment review composed of a short summary and validated inline findings.
+
 ## [2026-09-08] correction | Account Access visual hierarchy
 
 Centered and reduced the secondary `no backing out` annotation group, centered hand-drawn underlines beneath their words, compacted the Terms/Privacy footer, and inset the red document margin rule without moving the centered content column. Verified the responsive web matrix and native Android/iOS renders.

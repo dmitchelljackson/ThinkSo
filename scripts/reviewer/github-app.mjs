@@ -70,12 +70,6 @@ async function github(path, { method = 'GET', token, body } = {}) {
   return parsed;
 }
 
-async function stdinText() {
-  const chunks = [];
-  for await (const chunk of process.stdin) chunks.push(chunk);
-  return Buffer.concat(chunks).toString('utf8');
-}
-
 async function installationToken(repo) {
   const installationId = required('THINKSO_REVIEWER_INSTALLATION_ID');
   const jwt = await appJwt();
@@ -104,32 +98,7 @@ const options = args();
 const repo = options.repo ?? required('THINKSO_REVIEWER_REPOSITORY');
 const token = await installationToken(repo);
 
-if (command === 'review') {
-  const body =
-    options['body-stdin'] === 'true' || options['body-stdin'] === true
-      ? await stdinText()
-      : await fs.readFile(required('THINKSO_REVIEWER_BODY_FILE'), 'utf8');
-  const result = await github(`/repos/${repo}/pulls/${options.pr}/reviews`, {
-    method: 'POST',
-    token,
-    body: { body, event: 'COMMENT', ...(options.commit ? { commit_id: options.commit } : {}) },
-  });
-  console.log(JSON.stringify({ id: result.id, html_url: result.html_url }));
-} else if (command === 'pr') {
-  const result = await github(`/repos/${repo}/pulls/${options.pr}`, { token });
-  console.log(
-    JSON.stringify({
-      number: result.number,
-      state: result.state,
-      merged_at: result.merged_at,
-      merge_commit: result.merge_commit_sha,
-      head: result.head.sha,
-      head_ref: result.head.ref,
-      base: result.base.sha,
-      base_ref: result.base.ref,
-    }),
-  );
-} else if (command === 'feedback-context') {
+if (command === 'feedback-context') {
   const [pull, reviews, reviewComments, issueComments] = await Promise.all([
     github(`/repos/${repo}/pulls/${options.pr}`, { token }),
     github(`/repos/${repo}/pulls/${options.pr}/reviews?per_page=100`, { token }),
@@ -230,7 +199,5 @@ if (command === 'review') {
   if (push.status !== 0) throw new Error('Unable to push reviewer knowledge commit');
   console.log(JSON.stringify({ committed: true, paths: stagedPaths }));
 } else {
-  throw new Error(
-    'Usage: github-app.mjs review|pr|feedback-context --repo owner/name --pr number [--commit sha]',
-  );
+  throw new Error('Usage: github-app.mjs feedback-context|push-wiki --repo owner/name --pr number');
 }
