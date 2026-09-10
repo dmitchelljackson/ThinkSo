@@ -2,6 +2,10 @@
 
 This is an append-only history of material wiki operations.
 
+## [2026-09-10] add | Local learning pull-request reviewer
+
+Added separate post-push review and post-merge feedback skills. Both dispatch invariant prompts that point to canonical wiki role files and change only the pull-request number. Locked review roles to the current affordable Sol model for OpenAI/Codex or Opus for Anthropic/Claude, excluding Luna, Astra, and Fable. The reviewer posts only `COMMENT` reviews through the ThinkSo Local Reviewer GitHub App; the feedback agent may commit only under `wiki/reviewer/**`.
+
 ## [2026-09-06] decision | Two-stage mobile visual QA
 
 Locked visual review for every mobile UI ticket to two stages: Expo Web/Playwright side-by-side comparison with the authoritative design during fast implementation iteration, followed by Android and iOS side-by-side native verification against the same source. Added the canonical workflow and made it required context for coordinator, implementer, and UI-verifier dispatches and a required ticket gate.

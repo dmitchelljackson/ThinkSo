@@ -9,6 +9,7 @@ Build ThinkSo as a deep, reviewable stack of small full-stack pull requests. Hum
 - [Coordinator](./coordinator.md) — owns the stack, ticket state, dispatch, gates, and restacking.
 - [Implementer](./implementer.md) — owns one small full-stack ticket and its pull request.
 - [Code reviewer](./code-reviewer.md) — independently reviews one immutable candidate diff.
+- [Review feedback](./review-feedback.md) — distills authorized post-merge feedback into reviewer knowledge.
 - [UI verifier](./ui-verifier.md) — exercises one immutable candidate build through AutoMobile.
 
 These files are durable role prompts. A dispatched task also receives its ticket path, base branch, target branch, expected PR base, and candidate SHA where applicable. Every UI dispatch also receives the mandatory [mobile visual QA workflow](../design/visual-qa-workflow.md).
@@ -56,8 +57,9 @@ The coordinator may continue building after `STACKED`; it never interprets autom
 ## Model policy
 
 - The coordinator uses its configured primary model.
-- Spawn every implementer, code reviewer, and UI verifier with `gpt-5.6-luna` by default.
-- Use high reasoning for implementers and code reviewers; use medium reasoning for UI verification unless a difficult diagnosis warrants high.
+- Spawn implementers and UI verifiers with `gpt-5.6-luna` by default.
+- Spawn code-review and review-feedback agents with the current Sol model when using OpenAI/Codex or the current Opus model when using Anthropic/Claude. Never use Luna, Astra, or Fable for review roles.
+- Use high reasoning for implementers, code reviewers, and review-feedback agents; use medium reasoning for UI verification unless a difficult diagnosis warrants high.
 - Luna is a cost policy, not a quality waiver. After two failed repair cycles with the same underlying blocker, or when a worker identifies ambiguity requiring materially stronger judgment, the coordinator may rerun that bounded role with `gpt-5.6-terra` and records why in the ticket history.
 - Do not escalate merely because a task is long. Narrow or repair the ticket first when scope is the problem.
 

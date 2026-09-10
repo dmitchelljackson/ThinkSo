@@ -9,6 +9,23 @@ import path from 'node:path';
 const apiBase = 'https://api.github.com';
 const apiVersion = '2022-11-28';
 
+async function loadLocalConfig() {
+  const configPath =
+    process.env.THINKSO_REVIEWER_CONFIG_PATH ??
+    path.join(os.homedir(), '.config', 'thinkso-local-reviewer', 'config.json');
+  try {
+    const config = JSON.parse(await fs.readFile(configPath, 'utf8'));
+    process.env.THINKSO_REVIEWER_APP_ID ??= String(config.app_id ?? '');
+    process.env.THINKSO_REVIEWER_INSTALLATION_ID ??= String(config.installation_id ?? '');
+    process.env.THINKSO_REVIEWER_PRIVATE_KEY_PATH ??= config.private_key_path;
+    process.env.THINKSO_REVIEWER_REPOSITORY ??= config.repository;
+  } catch (error) {
+    if (error?.code !== 'ENOENT') throw error;
+  }
+}
+
+await loadLocalConfig();
+
 function required(name) {
   const value = process.env[name];
   if (!value) throw new Error(`Missing ${name}`);
