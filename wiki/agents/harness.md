@@ -9,6 +9,7 @@ Build ThinkSo as a deep, reviewable stack of small full-stack pull requests. Hum
 - [Coordinator](./coordinator.md) — owns the stack, ticket state, dispatch, gates, and restacking.
 - [Implementer](./implementer.md) — owns one small full-stack ticket and its pull request.
 - [Code reviewer](./code-reviewer.md) — independently reviews one immutable candidate diff.
+- [Review feedback](./review-feedback.md) — distills authorized post-merge feedback into reviewer knowledge.
 - [UI verifier](./ui-verifier.md) — exercises one immutable candidate build through AutoMobile.
 
 These files are durable role prompts. A dispatched task also receives its ticket path, base branch, target branch, expected PR base, and candidate SHA where applicable. Every UI dispatch also receives the mandatory [mobile visual QA workflow](../design/visual-qa-workflow.md).
@@ -17,7 +18,7 @@ These files are durable role prompts. A dispatched task also receives its ticket
 
 The Markdown ticket is the durable Jira-like conversation for every role. The coordinator is its sole writer so concurrent verification cannot create conflicting edits. Implementers, reviewers, and UI verifiers send structured reports to the coordinator; the coordinator appends them to the activity log, updates gates/status, and forwards the newly recorded ticket state when another role must respond.
 
-Every finding receives a stable ID such as `CR-001` or `UI-001`. Fix and verification reports cite those IDs. Agents may communicate transient execution details directly, but a decision, blocker, candidate, finding, fix, gate result, or human request is not authoritative until the coordinator records it in the ticket.
+Every finding receives a stable ID such as `CR-001` or `UI-001`. Code-review IDs increase across repeated review runs on the same pull request instead of resetting at each head. Fix and verification reports cite those IDs. Agents may communicate transient execution details directly, but a decision, blocker, candidate, finding, fix, gate result, or human request is not authoritative until the coordinator records it in the ticket.
 
 Only the product owner may change locked acceptance behavior. The coordinator may clarify ticket wording from canonical sources but must not let a worker silently edit acceptance criteria to make a failing implementation pass.
 
@@ -31,7 +32,7 @@ main
             └── stack/030-record
 ```
 
-The coordinator owns one shared stack checkout and all Git operations. The official `github/gh-stack` extension owns local stack metadata and GitHub's native stack relationship. The write path is sequential: only one implementer subagent edits that checkout at a time. The implementer returns an uncommitted candidate; the coordinator inspects it, records the ticket update, commits it, and freezes the candidate SHA. CI, code review, and AutoMobile verification may then run concurrently against that fixed candidate. The coordinator does not edit the checkout while those read-only roles are inspecting it. The next implementer starts only after all required gates pass.
+The coordinator owns one shared stack checkout and all product-stack Git operations. The official `github/gh-stack` extension owns local stack metadata and GitHub's native stack relationship. The write path is sequential: only one implementer subagent edits that checkout at a time. The implementer returns an uncommitted candidate; the coordinator inspects it, records the ticket update, commits it, and freezes the candidate SHA. CI, code review, and AutoMobile verification may then run concurrently against that fixed candidate. The coordinator does not edit the checkout while those roles inspect it. Reviewer model processes run read-only with denied approvals. Their privileged Python parents, imports, prompts, and policies execute from a temporary detached checkout of `origin/main`, while candidate and merged-PR trees are separate read-only evidence. Those parents own the narrow side effects: one App-authenticated pull-request review, or a validated commit containing only JSON learned-rule records under `wiki/reviewer/rules/` and `wiki/reviewer/retired/`. The next implementer starts only after all required gates pass.
 
 PR titles use `[T-NNN] Simple title`. PR bodies stay human-scannable: ticket, what changed, how to test, screenshots when relevant, and brief notes.
 
@@ -56,8 +57,9 @@ The coordinator may continue building after `STACKED`; it never interprets autom
 ## Model policy
 
 - The coordinator uses its configured primary model.
-- Spawn every implementer, code reviewer, and UI verifier with `gpt-5.6-luna` by default.
-- Use high reasoning for implementers and code reviewers; use medium reasoning for UI verification unless a difficult diagnosis warrants high.
+- Spawn implementers and UI verifiers with `gpt-5.6-luna` by default.
+- Spawn code-review and review-feedback agents with the current Sol model when using OpenAI/Codex or the current Opus model when using Anthropic/Claude. Never use Luna, Astra, or Fable for review roles.
+- Use high reasoning for implementers, code reviewers, and review-feedback agents; use medium reasoning for UI verification unless a difficult diagnosis warrants high.
 - Luna is a cost policy, not a quality waiver. After two failed repair cycles with the same underlying blocker, or when a worker identifies ambiguity requiring materially stronger judgment, the coordinator may rerun that bounded role with `gpt-5.6-terra` and records why in the ticket history.
 - Do not escalate merely because a task is long. Narrow or repair the ticket first when scope is the problem.
 
@@ -82,4 +84,4 @@ Ordinary implementation judgment, test failures, lint problems, merge conflicts,
 
 ## Harness scope
 
-Begin with one coordinator checkout, sequential implementation subagents, parallel read-only verification subagents, role prompts, GitHub CLI 2.90.0 or later, the official `github/gh-stack` extension, repository scripts, and GitHub Actions. GitHub's stack feature and extension are in public preview, so the coordinator verifies commands against `gh stack <command> --help` and records any upstream behavior change. Do not build manual stack automation or a custom Codex SDK orchestrator until this coordinator loop has produced evidence that the native workflow is insufficient.
+Begin with one coordinator checkout, sequential implementation subagents, parallel read-only verification subagents, role prompts, GitHub CLI 2.90.0 or later, the official `github/gh-stack` extension, repository scripts, and GitHub Actions. GitHub's stack feature and extension are in public preview, so the coordinator verifies commands against `gh stack <command> --help` and records any upstream behavior change. The narrow Codex SDK reviewer scripts automate only post-push review and post-merge learning; they do not replace the coordinator or native stack workflow.

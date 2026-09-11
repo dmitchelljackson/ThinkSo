@@ -2,6 +2,26 @@
 
 This is an append-only history of material wiki operations.
 
+## [2026-09-11] replace | Structured local reviewer agents
+
+Replaced the JavaScript and MCP reviewer launch path with two Python entrypoints backed by the authenticated OpenAI Codex Python SDK. Locked both model subprocesses to read-only Sol/high execution with denied approvals, isolated credentials, live web search, canonical wiki prompts, injected reviewer knowledge, and strict result schemas. The review parent alone posts an App-authenticated summary and inline comments; the feedback parent alone validates Markdown/YAML knowledge proposals, retries once from fresh `origin/main`, and commits through the App. Added a non-mutating feedback dry run for pre-merge prompt evaluation.
+
+## [2026-09-11] harden | Reviewer instruction and credential isolation
+
+Disabled automatic candidate `AGENTS.md` discovery for reviewer turns. The SDK host now loads Codex authentication before deleting the temporary credential file and removing directory access, gives the model shell only an allowlisted non-secret environment, and rejects any result containing an exact copied authentication value before GitHub submission.
+
+## [2026-09-10] add | Local learning pull-request reviewer
+
+Added separate post-push review and post-merge feedback skills. Both dispatch invariant prompts that point to canonical wiki role files and change only the pull-request number. Locked review roles to the current affordable Sol model for OpenAI/Codex or Opus for Anthropic/Claude, excluding Luna, Astra, and Fable. The reviewer posts only `COMMENT` reviews through the ThinkSo Local Reviewer GitHub App; the feedback agent may commit only under `wiki/reviewer/**`.
+
+## [2026-09-10] harden | Reviewer feedback integration
+
+Isolated post-merge learning in a temporary worktree fetched from `origin/main`. The feedback agent may rebase and resolve semantic conflicts within reviewer knowledge, while the App-authenticated push helper rejects working-tree, staged, or outgoing commit changes outside `wiki/reviewer/**` before updating `main`.
+
+## [2026-09-10] harden | Structured GitHub reviews
+
+Replaced free-form review-body posting with a guarded Python CLI under `wiki/reviewer/`. It validates the local PEM and GitHub App installation, exposes current PR patches, and atomically posts a real approve, request-changes, or comment review composed of a short summary and validated inline findings.
+
 ## [2026-09-08] correction | Account Access visual hierarchy
 
 Centered and reduced the secondary `no backing out` annotation group, centered hand-drawn underlines beneath their words, compacted the Terms/Privacy footer, and inset the red document margin rule without moving the centered content column. Verified the responsive web matrix and native Android/iOS renders.
@@ -529,3 +549,15 @@ Created the monorepo-ready ThinkSo workspace, separated raw source pointers from
 ## [2026-09-05] decision | Mobile theme and foundation atoms
 
 Standardized complete mobile text roles, semantic text tones, spacing, radii, shared sizes, motion durations, and Stack/Inline/Spacer layout atoms. Locked production to follow the OS light/dark appearance through a typed theme contract; the catalog can force either palette for review. The initial dark palette is an intentionally rough native-reviewed baseline that may be tuned without changing screen or component APIs.
+
+## [2026-09-11] harden | Local reviewer filesystem boundary
+
+Replaced the review agent's full-disk-readable sandbox with a custom Codex permission profile that permits read-only access to exact review checkouts and the minimal system runtime while denying temporary-directory access, checkout writes, approval escalation, and shell network access. Added deterministic macOS sandbox canary tests and made feedback proposals load reviewer knowledge from the exact `origin/main` revision they will update.
+
+## [2026-09-11] harden | Trusted reviewer bootstrap and stable findings
+
+Required privileged reviewer and feedback hosts, imports, prompts, and policies to execute from a detached checkout of fetched `origin/main`, leaving pull-request trees as read-only evidence. Recorded the initial manual bootstrap, authenticated duplicate markers and prior finding IDs against the GitHub App bot identity, continued `CR-###` numbering across review runs on one pull request, and made the trusted prompt and injected reviewer knowledge the only reviewer-rule sources.
+
+## [2026-09-11] add | Traceable reviewer-rule lifecycle
+
+Added structured active and retired reviewer-rule directories. Learned rules now require validated GitHub comment provenance, preserve prior origins and append a new source on every edit, and may be retired only by moving the unchanged historical rule into the retired archive with an explicit owner-comment link and reason.
