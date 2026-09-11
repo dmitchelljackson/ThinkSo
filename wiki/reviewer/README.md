@@ -34,11 +34,11 @@ python3 wiki/reviewer/feedback.py <number>
 
 For a non-mutating feedback-prompt test before merge, use `--dry-run`. It invokes the feedback agent and validates its proposal but never writes, commits, or pushes anything.
 
-Both entrypoints take the PR number as their only production input. They validate the local GitHub App configuration before running. The model subprocess receives neither the PEM nor an installation token. The SDK process loads a temporary copy of the Codex session, deletes that file, and removes directory access before starting the model turn. Candidate `AGENTS.md` discovery is disabled, the model shell receives an allowlisted environment without credential locations or tokens, the repository sandbox is read-only, and approvals are denied. The parent rejects output containing any copied authentication value before performing GitHub or Git mutations.
+Both entrypoints take the PR number as their only production input. They validate the local GitHub App configuration before running. The model subprocess receives neither the PEM nor an installation token. The SDK process loads a temporary copy of the Codex session, deletes that file, and removes directory access before starting the model turn. Candidate `AGENTS.md` discovery is disabled, the model shell receives an allowlisted environment without credential locations or tokens, and approvals are denied. A custom Codex permission profile permits reads only from the exact review checkout, any explicitly supplied second checkout, and the minimal system runtime; it denies checkout writes, temporary-directory reads, and shell network access. Native web search remains available separately. The parent rejects output containing any copied authentication value before performing GitHub or Git mutations.
 
 The reviewer posts one normal review with a short summary and inline findings. Previous automated review text is deliberately excluded from model context so each head receives an independent review. Optional `why` evidence is validated against the injected knowledge and rendered as a permanent rule link.
 
-The feedback parent accepts only complete Markdown or YAML file proposals under `wiki/reviewer/**`. Before applying a proposal it verifies that `origin/main` still matches the SHA inspected by the model. If main changed or the push races, it discards the proposal and runs the agent once more against fresh context; a second race returns a structured error for the coordinator to surface.
+The feedback parent accepts only complete Markdown or YAML file proposals under `wiki/reviewer/**`. The learner reads existing knowledge from a detached checkout of the exact `origin/main` SHA it proposes to update and inspects the merged implementation through a separate read-only checkout. Before applying a proposal the parent verifies that `origin/main` still matches the SHA inspected by the model. If main changed or the push races, it discards the proposal and runs the agent once more against fresh context; a second race returns a structured error for the coordinator to surface.
 
 ## Knowledge files
 
@@ -55,3 +55,11 @@ Canonical product BDDs, API specifications, decisions, and architecture remain a
 - `agent_runtime.py` — creates the isolated authenticated Codex SDK runtime.
 - `github_review.py` — validates App credentials and implements GitHub reads and review submission.
 - `test_*.py` — standard-library tests for host-side validation and safety boundaries.
+
+Run the reviewer tests with:
+
+```text
+python3 -m unittest discover -s wiki/reviewer -p 'test_*.py'
+```
+
+On macOS with the Codex binary installed, the suite also runs deterministic commands through the production permission profile. Fake canary files verify that the checkout is readable while sibling secrets, fake authentication, fake PEM material, checkout writes, and shell network access are denied. These tests do not invoke a model or consume Codex usage.

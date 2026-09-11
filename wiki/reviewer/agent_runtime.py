@@ -9,6 +9,8 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
+REVIEWER_PERMISSION_PROFILE = "thinkso-reviewer"
+
 
 class AgentRuntimeError(Exception):
     """An actionable Codex runtime failure."""
@@ -43,9 +45,61 @@ def assert_no_secret_output(output: str, secrets: set[str]) -> None:
         )
 
 
-def _isolated_codex_home() -> tuple[
-    tempfile.TemporaryDirectory[str], dict[str, str], Path, set[str]
-]:
+def reviewer_permission_config(
+    cwd: Path, *, additional_read_roots: tuple[Path, ...] = ()
+) -> dict[str, Any]:
+    roots = {str(cwd.resolve()): True}
+    roots.update({str(path.resolve()): True for path in additional_read_roots})
+    return {
+        "default_permissions": REVIEWER_PERMISSION_PROFILE,
+        "permissions": {
+            REVIEWER_PERMISSION_PROFILE: {
+                "workspace_roots": roots,
+                "filesystem": {
+                    ":minimal": "read",
+                    ":workspace_roots": "read",
+                    ":tmpdir": "deny",
+                    ":slash_tmp": "deny",
+                },
+                "network": {"enabled": False},
+            }
+        },
+    }
+
+
+def reviewer_permission_toml(
+    cwd: Path, *, additional_read_roots: tuple[Path, ...] = ()
+) -> str:
+    config = reviewer_permission_config(
+        cwd, additional_read_roots=additional_read_roots
+    )
+    profile = config["permissions"][REVIEWER_PERMISSION_PROFILE]
+    lines = [
+        f'default_permissions = "{REVIEWER_PERMISSION_PROFILE}"',
+        "",
+        f"[permissions.{REVIEWER_PERMISSION_PROFILE}.workspace_roots]",
+    ]
+    lines.extend(f"{json.dumps(path)} = true" for path in profile["workspace_roots"])
+    lines.extend(
+        [
+            "",
+            f"[permissions.{REVIEWER_PERMISSION_PROFILE}.filesystem]",
+            '":minimal" = "read"',
+            '":workspace_roots" = "read"',
+            '":tmpdir" = "deny"',
+            '":slash_tmp" = "deny"',
+            "",
+            f"[permissions.{REVIEWER_PERMISSION_PROFILE}.network]",
+            "enabled = false",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def _isolated_codex_home(
+    cwd: Path, *, additional_read_roots: tuple[Path, ...] = ()
+) -> tuple[tempfile.TemporaryDirectory[str], dict[str, str], Path, set[str]]:
     source_home = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex"))
     auth = source_home / "auth.json"
     if not auth.is_file():
@@ -54,6 +108,10 @@ def _isolated_codex_home() -> tuple[
         )
     temporary = tempfile.TemporaryDirectory(prefix="thinkso-codex-")
     target_home = Path(temporary.name)
+    (target_home / "config.toml").write_text(
+        reviewer_permission_toml(cwd, additional_read_roots=additional_read_roots),
+        encoding="utf-8",
+    )
     target_auth = target_home / "auth.json"
     auth_bytes = auth.read_bytes()
     try:
@@ -74,6 +132,7 @@ def run_structured_agent(
     developer_prompt: str,
     external_context: dict[str, Any],
     output_schema: dict[str, Any],
+    additional_read_roots: tuple[Path, ...] = (),
 ) -> dict[str, Any]:
     try:
         from openai_codex import (
@@ -81,7 +140,6 @@ def run_structured_agent(
             Codex,
             CodexConfig,
             ExternalMessage,
-            Sandbox,
         )
         from openai_codex.types import ReasoningEffort
     except ImportError as error:
@@ -90,7 +148,9 @@ def run_structured_agent(
             "`python3 -m pip install --user openai-codex==0.154.0`"
         ) from error
 
-    temporary, codex_env, target_auth, secrets = _isolated_codex_home()
+    temporary, codex_env, target_auth, secrets = _isolated_codex_home(
+        cwd, additional_read_roots=additional_read_roots
+    )
     credential_home = Path(temporary.name)
     credential_home_locked = False
     try:
@@ -120,7 +180,6 @@ def run_structured_agent(
                 developer_instructions=developer_prompt,
                 ephemeral=True,
                 model=reviewer_model(),
-                sandbox=Sandbox.read_only,
                 config={
                     "model_reasoning_effort": "high",
                     "web_search": "live",
@@ -139,7 +198,6 @@ def run_structured_agent(
                 ),
                 effort=ReasoningEffort.high,
                 output_schema=output_schema,
-                sandbox=Sandbox.read_only,
                 source="thinkso_reviewer",
             )
     except AgentRuntimeError:
@@ -165,6 +223,8 @@ def run_structured_agent(
 
 def load_reviewer_knowledge(root: Path) -> dict[str, str]:
     knowledge_root = root / "wiki" / "reviewer"
+    if not knowledge_root.is_dir():
+        return {}
     allowed = {".md", ".yml", ".yaml"}
     return {
         path.relative_to(root).as_posix(): path.read_text(encoding="utf-8")

@@ -549,3 +549,7 @@ Created the monorepo-ready ThinkSo workspace, separated raw source pointers from
 ## [2026-09-05] decision | Mobile theme and foundation atoms
 
 Standardized complete mobile text roles, semantic text tones, spacing, radii, shared sizes, motion durations, and Stack/Inline/Spacer layout atoms. Locked production to follow the OS light/dark appearance through a typed theme contract; the catalog can force either palette for review. The initial dark palette is an intentionally rough native-reviewed baseline that may be tuned without changing screen or component APIs.
+
+## [2026-09-11] harden | Local reviewer filesystem boundary
+
+Replaced the review agent's full-disk-readable sandbox with a custom Codex permission profile that permits read-only access to exact review checkouts and the minimal system runtime while denying temporary-directory access, checkout writes, approval escalation, and shell network access. Added deterministic macOS sandbox canary tests and made feedback proposals load reviewer knowledge from the exact `origin/main` revision they will update.
