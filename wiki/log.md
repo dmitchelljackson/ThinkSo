@@ -557,3 +557,7 @@ Replaced the review agent's full-disk-readable sandbox with a custom Codex permi
 ## [2026-09-11] harden | Trusted reviewer bootstrap and stable findings
 
 Required privileged reviewer and feedback hosts, imports, prompts, and policies to execute from a detached checkout of fetched `origin/main`, leaving pull-request trees as read-only evidence. Recorded the initial manual bootstrap, authenticated duplicate markers and prior finding IDs against the GitHub App bot identity, continued `CR-###` numbering across review runs on one pull request, and made the trusted prompt and injected reviewer knowledge the only reviewer-rule sources.
+
+## [2026-09-11] add | Traceable reviewer-rule lifecycle
+
+Added structured active and retired reviewer-rule directories. Learned rules now require validated GitHub comment provenance, preserve prior origins and append a new source on every edit, and may be retired only by moving the unchanged historical rule into the retired archive with an explicit owner-comment link and reason.

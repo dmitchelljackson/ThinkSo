@@ -225,9 +225,8 @@ def load_reviewer_knowledge(root: Path) -> dict[str, str]:
     knowledge_root = root / "wiki" / "reviewer"
     if not knowledge_root.is_dir():
         return {}
-    allowed = {".md", ".yml", ".yaml"}
     return {
         path.relative_to(root).as_posix(): path.read_text(encoding="utf-8")
-        for path in sorted(knowledge_root.iterdir())
-        if path.is_file() and path.suffix in allowed
+        for path in sorted(knowledge_root.rglob("*"))
+        if path.is_file() and path.suffix == ".json"
     }

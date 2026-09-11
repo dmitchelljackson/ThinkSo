@@ -39,13 +39,15 @@ Both entrypoints take the PR number as their only production input. The orchestr
 
 The reviewer posts one normal review with a short summary and inline findings. Previous automated review text is deliberately excluded from model context so each head receives an independent review, while the trusted parent reads prior App-authored inline IDs and supplies the next sequential `CR-###` number. Duplicate-run markers count only when authored by the verified App bot identity. Optional `why` evidence is validated against the injected knowledge and rendered as a permanent rule link.
 
-The feedback parent accepts only complete Markdown or YAML file proposals under `wiki/reviewer/**`. The learner reads existing knowledge from a detached checkout of the exact `origin/main` SHA it proposes to update and inspects the merged implementation through a separate read-only checkout. Before applying a proposal the parent verifies that `origin/main` still matches the SHA inspected by the model. If main changed or the push races, it discards the proposal and runs the agent once more against fresh context; a second race returns a structured error for the coordinator to surface.
+The feedback parent accepts only complete JSON rule records under `wiki/reviewer/rules/` and validated moves into `wiki/reviewer/retired/`. Every active learned rule retains an ordered origin-comment list; edits preserve that history and append a new source. Retirement preserves the record and requires an authorized owner-comment link and reason. The learner reads existing knowledge from a detached checkout of the exact `origin/main` SHA it proposes to update and inspects the merged implementation through a separate read-only checkout. Before applying a proposal the parent verifies that `origin/main` still matches the SHA inspected by the model. If main changed or the push races, it discards the proposal and runs the agent once more against fresh context; a second race returns a structured error for the coordinator to surface.
 
 ## Knowledge files
 
-- [Rules](./rules.md) — compact implementation and review invariants distilled from accepted feedback.
-- [Regression cases](./regressions.yml) — prior review patterns that should be checked again.
-- [Exceptions](./exceptions.md) — intentionally waived or narrowly scoped findings.
+- [Baseline rules](./baseline.json) — manually maintained review invariants derived from canonical project sources.
+- [Regression cases](./regressions.json) — prior review patterns that should be checked again.
+- [Exceptions](./exceptions.json) — intentionally waived or narrowly scoped findings.
+- `rules/*.json` — active learned rules with append-only comment provenance.
+- `retired/*.json` — immutable retired rules with an explicit owner-comment retirement source.
 
 Canonical product BDDs, API specifications, decisions, and architecture remain authoritative. Reviewer knowledge cannot supersede them. Raw pull-request conversation remains evidence; only authorized, durable, non-obvious learning becomes future reviewer context.
 

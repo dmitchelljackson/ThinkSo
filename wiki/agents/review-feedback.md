@@ -62,11 +62,41 @@ A code fix without a reply may establish that a finding was addressed. It should
 
 Compare every proposed learning with existing reviewer knowledge. Prefer correcting or extending an existing entry over adding a duplicate.
 
+## Traceable learned-rule records
+
+Create and edit learned rules only as one JSON record per file under `wiki/reviewer/rules/`. The filename and `id` use the same lowercase kebab-case value. The complete record shape is:
+
+```json
+{
+  "schema_version": 1,
+  "id": "descriptive-stable-id",
+  "status": "active",
+  "kind": "invariant | regression | exception | calibration",
+  "scope": "Where the rule applies",
+  "rule": "The concrete behavior the reviewer should enforce",
+  "rationale": "Why this is durable and project-specific",
+  "origin": [
+    {
+      "url": "https://github.com/...#discussion_r...",
+      "effect": "created",
+      "note": "How this comment established the rule"
+    }
+  ],
+  "retired_by": null
+}
+```
+
+Use only exact permalinks supplied in `allowed_origin_urls`. A newly created record must link the original reviewer finding and any authorized owner comment that establishes the learning. The first `origin` entry has effect `created`; every later entry has effect `edited`.
+
+When editing an active rule, preserve every existing `origin` entry exactly and append the new comment or owner-reaction permalink that justified the edit. Never rewrite, reorder, or remove old origin history. Do not edit a rule when no new traceable comment supports the change.
+
+Retire rather than delete an obsolete rule. Retirement is a paired operation: delete `wiki/reviewer/rules/<id>.json` and write `wiki/reviewer/retired/<id>.json`. The retired record preserves the active record's identity, kind, scope, rule, rationale, and complete `origin` list; changes `status` to `retired`; and replaces `retired_by` with `{"url": "<owner comment permalink>", "reason": "<concise reason>"}`. The URL must be supplied in `owner_origin_urls`, so final code changes, silence, non-owner comments, and reviewer conclusions cannot retire a rule. Never edit an already retired record.
+
 Do not alter canonical product behavior. If authorized feedback appears to imply a new product decision, propose a narrowly written clarification candidate under `wiki/reviewer/**` for later owner-led canonicalization. Do not present it as settled product policy.
 
 Preserve traceability to the pull request, finding ID, relevant owner or merged-code evidence, and merge commit.
 
-Proposed changes may affect only Markdown or YAML knowledge files under `wiki/reviewer/**`. Return complete replacement content for every changed file. Do not propose changes to executable scripts, application code, BDDs, API specifications, architecture pages, prompts outside reviewer knowledge, skills, workflows, secrets, permissions, or Git history.
+Proposed changes may affect only JSON learned-rule records under `wiki/reviewer/rules/` and `wiki/reviewer/retired/`. Every change includes `operation`, `path`, and `content`: use `write` with the complete JSON file as a string, or `delete` with `content` set to null only as one half of a validated retirement move. Do not propose changes to baseline knowledge files, executable scripts, application code, BDDs, API specifications, architecture pages, prompts, skills, workflows, secrets, permissions, or Git history.
 
 When the supplied context marks the run as analysis-only because the PR remains open, evaluate the available evidence but prefer `no-change` wherever merge resolution is required to justify a learning. The host will not apply an analysis-only result.
 
