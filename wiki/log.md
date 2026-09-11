@@ -553,3 +553,7 @@ Standardized complete mobile text roles, semantic text tones, spacing, radii, sh
 ## [2026-09-11] harden | Local reviewer filesystem boundary
 
 Replaced the review agent's full-disk-readable sandbox with a custom Codex permission profile that permits read-only access to exact review checkouts and the minimal system runtime while denying temporary-directory access, checkout writes, approval escalation, and shell network access. Added deterministic macOS sandbox canary tests and made feedback proposals load reviewer knowledge from the exact `origin/main` revision they will update.
+
+## [2026-09-11] harden | Trusted reviewer bootstrap and stable findings
+
+Required privileged reviewer and feedback hosts, imports, prompts, and policies to execute from a detached checkout of fetched `origin/main`, leaving pull-request trees as read-only evidence. Recorded the initial manual bootstrap, authenticated duplicate markers and prior finding IDs against the GitHub App bot identity, continued `CR-###` numbering across review runs on one pull request, and made the trusted prompt and injected reviewer knowledge the only reviewer-rule sources.
