@@ -1,28 +1,57 @@
-# Reviewer knowledge
+# Reviewer knowledge and local automation
 
-This directory is the only repository area the automated post-merge feedback agent may modify.
+The local reviewer uses the user's existing Codex ChatGPT session for inference and the ThinkSo Local Reviewer GitHub App for identity and repository access. The PEM and App configuration remain outside this repository. `*.pem` and local environment files are ignored globally.
 
-The local entrypoint is `scripts/reviewer/orchestrator.mjs`. The coordinator invokes `review` after pushing a PR and `feedback` after detecting a merge. Actual App IDs, installation IDs, and private-key paths belong in a local environment file; `.env.reviewer.example` contains the shape only.
+Requirements:
 
-`github_review.py` is the reviewer's only GitHub write interface. It validates the local PEM and App installation with `doctor`, exposes current PR metadata and patches with `pr`, and submits one atomic review with `submit`. Submission accepts one short summary plus repeatable, structured inline findings.
+- Python 3.10 or newer;
+- `openai-codex==0.154.0`, installable from [requirements.txt](./requirements.txt);
+- an authenticated `codex login` session; and
+- `~/.config/thinkso-local-reviewer/config.json` pointing to the App ID, installation ID, repository, and private PEM path.
 
-```text
-python3 wiki/reviewer/github_review.py doctor
-python3 wiki/reviewer/github_review.py submit --pr 6 --commit <sha> \
-  --decision request-changes --summary "Two blocking reliability issues remain." \
-  --comment 'CR-001|P1|scripts/example.py|42|RIGHT|Explain the issue and correction here.'
+The default config shape is:
+
+```json
+{
+  "app_id": "<GitHub App ID>",
+  "installation_id": "<installation ID>",
+  "private_key_path": "/absolute/path/to/private-key.pem",
+  "repository": "owner/repository"
+}
 ```
 
-The reviewer loads these files as versioned, owner-approved knowledge. They are not a replacement for canonical product behavior: the BDDs, API specification, decisions, and architecture pages remain authoritative. When these files conflict with canonical wiki content, the reviewer reports the contradiction instead of inventing a resolution.
+Run a complete review after pushing or updating a pull request:
 
-## Files
+```text
+python3 wiki/reviewer/review.py <number>
+```
+
+Run feedback learning after that reviewed pull request merges:
+
+```text
+python3 wiki/reviewer/feedback.py <number>
+```
+
+For a non-mutating feedback-prompt test before merge, use `--dry-run`. It invokes the feedback agent and validates its proposal but never writes, commits, or pushes anything.
+
+Both entrypoints take the PR number as their only production input. They validate the local GitHub App configuration before running. The model subprocess receives neither the PEM nor an installation token: it runs in an isolated Codex home with only copied Codex authentication, a read-only repository sandbox, denied approvals, live web search, and a strict output schema. The Python parent performs all GitHub and Git mutations.
+
+The reviewer posts one normal review with a short summary and inline findings. Previous automated review text is deliberately excluded from model context so each head receives an independent review. Optional `why` evidence is validated against the injected knowledge and rendered as a permanent rule link.
+
+The feedback parent accepts only complete Markdown or YAML file proposals under `wiki/reviewer/**`. Before applying a proposal it verifies that `origin/main` still matches the SHA inspected by the model. If main changed or the push races, it discards the proposal and runs the agent once more against fresh context; a second race returns a structured error for the coordinator to surface.
+
+## Knowledge files
 
 - [Rules](./rules.md) — compact implementation and review invariants distilled from accepted feedback.
 - [Regression cases](./regressions.yml) — prior review patterns that should be checked again.
 - [Exceptions](./exceptions.md) — intentionally waived or narrowly scoped findings.
-- `github_review.py` — guarded GitHub App review CLI.
-- `test_github_review.py` — standard-library tests for its structured input and diff mapping.
 
-## Feedback policy
+Canonical product BDDs, API specifications, decisions, and architecture remain authoritative. Reviewer knowledge cannot supersede them. Raw pull-request conversation remains evidence; only authorized, durable, non-obvious learning becomes future reviewer context.
 
-Feedback is accepted only from the configured product owner through the GitHub App workflow. The feedback agent may update only this directory and must verify its changed-path boundary before committing. Raw PR conversation remains evidence; only an owner-approved distilled rule, exception, or regression case becomes future reviewer context.
+## Implementation files
+
+- `review.py` — fetches one PR, launches the reviewer, validates its result, and posts through the App.
+- `feedback.py` — gathers post-review evidence, launches the learner, and guards knowledge-only commits.
+- `agent_runtime.py` — creates the isolated authenticated Codex SDK runtime.
+- `github_review.py` — validates App credentials and implements GitHub reads and review submission.
+- `test_*.py` — standard-library tests for host-side validation and safety boundaries.

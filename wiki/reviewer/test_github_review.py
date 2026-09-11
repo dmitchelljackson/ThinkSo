@@ -1,6 +1,12 @@
 import unittest
 
-from github_review import ReviewerError, commentable_lines, parse_inline_comment, validate_summary
+from github_review import (
+    ReviewerError,
+    commentable_lines,
+    parse_inline_comment,
+    validate_structured_review,
+    validate_summary,
+)
 
 
 class ReviewerCliTests(unittest.TestCase):
@@ -27,6 +33,43 @@ class ReviewerCliTests(unittest.TestCase):
         self.assertIn(("LEFT", 11), lines)
         self.assertIn(("RIGHT", 11), lines)
         self.assertIn(("RIGHT", 12), lines)
+
+    def test_source_lines_starting_with_diff_markers_advance_lines(self) -> None:
+        lines = commentable_lines("@@ -10,1 +10,3 @@\n-old\n+new\n+++counter\n+after")
+        self.assertIn(("LEFT", 10), lines)
+        self.assertIn(("RIGHT", 10), lines)
+        self.assertIn(("RIGHT", 11), lines)
+        self.assertIn(("RIGHT", 12), lines)
+
+    def test_structured_review_requires_exact_rule_evidence(self) -> None:
+        result = {
+            "decision": "request-changes",
+            "reviewed_head": "a" * 40,
+            "summary": "One blocking issue remains.",
+            "comments": [
+                {
+                    "id": "CR-001",
+                    "severity": "P1",
+                    "path": "file.py",
+                    "line": 1,
+                    "side": "RIGHT",
+                    "title": "Unsafe retry",
+                    "body": "The retry duplicates the write.",
+                    "why": {"path": "wiki/reviewer/rules.md", "text": "invented"},
+                }
+            ],
+        }
+        pull = {"head": {"sha": "a" * 40}}
+        files = [{"filename": "file.py", "patch": "@@ -0,0 +1,1 @@\n+value"}]
+        with self.assertRaisesRegex(ReviewerError, "not exact text"):
+            validate_structured_review(
+                result=result,
+                pr=7,
+                pull=pull,
+                files=files,
+                reviews=[],
+                knowledge={"wiki/reviewer/rules.md": "real rule"},
+            )
 
 
 if __name__ == "__main__":
