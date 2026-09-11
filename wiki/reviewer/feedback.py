@@ -126,9 +126,11 @@ def analyze(
         f"{pull['base']['sha']}...{evaluated_sha}",
     )
     with tempfile.TemporaryDirectory(prefix="thinkso-feedback-") as temporary:
-        checkout = Path(temporary) / "checkout"
-        git("worktree", "add", "--detach", str(checkout), evaluated_sha)
+        evaluated_checkout = Path(temporary) / "evaluated"
+        main_checkout = Path(temporary) / "main"
+        git("worktree", "add", "--detach", str(evaluated_checkout), evaluated_sha)
         try:
+            git("worktree", "add", "--detach", str(main_checkout), base_sha)
             prompt = (ROOT / "wiki/agents/review-feedback.md").read_text(
                 encoding="utf-8"
             )
@@ -137,18 +139,22 @@ def analyze(
                 "authorized_owner": {"id": OWNER_ID, "login": "dmitchelljackson"},
                 "base_main_sha": base_sha,
                 "evaluated_commit": evaluated_sha,
+                "evaluated_checkout_path": str(evaluated_checkout),
                 "complete_final_diff": final_diff,
                 "pull_request_context": context,
-                "reviewer_knowledge": load_reviewer_knowledge(ROOT),
+                "reviewer_knowledge": load_reviewer_knowledge(main_checkout),
             }
             result = run_structured_agent(
-                cwd=checkout,
+                cwd=main_checkout,
                 developer_prompt=prompt,
                 external_context=external,
                 output_schema=FEEDBACK_SCHEMA,
+                additional_read_roots=(evaluated_checkout,),
             )
         finally:
-            git("worktree", "remove", "--force", str(checkout))
+            if main_checkout.exists():
+                git("worktree", "remove", "--force", str(main_checkout))
+            git("worktree", "remove", "--force", str(evaluated_checkout))
     validate_result(result, base_sha)
     return result, base_sha, config
 

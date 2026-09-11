@@ -1,6 +1,16 @@
+import tempfile
 import unittest
+from pathlib import Path
 
-from agent_runtime import AgentRuntimeError, _string_values, assert_no_secret_output
+import tomllib
+from agent_runtime import (
+    REVIEWER_PERMISSION_PROFILE,
+    AgentRuntimeError,
+    _string_values,
+    assert_no_secret_output,
+    load_reviewer_knowledge,
+    reviewer_permission_toml,
+)
 
 
 class AgentRuntimeTests(unittest.TestCase):
@@ -20,6 +30,39 @@ class AgentRuntimeTests(unittest.TestCase):
         assert_no_secret_output(
             '{"summary":"safe"}', {"secret-value-that-is-long-enough"}
         )
+
+    def test_permission_profile_is_read_only_and_network_restricted(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            checkout = Path(temporary) / "checkout"
+            second_checkout = Path(temporary) / "evaluated"
+            checkout.mkdir()
+            second_checkout.mkdir()
+            config = tomllib.loads(
+                reviewer_permission_toml(
+                    checkout, additional_read_roots=(second_checkout,)
+                )
+            )
+
+        self.assertEqual(config["default_permissions"], REVIEWER_PERMISSION_PROFILE)
+        profile = config["permissions"][REVIEWER_PERMISSION_PROFILE]
+        self.assertEqual(
+            profile["workspace_roots"],
+            {str(checkout.resolve()): True, str(second_checkout.resolve()): True},
+        )
+        self.assertEqual(
+            profile["filesystem"],
+            {
+                ":minimal": "read",
+                ":workspace_roots": "read",
+                ":tmpdir": "deny",
+                ":slash_tmp": "deny",
+            },
+        )
+        self.assertEqual(profile["network"], {"enabled": False})
+
+    def test_missing_knowledge_directory_is_empty(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            self.assertEqual(load_reviewer_knowledge(Path(temporary)), {})
 
 
 if __name__ == "__main__":
