@@ -19,8 +19,11 @@ from agent_runtime import (
 from github_review import (
     ReviewerError,
     authenticate,
+    has_authenticated_marker,
     load_config,
+    next_finding_number,
     pull_context,
+    reviewer_app_user,
     submit_review,
 )
 
@@ -90,14 +93,16 @@ def git(*arguments: str, cwd: Path = ROOT) -> str:
 
 def run_review(pr: int) -> dict[str, Any]:
     config = load_config()
-    token, _ = authenticate(config)
-    pull, files, reviews = pull_context(config, token, pr)
+    token, installation = authenticate(config)
+    app_user = reviewer_app_user(config, token, installation)
+    pull, files, reviews, review_comments = pull_context(config, token, pr)
     if pull["state"] != "open":
         raise ReviewerError(f"PR #{pr} is not open")
     head = pull["head"]["sha"]
     marker = f"<!-- thinkso-reviewer:run pr={pr} head={head} -->"
-    if any(marker in (review.get("body") or "") for review in reviews):
+    if has_authenticated_marker(reviews, marker, app_user["id"]):
         raise ReviewerError(f"A reviewer run already exists for PR #{pr} at {head}")
+    finding_id_start = next_finding_number(review_comments, app_user["id"])
 
     git("fetch", "origin", f"pull/{pr}/head")
     git("fetch", "origin", pull["base"]["ref"])
@@ -135,6 +140,7 @@ def run_review(pr: int) -> dict[str, Any]:
                     for file in files
                 ],
                 "complete_diff": full_diff,
+                "finding_id_start": finding_id_start,
                 "reviewer_knowledge": knowledge,
             }
             result = run_structured_agent(
@@ -146,7 +152,16 @@ def run_review(pr: int) -> dict[str, Any]:
         finally:
             git("worktree", "remove", "--force", str(checkout))
 
-    posted = submit_review(config, token, pr, result, files, reviews, knowledge)
+    posted = submit_review(
+        config,
+        token,
+        pr,
+        result,
+        files,
+        app_user["id"],
+        finding_id_start,
+        knowledge,
+    )
     return {
         "status": "reviewed",
         "pr": pr,

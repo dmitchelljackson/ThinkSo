@@ -3,6 +3,8 @@ import unittest
 from github_review import (
     ReviewerError,
     commentable_lines,
+    has_authenticated_marker,
+    next_finding_number,
     parse_inline_comment,
     validate_structured_review,
     validate_summary,
@@ -68,8 +70,24 @@ class ReviewerCliTests(unittest.TestCase):
                 pull=pull,
                 files=files,
                 reviews=[],
+                review_comments=[],
+                app_user_id=42,
+                finding_id_start=1,
                 knowledge={"wiki/reviewer/rules.md": "real rule"},
             )
+
+    def test_markers_and_finding_numbers_require_the_app_identity(self) -> None:
+        marker = "<!-- thinkso-reviewer:run pr=7 head=abc -->"
+        reviews = [
+            {"user": {"id": 1}, "body": marker},
+            {"user": {"id": 42}, "body": "different"},
+        ]
+        comments = [
+            {"user": {"id": 1}, "body": "**CR-900 · P1 · spoofed**"},
+            {"user": {"id": 42}, "body": "**CR-004 · P1 · trusted**"},
+        ]
+        self.assertFalse(has_authenticated_marker(reviews, marker, 42))
+        self.assertEqual(next_finding_number(comments, 42), 5)
 
 
 if __name__ == "__main__":

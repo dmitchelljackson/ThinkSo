@@ -27,6 +27,7 @@ DECISIONS = {
     "comment": "COMMENT",
 }
 SEVERITIES = {"P0", "P1", "P2", "P3"}
+FINDING_ID = re.compile(r"\bCR-(\d{3})\b")
 
 
 class ReviewerError(Exception):
@@ -172,6 +173,18 @@ def authenticate(config: dict[str, Any]) -> tuple[str, dict[str, Any]]:
     return token, installation
 
 
+def reviewer_app_user(
+    config: dict[str, Any], token: str, installation: dict[str, Any]
+) -> dict[str, Any]:
+    slug = installation.get("app_slug")
+    if not isinstance(slug, str) or not slug:
+        raise ReviewerError("GitHub App installation did not identify its App slug")
+    user = github(f"/users/{quote(f'{slug}[bot]', safe='')}", token=token)
+    if user.get("type") != "Bot" or not isinstance(user.get("id"), int):
+        raise ReviewerError("GitHub App bot identity could not be verified")
+    return {"id": user["id"], "login": user.get("login"), "app_id": config["app_id"]}
+
+
 def all_pages(api_path: str, token: str) -> list[dict[str, Any]]:
     values: list[dict[str, Any]] = []
     page = 1
@@ -184,12 +197,43 @@ def all_pages(api_path: str, token: str) -> list[dict[str, Any]]:
         page += 1
 
 
-def pull_context(config: dict[str, Any], token: str, pr: int) -> tuple[Any, Any, Any]:
+def authored_by_reviewer_app(value: dict[str, Any], app_user_id: int) -> bool:
+    return value.get("user", {}).get("id") == app_user_id
+
+
+def has_authenticated_marker(
+    reviews: list[dict[str, Any]], marker: str, app_user_id: int
+) -> bool:
+    return any(
+        authored_by_reviewer_app(review, app_user_id)
+        and marker in (review.get("body") or "")
+        for review in reviews
+    )
+
+
+def next_finding_number(review_comments: list[dict[str, Any]], app_user_id: int) -> int:
+    numbers = [
+        int(match.group(1))
+        for comment in review_comments
+        if authored_by_reviewer_app(comment, app_user_id)
+        for match in [FINDING_ID.search(comment.get("body") or "")]
+        if match is not None
+    ]
+    next_number = max(max(numbers, default=0), len(numbers)) + 1
+    if next_number > 999:
+        raise ReviewerError("Reviewer finding IDs exhausted the CR-001..CR-999 range")
+    return next_number
+
+
+def pull_context(
+    config: dict[str, Any], token: str, pr: int
+) -> tuple[Any, Any, Any, Any]:
     repository = config["repository"]
     pull = github(f"/repos/{repository}/pulls/{pr}", token=token)
     files = all_pages(f"/repos/{repository}/pulls/{pr}/files", token)
     reviews = all_pages(f"/repos/{repository}/pulls/{pr}/reviews", token)
-    return pull, files, reviews
+    review_comments = all_pages(f"/repos/{repository}/pulls/{pr}/comments", token)
+    return pull, files, reviews, review_comments
 
 
 def feedback_context(config: dict[str, Any], token: str, pr: int) -> dict[str, Any]:
@@ -298,6 +342,9 @@ def validate_structured_review(
     pull: dict[str, Any],
     files: list[dict[str, Any]],
     reviews: list[dict[str, Any]],
+    review_comments: list[dict[str, Any]],
+    app_user_id: int,
+    finding_id_start: int,
     knowledge: dict[str, str],
 ) -> tuple[str, str, list[dict[str, Any]], str]:
     decision = result.get("decision")
@@ -315,6 +362,19 @@ def validate_structured_review(
     ids = [comment.get("id") for comment in comments if isinstance(comment, dict)]
     if len(ids) != len(comments) or len(ids) != len(set(ids)):
         raise ReviewerError("Reviewer finding IDs must be present and unique")
+    current_start = next_finding_number(review_comments, app_user_id)
+    if current_start != finding_id_start:
+        raise ReviewerError(
+            "Reviewer finding sequence changed while the review was running"
+        )
+    expected_ids = [
+        f"CR-{number:03d}"
+        for number in range(finding_id_start, finding_id_start + len(comments))
+    ]
+    if ids != expected_ids:
+        raise ReviewerError(
+            f"Reviewer finding IDs must be sequential from CR-{finding_id_start:03d}"
+        )
     blocking = [
         comment for comment in comments if comment.get("severity") in {"P0", "P1"}
     ]
@@ -324,7 +384,7 @@ def validate_structured_review(
         raise ReviewerError("P0/P1 findings require request-changes")
 
     marker = f"<!-- thinkso-reviewer:run pr={pr} head={commit} -->"
-    if any(marker in (review.get("body") or "") for review in reviews):
+    if has_authenticated_marker(reviews, marker, app_user_id):
         raise ReviewerError(f"A reviewer run already exists for PR #{pr} at {commit}")
     changed_files = {
         file["filename"]: commentable_lines(file.get("patch")) for file in files
@@ -377,18 +437,25 @@ def submit_review(
     pr: int,
     result: dict[str, Any],
     files: list[dict[str, Any]],
-    reviews: list[dict[str, Any]],
+    app_user_id: int,
+    finding_id_start: int,
     knowledge: dict[str, str],
 ) -> dict[str, Any]:
     pull = github(f"/repos/{config['repository']}/pulls/{pr}", token=token)
     if pull["state"] != "open":
         raise ReviewerError(f"PR #{pr} is not open")
+    repository = config["repository"]
+    reviews = all_pages(f"/repos/{repository}/pulls/{pr}/reviews", token)
+    review_comments = all_pages(f"/repos/{repository}/pulls/{pr}/comments", token)
     decision, summary, comments, marker = validate_structured_review(
         result=result,
         pr=pr,
         pull=pull,
         files=files,
         reviews=reviews,
+        review_comments=review_comments,
+        app_user_id=app_user_id,
+        finding_id_start=finding_id_start,
         knowledge=knowledge,
     )
     rendered = []
@@ -450,7 +517,7 @@ def command_doctor(_: argparse.Namespace) -> None:
 def command_pr(arguments: argparse.Namespace) -> None:
     config = load_config()
     token, _ = authenticate(config)
-    pull, files, _ = pull_context(config, token, arguments.pr)
+    pull, files, _, _ = pull_context(config, token, arguments.pr)
     print(
         json.dumps(
             {
@@ -487,8 +554,9 @@ def command_submit(arguments: argparse.Namespace) -> None:
         raise ReviewerError("P0/P1 findings require decision request-changes")
 
     config = load_config()
-    token, _ = authenticate(config)
-    pull, files, reviews = pull_context(config, token, arguments.pr)
+    token, installation = authenticate(config)
+    app_user = reviewer_app_user(config, token, installation)
+    pull, files, reviews, review_comments = pull_context(config, token, arguments.pr)
     if pull["state"] != "open":
         raise ReviewerError(f"PR #{arguments.pr} is not open")
     if pull["head"]["sha"] != arguments.commit:
@@ -496,9 +564,18 @@ def command_submit(arguments: argparse.Namespace) -> None:
             f"Stale review: PR head is {pull['head']['sha']}, not {arguments.commit}"
         )
     marker = f"<!-- thinkso-reviewer:run pr={arguments.pr} head={arguments.commit} -->"
-    if any(marker in (review.get("body") or "") for review in reviews):
+    if has_authenticated_marker(reviews, marker, app_user["id"]):
         raise ReviewerError(
             f"A reviewer run already exists for PR #{arguments.pr} at {arguments.commit}"
+        )
+    expected_start = next_finding_number(review_comments, app_user["id"])
+    expected_ids = [
+        f"CR-{number:03d}"
+        for number in range(expected_start, expected_start + len(comments))
+    ]
+    if ids != expected_ids:
+        raise ReviewerError(
+            f"Finding IDs must be sequential from CR-{expected_start:03d}"
         )
 
     changed_files = {

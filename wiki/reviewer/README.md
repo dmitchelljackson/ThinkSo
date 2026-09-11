@@ -20,23 +20,24 @@ The default config shape is:
 }
 ```
 
-Run a complete review after pushing or updating a pull request:
+After this system is bootstrapped onto `main`, run a complete review from a temporary detached
+checkout of the fetched `origin/main`, never from the candidate branch:
 
 ```text
-python3 wiki/reviewer/review.py <number>
+python3 <trusted-main-worktree>/wiki/reviewer/review.py <number>
 ```
 
-Run feedback learning after that reviewed pull request merges:
+Run feedback learning from the same trusted-main boundary after that reviewed pull request merges:
 
 ```text
-python3 wiki/reviewer/feedback.py <number>
+python3 <trusted-main-worktree>/wiki/reviewer/feedback.py <number>
 ```
 
 For a non-mutating feedback-prompt test before merge, use `--dry-run`. It invokes the feedback agent and validates its proposal but never writes, commits, or pushes anything.
 
-Both entrypoints take the PR number as their only production input. They validate the local GitHub App configuration before running. The model subprocess receives neither the PEM nor an installation token. The SDK process loads a temporary copy of the Codex session, deletes that file, and removes directory access before starting the model turn. Candidate `AGENTS.md` discovery is disabled, the model shell receives an allowlisted environment without credential locations or tokens, and approvals are denied. A custom Codex permission profile permits reads only from the exact review checkout, any explicitly supplied second checkout, and the minimal system runtime; it denies checkout writes, temporary-directory reads, and shell network access. Native web search remains available separately. The parent rejects output containing any copied authentication value before performing GitHub or Git mutations.
+Both entrypoints take the PR number as their only production input. The orchestrator, rather than candidate code, creates and removes the trusted-main worktree. The first merge is a manual bootstrap; later changes to the reviewer are reviewed by the previously trusted main version. The entrypoints validate the local GitHub App configuration before running. The model subprocess receives neither the PEM nor an installation token. The SDK process loads a temporary copy of the Codex session, deletes that file, and removes directory access before starting the model turn. Candidate `AGENTS.md` discovery is disabled, the model shell receives an allowlisted environment without credential locations or tokens, and approvals are denied. A custom Codex permission profile permits reads only from the exact review checkout, any explicitly supplied second checkout, and the minimal system runtime; it denies checkout writes, temporary-directory reads, and shell network access. Native web search remains available separately. The parent rejects output containing any copied authentication value before performing GitHub or Git mutations.
 
-The reviewer posts one normal review with a short summary and inline findings. Previous automated review text is deliberately excluded from model context so each head receives an independent review. Optional `why` evidence is validated against the injected knowledge and rendered as a permanent rule link.
+The reviewer posts one normal review with a short summary and inline findings. Previous automated review text is deliberately excluded from model context so each head receives an independent review, while the trusted parent reads prior App-authored inline IDs and supplies the next sequential `CR-###` number. Duplicate-run markers count only when authored by the verified App bot identity. Optional `why` evidence is validated against the injected knowledge and rendered as a permanent rule link.
 
 The feedback parent accepts only complete Markdown or YAML file proposals under `wiki/reviewer/**`. The learner reads existing knowledge from a detached checkout of the exact `origin/main` SHA it proposes to update and inspects the merged implementation through a separate read-only checkout. Before applying a proposal the parent verifies that `origin/main` still matches the SHA inspected by the model. If main changed or the push races, it discards the proposal and runs the agent once more against fresh context; a second race returns a structured error for the coordinator to surface.
 
