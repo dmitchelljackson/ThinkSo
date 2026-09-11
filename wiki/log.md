@@ -2,6 +2,10 @@
 
 This is an append-only history of material wiki operations.
 
+## [2026-09-11] replace | Structured local reviewer agents
+
+Replaced the JavaScript and MCP reviewer launch path with two Python entrypoints backed by the authenticated OpenAI Codex Python SDK. Locked both model subprocesses to read-only Sol/high execution with denied approvals, isolated credentials, live web search, canonical wiki prompts, injected reviewer knowledge, and strict result schemas. The review parent alone posts an App-authenticated summary and inline comments; the feedback parent alone validates Markdown/YAML knowledge proposals, retries once from fresh `origin/main`, and commits through the App. Added a non-mutating feedback dry run for pre-merge prompt evaluation.
+
 ## [2026-09-10] add | Local learning pull-request reviewer
 
 Added separate post-push review and post-merge feedback skills. Both dispatch invariant prompts that point to canonical wiki role files and change only the pull-request number. Locked review roles to the current affordable Sol model for OpenAI/Codex or Opus for Anthropic/Claude, excluding Luna, Astra, and Fable. The reviewer posts only `COMMENT` reviews through the ThinkSo Local Reviewer GitHub App; the feedback agent may commit only under `wiki/reviewer/**`.

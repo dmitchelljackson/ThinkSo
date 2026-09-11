@@ -1,18 +1,23 @@
 ---
 name: thinkso-pr-feedback
 description:
-  After the ThinkSo orchestrator detects a reviewed pull request merge, dispatch the feedback
-  subagent that follows the canonical wiki feedback role and updates only wiki/reviewer/.
+  After the ThinkSo orchestrator detects a reviewed pull request merge, run the local feedback
+  learner and permit its guarded host to update only reviewer knowledge.
 ---
 
 # ThinkSo PR feedback trigger
 
-After a reviewed pull request is detected as merged, launch one feedback subagent.
+After a reviewed pull request is detected as merged, run:
 
-- OpenAI/Codex feedback agent: use the current affordable Sol model, never Luna or Astra.
-- Anthropic/Claude feedback agent: use the current Opus model, never a cheaper Claude tier or Fable.
-- Give the subagent exactly this prompt, changing only the pull request number:
-  `Follow wiki/agents/review-feedback.md for PR #<number>.`
+```text
+python3 wiki/reviewer/feedback.py <number>
+```
 
-The orchestrator must not reinterpret the feedback. The wiki role owns authorization, context
-discovery, learning classification, path limits, validation, and the GitHub App commit.
+The script launches an ephemeral Sol/high Codex agent with the invariant prompt in
+`wiki/agents/review-feedback.md`, a read-only merged checkout, denied approvals, live web search,
+and a strict result schema. The Python parent validates and applies only Markdown or YAML files
+under `wiki/reviewer/**`, then commits and pushes through the GitHub App. If `origin/main` changes,
+it discards the proposal and reruns the agent once against fresh context.
+
+Run it once after a reviewed PR merges. Do not reinterpret the result. Surface any returned
+`user_message` to the owner.

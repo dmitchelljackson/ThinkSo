@@ -16,6 +16,7 @@ import time
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
+from urllib.parse import quote
 from urllib.request import Request, urlopen
 
 API_BASE = "https://api.github.com"
@@ -50,7 +51,9 @@ def load_config() -> dict[str, Any]:
     except FileNotFoundError as error:
         raise ReviewerError(f"Reviewer config is not installed: {path}") from error
     except json.JSONDecodeError as error:
-        raise ReviewerError(f"Reviewer config is invalid JSON: {path}: {error}") from error
+        raise ReviewerError(
+            f"Reviewer config is invalid JSON: {path}: {error}"
+        ) from error
 
     required = ("app_id", "installation_id", "private_key_path", "repository")
     for key in required:
@@ -91,7 +94,9 @@ def load_config() -> dict[str, Any]:
 
 def app_jwt(config: dict[str, Any]) -> str:
     now = int(time.time())
-    header = encode(json.dumps({"alg": "RS256", "typ": "JWT"}, separators=(",", ":")).encode())
+    header = encode(
+        json.dumps({"alg": "RS256", "typ": "JWT"}, separators=(",", ":")).encode()
+    )
     payload = encode(
         json.dumps(
             {"iat": now - 60, "exp": now + 540, "iss": str(config["app_id"])},
@@ -148,9 +153,13 @@ def authenticate(config: dict[str, Any]) -> tuple[str, dict[str, Any]]:
     jwt = app_jwt(config)
     installation = github(f"/app/installations/{config['installation_id']}", token=jwt)
     if str(installation.get("app_id")) != str(config["app_id"]):
-        raise ReviewerError("Configured installation does not belong to the configured GitHub App")
+        raise ReviewerError(
+            "Configured installation does not belong to the configured GitHub App"
+        )
     if installation.get("permissions", {}).get("pull_requests") != "write":
-        raise ReviewerError("GitHub App installation is missing Pull requests: write permission")
+        raise ReviewerError(
+            "GitHub App installation is missing Pull requests: write permission"
+        )
     repository_name = str(config["repository"]).split("/", 1)[1]
     token_result = github(
         f"/app/installations/{config['installation_id']}/access_tokens",
@@ -183,10 +192,36 @@ def pull_context(config: dict[str, Any], token: str, pr: int) -> tuple[Any, Any,
     return pull, files, reviews
 
 
+def feedback_context(config: dict[str, Any], token: str, pr: int) -> dict[str, Any]:
+    repository = config["repository"]
+    pull = github(f"/repos/{repository}/pulls/{pr}", token=token)
+    files = all_pages(f"/repos/{repository}/pulls/{pr}/files", token)
+    reviews = all_pages(f"/repos/{repository}/pulls/{pr}/reviews", token)
+    review_comments = all_pages(f"/repos/{repository}/pulls/{pr}/comments", token)
+    issue_comments = all_pages(f"/repos/{repository}/issues/{pr}/comments", token)
+    for comment in review_comments:
+        comment["reactions"] = all_pages(
+            f"/repos/{repository}/pulls/comments/{comment['id']}/reactions", token
+        )
+    for comment in issue_comments:
+        comment["reactions"] = all_pages(
+            f"/repos/{repository}/issues/comments/{comment['id']}/reactions", token
+        )
+    return {
+        "pull": pull,
+        "files": files,
+        "reviews": reviews,
+        "review_comments": review_comments,
+        "issue_comments": issue_comments,
+    }
+
+
 def parse_inline_comment(value: str) -> dict[str, Any]:
     parts = value.split("|", 5)
     if len(parts) != 6:
-        raise ReviewerError("Invalid --comment; expected ID|SEVERITY|PATH|LINE|SIDE|BODY")
+        raise ReviewerError(
+            "Invalid --comment; expected ID|SEVERITY|PATH|LINE|SIDE|BODY"
+        )
     finding_id, severity, file_path, line_value, side, body = parts
     severity = severity.upper()
     side = side.upper()
@@ -195,7 +230,9 @@ def parse_inline_comment(value: str) -> dict[str, Any]:
     if severity not in SEVERITIES:
         raise ReviewerError(f"Invalid severity for {finding_id}: {severity}")
     if not file_path or file_path.startswith("/") or ".." in Path(file_path).parts:
-        raise ReviewerError(f"Invalid repository-relative path for {finding_id}: {file_path}")
+        raise ReviewerError(
+            f"Invalid repository-relative path for {finding_id}: {file_path}"
+        )
     try:
         line = int(line_value)
     except ValueError as error:
@@ -232,14 +269,18 @@ def commentable_lines(patch: str | None) -> set[tuple[str, int]]:
         return result
     old_line = 0
     new_line = 0
+    in_hunk = False
     for text in patch.splitlines():
         hunk = re.match(r"^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@", text)
         if hunk:
             old_line, new_line = int(hunk.group(1)), int(hunk.group(2))
-        elif text.startswith("+") and not text.startswith("+++"):
+            in_hunk = True
+        elif not in_hunk:
+            continue
+        elif text.startswith("+"):
             result.add(("RIGHT", new_line))
             new_line += 1
-        elif text.startswith("-") and not text.startswith("---"):
+        elif text.startswith("-"):
             result.add(("LEFT", old_line))
             old_line += 1
         elif text.startswith(" "):
@@ -248,6 +289,146 @@ def commentable_lines(patch: str | None) -> set[tuple[str, int]]:
             old_line += 1
             new_line += 1
     return result
+
+
+def validate_structured_review(
+    *,
+    result: dict[str, Any],
+    pr: int,
+    pull: dict[str, Any],
+    files: list[dict[str, Any]],
+    reviews: list[dict[str, Any]],
+    knowledge: dict[str, str],
+) -> tuple[str, str, list[dict[str, Any]], str]:
+    decision = result.get("decision")
+    if decision not in {"approve", "request-changes"}:
+        raise ReviewerError(f"Invalid reviewer decision: {decision}")
+    commit = result.get("reviewed_head")
+    if commit != pull["head"]["sha"]:
+        raise ReviewerError(
+            f"Stale review: PR head is {pull['head']['sha']}, not {commit}"
+        )
+    summary = validate_summary(result.get("summary", ""))
+    comments = result.get("comments")
+    if not isinstance(comments, list):
+        raise ReviewerError("Reviewer comments must be a list")
+    ids = [comment.get("id") for comment in comments if isinstance(comment, dict)]
+    if len(ids) != len(comments) or len(ids) != len(set(ids)):
+        raise ReviewerError("Reviewer finding IDs must be present and unique")
+    blocking = [
+        comment for comment in comments if comment.get("severity") in {"P0", "P1"}
+    ]
+    if decision == "request-changes" and not blocking:
+        raise ReviewerError("request-changes requires at least one P0/P1 finding")
+    if decision == "approve" and blocking:
+        raise ReviewerError("P0/P1 findings require request-changes")
+
+    marker = f"<!-- thinkso-reviewer:run pr={pr} head={commit} -->"
+    if any(marker in (review.get("body") or "") for review in reviews):
+        raise ReviewerError(f"A reviewer run already exists for PR #{pr} at {commit}")
+    changed_files = {
+        file["filename"]: commentable_lines(file.get("patch")) for file in files
+    }
+    for comment in comments:
+        finding_id = comment.get("id", "unknown")
+        if not re.fullmatch(r"CR-\d{3}", str(finding_id)):
+            raise ReviewerError(f"Invalid finding ID: {finding_id}")
+        if comment.get("severity") not in SEVERITIES:
+            raise ReviewerError(
+                f"Invalid severity for {finding_id}: {comment.get('severity')}"
+            )
+        path = comment.get("path")
+        if not isinstance(path, str) or path not in changed_files:
+            raise ReviewerError(
+                f"{finding_id} targets a file outside the PR diff: {path}"
+            )
+        side = comment.get("side")
+        line = comment.get("line")
+        if (side, line) not in changed_files[path]:
+            raise ReviewerError(
+                f"{finding_id} targets a non-commentable diff line: {path}:{line}:{side}"
+            )
+        title = str(comment.get("title", "")).strip()
+        body = str(comment.get("body", "")).strip()
+        if not 1 <= len(title) <= 100:
+            raise ReviewerError(f"Title for {finding_id} must contain 1-100 characters")
+        if not 1 <= len(body) <= 1500:
+            raise ReviewerError(f"Body for {finding_id} must contain 1-1500 characters")
+        why = comment.get("why")
+        if why is not None:
+            if not isinstance(why, dict):
+                raise ReviewerError(f"Why for {finding_id} must be an object or null")
+            rule_path = why.get("path")
+            rule_text = why.get("text")
+            if rule_path not in knowledge:
+                raise ReviewerError(
+                    f"Why for {finding_id} cites unknown rule file: {rule_path}"
+                )
+            if not isinstance(rule_text, str) or rule_text not in knowledge[rule_path]:
+                raise ReviewerError(
+                    f"Why for {finding_id} is not exact text from {rule_path}"
+                )
+    return decision, summary, comments, marker
+
+
+def submit_review(
+    config: dict[str, Any],
+    token: str,
+    pr: int,
+    result: dict[str, Any],
+    files: list[dict[str, Any]],
+    reviews: list[dict[str, Any]],
+    knowledge: dict[str, str],
+) -> dict[str, Any]:
+    pull = github(f"/repos/{config['repository']}/pulls/{pr}", token=token)
+    if pull["state"] != "open":
+        raise ReviewerError(f"PR #{pr} is not open")
+    decision, summary, comments, marker = validate_structured_review(
+        result=result,
+        pr=pr,
+        pull=pull,
+        files=files,
+        reviews=reviews,
+        knowledge=knowledge,
+    )
+    rendered = []
+    for comment in comments:
+        body = (
+            f"**{comment['id']} · {comment['severity']} · {comment['title']}**\n\n"
+            f"{comment['body']}"
+        )
+        why = comment.get("why")
+        if why is not None:
+            rule_url = (
+                f"https://github.com/{config['repository']}/blob/{result['reviewed_head']}/"
+                f"{quote(why['path'], safe='/')}"
+            )
+            body += f"\n\nWhy: [{why['path']}]({rule_url}) — {why['text']}"
+        rendered.append(
+            {
+                "path": comment["path"],
+                "line": comment["line"],
+                "side": comment["side"],
+                "body": body,
+            }
+        )
+    posted = github(
+        f"/repos/{config['repository']}/pulls/{pr}/reviews",
+        token=token,
+        method="POST",
+        body={
+            "commit_id": result["reviewed_head"],
+            "event": DECISIONS[decision],
+            "body": f"{marker}\n\n{summary}",
+            "comments": rendered,
+        },
+    )
+    return {
+        "id": posted["id"],
+        "state": posted["state"],
+        "html_url": posted["html_url"],
+        "inline_comments": len(comments),
+    }
 
 
 def command_doctor(_: argparse.Namespace) -> None:
@@ -320,7 +501,9 @@ def command_submit(arguments: argparse.Namespace) -> None:
             f"A reviewer run already exists for PR #{arguments.pr} at {arguments.commit}"
         )
 
-    changed_files = {file["filename"]: commentable_lines(file.get("patch")) for file in files}
+    changed_files = {
+        file["filename"]: commentable_lines(file.get("patch")) for file in files
+    }
     for comment in comments:
         if comment["path"] not in changed_files:
             raise ReviewerError(
