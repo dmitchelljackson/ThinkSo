@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import json
 import os
-import shutil
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -27,7 +26,26 @@ def reviewer_model() -> str:
     return model
 
 
-def _isolated_codex_home() -> tuple[tempfile.TemporaryDirectory[str], dict[str, str]]:
+def _string_values(value: Any) -> set[str]:
+    if isinstance(value, str):
+        return {value} if len(value) >= 24 else set()
+    if isinstance(value, dict):
+        return set().union(*(_string_values(item) for item in value.values()), set())
+    if isinstance(value, list):
+        return set().union(*(_string_values(item) for item in value), set())
+    return set()
+
+
+def assert_no_secret_output(output: str, secrets: set[str]) -> None:
+    if any(secret in output for secret in secrets):
+        raise AgentRuntimeError(
+            "Codex reviewer output contained authentication material"
+        )
+
+
+def _isolated_codex_home() -> tuple[
+    tempfile.TemporaryDirectory[str], dict[str, str], Path, set[str]
+]:
     source_home = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex"))
     auth = source_home / "auth.json"
     if not auth.is_file():
@@ -37,19 +55,17 @@ def _isolated_codex_home() -> tuple[tempfile.TemporaryDirectory[str], dict[str, 
     temporary = tempfile.TemporaryDirectory(prefix="thinkso-codex-")
     target_home = Path(temporary.name)
     target_auth = target_home / "auth.json"
-    shutil.copyfile(auth, target_auth)
+    auth_bytes = auth.read_bytes()
+    try:
+        secrets = _string_values(json.loads(auth_bytes))
+    except json.JSONDecodeError as error:
+        temporary.cleanup()
+        raise AgentRuntimeError(
+            f"Codex authentication is invalid JSON: {auth}"
+        ) from error
+    target_auth.write_bytes(auth_bytes)
     target_auth.chmod(0o600)
-    return temporary, {
-        "CODEX_HOME": str(target_home),
-        "HOME": str(target_home),
-        "GH_TOKEN": "",
-        "GITHUB_TOKEN": "",
-        "OPENAI_API_KEY": "",
-        "THINKSO_REVIEWER_APP_ID": "",
-        "THINKSO_REVIEWER_INSTALLATION_ID": "",
-        "THINKSO_REVIEWER_PRIVATE_KEY_PATH": "",
-        "THINKSO_REVIEWER_CONFIG_PATH": "",
-    }
+    return temporary, {"CODEX_HOME": str(target_home)}, target_auth, secrets
 
 
 def run_structured_agent(
@@ -74,13 +90,16 @@ def run_structured_agent(
             "`python3 -m pip install --user openai-codex==0.154.0`"
         ) from error
 
-    temporary, codex_env = _isolated_codex_home()
+    temporary, codex_env, target_auth, secrets = _isolated_codex_home()
+    credential_home = Path(temporary.name)
+    credential_home_locked = False
     try:
         config = CodexConfig(
             cwd=str(cwd),
             env=codex_env,
             config_overrides=(
                 'web_search="live"',
+                "project_doc_max_bytes=0",
                 "features.skill_search=false",
                 "features.skip_host_skill_discovery=true",
             ),
@@ -91,6 +110,10 @@ def run_structured_agent(
                 raise AgentRuntimeError(
                     "Codex has no authenticated account; run `codex login`"
                 )
+            target_auth.unlink()
+            credential_home.chmod(0o500)
+            credential_home_locked = True
+            shell_path = os.environ.get("PATH", "/usr/bin:/bin")
             thread = codex.thread_start(
                 approval_mode=ApprovalMode.deny_all,
                 cwd=str(cwd),
@@ -98,7 +121,15 @@ def run_structured_agent(
                 ephemeral=True,
                 model=reviewer_model(),
                 sandbox=Sandbox.read_only,
-                config={"model_reasoning_effort": "high", "web_search": "live"},
+                config={
+                    "model_reasoning_effort": "high",
+                    "web_search": "live",
+                    "project_doc_max_bytes": 0,
+                    "shell_environment_policy": {
+                        "inherit": "none",
+                        "set": {"PATH": shell_path, "LANG": "C.UTF-8"},
+                    },
+                },
             )
             result = thread.run(
                 ExternalMessage(
@@ -116,10 +147,13 @@ def run_structured_agent(
     except Exception as error:
         raise AgentRuntimeError(f"Codex reviewer agent failed: {error}") from error
     finally:
+        if credential_home_locked:
+            credential_home.chmod(0o700)
         temporary.cleanup()
 
     if not result.final_response:
         raise AgentRuntimeError("Codex reviewer agent returned no final response")
+    assert_no_secret_output(result.final_response, secrets)
     try:
         value = json.loads(result.final_response)
     except json.JSONDecodeError as error:

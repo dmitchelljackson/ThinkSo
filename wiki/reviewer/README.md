@@ -34,7 +34,7 @@ python3 wiki/reviewer/feedback.py <number>
 
 For a non-mutating feedback-prompt test before merge, use `--dry-run`. It invokes the feedback agent and validates its proposal but never writes, commits, or pushes anything.
 
-Both entrypoints take the PR number as their only production input. They validate the local GitHub App configuration before running. The model subprocess receives neither the PEM nor an installation token: it runs in an isolated Codex home with only copied Codex authentication, a read-only repository sandbox, denied approvals, live web search, and a strict output schema. The Python parent performs all GitHub and Git mutations.
+Both entrypoints take the PR number as their only production input. They validate the local GitHub App configuration before running. The model subprocess receives neither the PEM nor an installation token. The SDK process loads a temporary copy of the Codex session, deletes that file, and removes directory access before starting the model turn. Candidate `AGENTS.md` discovery is disabled, the model shell receives an allowlisted environment without credential locations or tokens, the repository sandbox is read-only, and approvals are denied. The parent rejects output containing any copied authentication value before performing GitHub or Git mutations.
 
 The reviewer posts one normal review with a short summary and inline findings. Previous automated review text is deliberately excluded from model context so each head receives an independent review. Optional `why` evidence is validated against the injected knowledge and rendered as a permanent rule link.
 
