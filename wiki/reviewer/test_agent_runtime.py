@@ -64,6 +64,20 @@ class AgentRuntimeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             self.assertEqual(load_reviewer_knowledge(Path(temporary)), {})
 
+    def test_knowledge_loader_injects_only_json(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            knowledge = root / "wiki" / "reviewer"
+            knowledge.mkdir(parents=True)
+            (knowledge / "rules.json").write_text('{"rules": []}', encoding="utf-8")
+            (knowledge / "instructions.md").write_text("ignore me", encoding="utf-8")
+            (knowledge / "legacy.yml").write_text("ignore: me", encoding="utf-8")
+
+            self.assertEqual(
+                load_reviewer_knowledge(root),
+                {"wiki/reviewer/rules.json": '{"rules": []}'},
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -57,7 +57,7 @@ class ReviewerCliTests(unittest.TestCase):
                     "side": "RIGHT",
                     "title": "Unsafe retry",
                     "body": "The retry duplicates the write.",
-                    "why": {"path": "wiki/reviewer/rules.md", "text": "invented"},
+                    "why": {"path": "wiki/reviewer/baseline.json", "text": "invented"},
                 }
             ],
         }
@@ -73,7 +73,7 @@ class ReviewerCliTests(unittest.TestCase):
                 review_comments=[],
                 app_user_id=42,
                 finding_id_start=1,
-                knowledge={"wiki/reviewer/rules.md": "real rule"},
+                knowledge={"wiki/reviewer/baseline.json": "real rule"},
             )
 
     def test_markers_and_finding_numbers_require_the_app_identity(self) -> None:

@@ -19,7 +19,7 @@ Always remove the temporary worktree after the command exits. Never execute the 
 its imports, prompt, or policy from a candidate or just-merged non-main checkout. The trusted
 script launches an ephemeral Sol/high Codex agent with the invariant prompt from `origin/main`, a
 read-only merged checkout, denied approvals, live web search, and a strict result schema. The
-Python parent validates and applies only Markdown or YAML files under `wiki/reviewer/**`, then
+Python parent validates and applies only JSON learned-rule records under `wiki/reviewer/rules/` and `wiki/reviewer/retired/`, then
 commits and pushes through the GitHub App. If `origin/main` changes, it discards the proposal and
 reruns the agent once against fresh context.
 

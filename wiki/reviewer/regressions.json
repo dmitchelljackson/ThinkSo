@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "RR-001",
+      "scope": "authentication",
+      "title": "Firebase revocation ownership contradiction",
+      "trigger": "A review encounters conflicting T-030, API, or data-model wording about Firebase-to-ThinkSo session revocation.",
+      "expected": "Report the contradiction and identify the conflicting canonical sources; do not infer ownership."
+    },
+    {
+      "id": "RR-002",
+      "scope": "authentication",
+      "title": "Credential leakage",
+      "trigger": "A diff logs, stores, serializes, or places Firebase or ThinkSo credentials in a UI-facing model.",
+      "expected": "Report a blocking security finding with the exact path and credential type."
+    }
+  ]
+}
