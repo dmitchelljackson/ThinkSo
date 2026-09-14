@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "exceptions": [],
+  "requirements": [
+    "An exception identifies the finding ID, pull request, owner decision, affected scope, and expiration or superseding condition.",
+    "A waiver cannot alter canonical product behavior or broaden itself to unrelated code."
+  ]
+}
