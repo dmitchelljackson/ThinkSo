@@ -2,6 +2,10 @@
 
 This is an append-only history of material wiki operations.
 
+## [2026-09-14] fix | Reviewer request size
+
+Stopped duplicating GitHub file patches alongside the complete pull-request diff and reduced unchanged diff context to 20 lines. Large stacked reviews now remain within the Codex JSON-RPC request limit while retaining the complete change set and read-only candidate checkout.
+
 ## [2026-09-11] replace | Structured local reviewer agents
 
 Replaced the JavaScript and MCP reviewer launch path with two Python entrypoints backed by the authenticated OpenAI Codex Python SDK. Locked both model subprocesses to read-only Sol/high execution with denied approvals, isolated credentials, live web search, canonical wiki prompts, injected reviewer knowledge, and strict result schemas. The review parent alone posts an App-authenticated summary and inline comments; the feedback parent alone validates Markdown/YAML knowledge proposals, retries once from fresh `origin/main`, and commits through the App. Added a non-mutating feedback dry run for pre-merge prompt evaluation.

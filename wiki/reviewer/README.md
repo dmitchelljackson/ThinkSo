@@ -54,7 +54,7 @@ Canonical product BDDs, API specifications, decisions, and architecture remain a
 
 ## Implementation files
 
-- `review.py` — fetches one PR, launches the reviewer, validates its result, and posts through the App.
+- `review.py` — fetches one PR, injects one complete bounded-context diff without duplicating GitHub patches, launches the reviewer, validates its result, and posts through the App.
 - `feedback.py` — gathers post-review evidence, launches the learner, and guards knowledge-only commits.
 - `agent_runtime.py` — creates the isolated authenticated Codex SDK runtime.
 - `github_review.py` — validates App credentials and implements GitHub reads and review submission.

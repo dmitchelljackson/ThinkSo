@@ -116,7 +116,7 @@ def run_review(pr: int, allowed_external_head: str | None = None) -> dict[str, A
         "diff",
         "--no-ext-diff",
         "--find-renames",
-        "--unified=80",
+        "--unified=20",
         f"{pull['base']['sha']}...{head}",
     )
     knowledge = load_reviewer_knowledge(ROOT)
@@ -141,7 +141,6 @@ def run_review(pr: int, allowed_external_head: str | None = None) -> dict[str, A
                         "status": file["status"],
                         "additions": file["additions"],
                         "deletions": file["deletions"],
-                        "patch": file.get("patch"),
                     }
                     for file in files
                 ],
