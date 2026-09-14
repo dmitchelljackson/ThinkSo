@@ -4,10 +4,12 @@ from github_review import (
     ExternalPRApprovalRequired,
     ReviewerError,
     commentable_lines,
+    commentable_ranges,
     has_authenticated_marker,
     next_finding_number,
     parse_inline_comment,
     require_authorized_head,
+    validate_coverage,
     validate_structured_review,
     validate_summary,
 )
@@ -78,6 +80,9 @@ class ReviewerCliTests(unittest.TestCase):
             "decision": "request-changes",
             "reviewed_head": "a" * 40,
             "summary": "One blocking issue remains.",
+            "coverage": [
+                {"path": "file.py", "diff": True, "full_file": True, "note": ""}
+            ],
             "comments": [
                 {
                     "id": "CR-001",
@@ -105,6 +110,66 @@ class ReviewerCliTests(unittest.TestCase):
                 finding_id_start=1,
                 knowledge={"wiki/reviewer/baseline.json": "real rule"},
             )
+
+    def test_commentable_ranges_collapse_adjacent_lines(self) -> None:
+        ranges = commentable_ranges("@@ -10,2 +10,3 @@\n context\n-old\n+new\n+added")
+        self.assertEqual(ranges, {"LEFT": [[10, 11]], "RIGHT": [[10, 12]]})
+
+    def test_coverage_requires_every_changed_file(self) -> None:
+        files = [
+            {"filename": "a.py", "status": "modified"},
+            {"filename": "b.py", "status": "added"},
+        ]
+        result = {
+            "coverage": [{"path": "a.py", "diff": True, "full_file": True, "note": ""}]
+        }
+        with self.assertRaisesRegex(ReviewerError, "did not cover 1 .*b.py"):
+            validate_coverage(result, files)
+
+    def test_coverage_requires_full_file_or_a_stated_exception(self) -> None:
+        files = [
+            {"filename": "pnpm-lock.yaml", "status": "modified"},
+            {"filename": "gone.py", "status": "removed"},
+            {"filename": "skimmed.py", "status": "modified"},
+        ]
+        result = {
+            "coverage": [
+                {"path": "pnpm-lock.yaml", "diff": True, "full_file": False, "note": "lockfile diff"},
+                {"path": "gone.py", "diff": True, "full_file": False, "note": ""},
+                {"path": "skimmed.py", "diff": True, "full_file": False, "note": ""},
+            ]
+        }
+        with self.assertRaisesRegex(ReviewerError, "did not cover 1 .*skimmed.py"):
+            validate_coverage(result, files)
+
+    def test_coverage_note_cannot_excuse_an_unread_regular_file(self) -> None:
+        files = [{"filename": "application.py", "status": "modified"}]
+        result = {
+            "coverage": [
+                {
+                    "path": "application.py",
+                    "diff": True,
+                    "full_file": False,
+                    "note": "output was truncated",
+                }
+            ]
+        }
+        with self.assertRaisesRegex(ReviewerError, "did not cover 1 .*application.py"):
+            validate_coverage(result, files)
+
+    def test_coverage_allows_a_named_lockfile_exception(self) -> None:
+        files = [{"filename": "services/api/uv.lock", "status": "modified"}]
+        result = {
+            "coverage": [
+                {
+                    "path": "services/api/uv.lock",
+                    "diff": True,
+                    "full_file": False,
+                    "note": "lockfile diff checked against pyproject.toml",
+                }
+            ]
+        }
+        validate_coverage(result, files)
 
     def test_markers_and_finding_numbers_require_the_app_identity(self) -> None:
         marker = "<!-- thinkso-reviewer:run pr=7 head=abc -->"

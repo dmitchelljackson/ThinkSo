@@ -20,6 +20,7 @@ from github_review import (
     ExternalPRApprovalRequired,
     ReviewerError,
     authenticate,
+    commentable_ranges,
     has_authenticated_marker,
     load_config,
     next_finding_number,
@@ -80,8 +81,29 @@ REVIEW_SCHEMA: dict[str, Any] = {
                 "additionalProperties": False,
             },
         },
+        "coverage": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "minLength": 1},
+                    "diff": {"type": "boolean"},
+                    "full_file": {"type": "boolean"},
+                    "note": {"type": "string", "maxLength": 300},
+                },
+                "required": ["path", "diff", "full_file", "note"],
+                "additionalProperties": False,
+            },
+        },
     },
-    "required": ["schema_version", "decision", "reviewed_head", "summary", "comments"],
+    "required": [
+        "schema_version",
+        "decision",
+        "reviewed_head",
+        "summary",
+        "coverage",
+        "comments",
+    ],
     "additionalProperties": False,
 }
 
@@ -141,6 +163,7 @@ def run_review(pr: int, allowed_external_head: str | None = None) -> dict[str, A
                         "status": file["status"],
                         "additions": file["additions"],
                         "deletions": file["deletions"],
+                        "commentable_lines": commentable_ranges(file.get("patch")),
                     }
                     for file in files
                 ],
