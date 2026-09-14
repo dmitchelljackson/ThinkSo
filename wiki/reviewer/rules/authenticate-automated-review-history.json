@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "id": "authenticate-automated-review-history",
+  "status": "active",
+  "kind": "regression",
+  "scope": "Local reviewer duplicate-run suppression and CR finding-number allocation",
+  "rule": "Count a review-run marker or prior CR finding number only when it was authored by the installed GitHub App identity resolved and verified by numeric user ID. User-supplied lookalike text must not suppress a reviewer run or influence numbering.",
+  "rationale": "PR #7 demonstrated that marker text and CR identifiers are attacker-copyable data, while their verified App authorship is the durable authority boundary. Merge f22c7241d2884108d5321dde0f94d00ceea317c8 added identity checks and regression coverage for both consumers.",
+  "origin": [
+    {
+      "url": "https://github.com/dmitchelljackson/ThinkSo/pull/7#discussion_r3993139005",
+      "effect": "created",
+      "note": "PR #7 CR-006 identified that unauthenticated marker and finding-ID text could suppress a run or alter subsequent numbering."
+    },
+    {
+      "url": "https://github.com/dmitchelljackson/ThinkSo/pull/7#discussion_r4001114981",
+      "effect": "edited",
+      "note": "The owner confirmed the finding was fixed by resolving the App bot identity and requiring its numeric user ID for duplicate markers and historical CR numbers."
+    }
+  ],
+  "retired_by": null
+}

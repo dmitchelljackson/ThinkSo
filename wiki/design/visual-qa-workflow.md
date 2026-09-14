@@ -8,8 +8,8 @@ Every ticket that creates or materially changes mobile UI uses two visual-review
 
 The implementer must:
 
-1. Render the authoritative exported design and the Expo Web implementation at the same representative phone viewport.
-2. Compare them side by side while iterating. Use an overlay or image diff when spacing, alignment, sizing, or typography is difficult to judge by eye.
+1. Render the authoritative exported design and the Expo Web implementation at matching small, medium, and large phone viewports.
+2. Compare the full responsive matrix side by side while iterating. Load the matrix into visual context; generating files without inspecting them does not satisfy this gate.
 3. Check composition, hierarchy, typography, colors, spacing, controls, and every ticket-owned visible state.
 4. Repeat until material visual differences are resolved or recorded as an intentional responsive/platform adaptation.
 5. Return comparison evidence and any remaining deviations to the coordinator.
@@ -20,7 +20,7 @@ Use the repeatable Playwright comparison command rather than manually arranging 
 pnpm visual:compare --source "raw/designs/<archive>/<screen>.dc.html" --name <screen> --url http://localhost:8081/
 ```
 
-Pass `--action "CREATE ACCOUNT"` when the target state is reached through a visible button. The command renders the exported design and Expo Web at 393 × 852, forces light mode for comparison, and writes design, implementation, side-by-side, and overlay captures under the ignored `screenshots/visual/<screen>/` directory. Generated comparison artifacts are temporary verification evidence unless a ticket explicitly requires committed documentation.
+Pass `--action "CREATE ACCOUNT"` when the target state is reached through a visible button. The command renders both the exported design and Expo Web at small (360 × 740), medium (393 × 852), and large (430 × 932) viewports, forces light mode, and writes the paired captures plus `responsive-matrix.png` under the ignored `screenshots/visual/<screen>/` directory. The implementer must inspect that matrix before native verification. Generated comparison artifacts are temporary verification evidence unless a ticket explicitly requires committed documentation.
 
 Expo Web is an iteration surface, not proof of native correctness. It does not reliably expose native font metrics, safe-area behavior, keyboards, system dialogs, platform controls, or other Android/iOS differences.
 
