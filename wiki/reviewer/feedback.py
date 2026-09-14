@@ -410,8 +410,7 @@ def apply_and_push(
                 "add",
                 "-A",
                 "--",
-                "wiki/reviewer/rules",
-                "wiki/reviewer/retired",
+                *paths,
                 cwd=checkout,
             )
             identity = {
