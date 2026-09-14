@@ -376,6 +376,60 @@ def commentable_lines(patch: str | None) -> set[tuple[str, int]]:
     return result
 
 
+def commentable_ranges(patch: str | None) -> dict[str, list[list[int]]]:
+    lines = commentable_lines(patch)
+    ranges: dict[str, list[list[int]]] = {"LEFT": [], "RIGHT": []}
+    for side, side_ranges in ranges.items():
+        for number in sorted(line for line_side, line in lines if line_side == side):
+            if side_ranges and side_ranges[-1][1] == number - 1:
+                side_ranges[-1][1] = number
+            else:
+                side_ranges.append([number, number])
+    return ranges
+
+
+LOCKFILE_NAMES = {
+    "bun.lock",
+    "bun.lockb",
+    "package-lock.json",
+    "Pipfile.lock",
+    "pnpm-lock.yaml",
+    "poetry.lock",
+    "uv.lock",
+    "yarn.lock",
+}
+
+
+def is_lockfile(path: str) -> bool:
+    return Path(path).name in LOCKFILE_NAMES
+
+
+def validate_coverage(result: dict[str, Any], files: list[dict[str, Any]]) -> None:
+    coverage = result.get("coverage")
+    if not isinstance(coverage, list):
+        raise ReviewerError("Reviewer coverage must be a list")
+    entries = {
+        entry.get("path"): entry for entry in coverage if isinstance(entry, dict)
+    }
+    missing = []
+    for file in files:
+        entry = entries.get(file["filename"])
+        complete = entry is not None and entry.get("diff") is True and (
+            entry.get("full_file") is True
+            or file.get("status") == "removed"
+            or (
+                is_lockfile(file["filename"])
+                and bool(str(entry.get("note") or "").strip())
+            )
+        )
+        if not complete:
+            missing.append(file["filename"])
+    if missing:
+        raise ReviewerError(
+            f"Reviewer did not cover {len(missing)} changed file(s): {', '.join(missing)}"
+        )
+
+
 def validate_structured_review(
     *,
     result: dict[str, Any],
@@ -396,6 +450,7 @@ def validate_structured_review(
         raise ReviewerError(
             f"Stale review: PR head is {pull['head']['sha']}, not {commit}"
         )
+    validate_coverage(result, files)
     summary = validate_summary(result.get("summary", ""))
     comments = result.get("comments")
     if not isinstance(comments, list):
