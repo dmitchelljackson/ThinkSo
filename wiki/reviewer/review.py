@@ -17,17 +17,21 @@ from agent_runtime import (
     run_structured_agent,
 )
 from github_review import (
+    ExternalPRApprovalRequired,
     ReviewerError,
     authenticate,
     has_authenticated_marker,
     load_config,
     next_finding_number,
     pull_context,
+    pull_metadata,
+    require_authorized_head,
     reviewer_app_user,
     submit_review,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
+OWNER_USER_ID = 6991658
 
 REVIEW_SCHEMA: dict[str, Any] = {
     "type": "object",
@@ -91,13 +95,15 @@ def git(*arguments: str, cwd: Path = ROOT) -> str:
     return result.stdout.strip()
 
 
-def run_review(pr: int) -> dict[str, Any]:
+def run_review(pr: int, allowed_external_head: str | None = None) -> dict[str, Any]:
     config = load_config()
     token, installation = authenticate(config)
     app_user = reviewer_app_user(config, token, installation)
-    pull, files, reviews, review_comments = pull_context(config, token, pr)
+    pull = pull_metadata(config, token, pr)
     if pull["state"] != "open":
         raise ReviewerError(f"PR #{pr} is not open")
+    require_authorized_head(pull, pr, OWNER_USER_ID, allowed_external_head)
+    pull, files, reviews, review_comments = pull_context(config, token, pr, pull)
     head = pull["head"]["sha"]
     marker = f"<!-- thinkso-reviewer:run pr={pr} head={head} -->"
     if has_authenticated_marker(reviews, marker, app_user["id"]):
@@ -177,10 +183,36 @@ def main() -> int:
         description="Review one ThinkSo pull request as the App."
     )
     parser.add_argument("pr", type=int)
+    parser.add_argument(
+        "--allow-external-head",
+        metavar="SHA",
+        help="exact external PR head explicitly approved by the repository owner",
+    )
     arguments = parser.parse_args()
     try:
-        print(json.dumps(run_review(arguments.pr), ensure_ascii=False))
+        print(
+            json.dumps(
+                run_review(arguments.pr, arguments.allow_external_head),
+                ensure_ascii=False,
+            )
+        )
         return 0
+    except ExternalPRApprovalRequired as error:
+        print(
+            json.dumps(
+                {
+                    "status": "error",
+                    "code": "EXTERNAL_PR_APPROVAL_REQUIRED",
+                    "pr": error.pr,
+                    "author": error.author,
+                    "head": error.head,
+                    "surface_to_user": True,
+                    "user_message": str(error),
+                }
+            ),
+            file=sys.stderr,
+        )
+        return 1
     except (ReviewerError, AgentRuntimeError) as error:
         print(
             json.dumps(

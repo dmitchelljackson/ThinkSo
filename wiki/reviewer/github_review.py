@@ -34,6 +34,20 @@ class ReviewerError(Exception):
     """A concise, actionable reviewer CLI error."""
 
 
+class ExternalPRApprovalRequired(ReviewerError):
+    """An external pull request needs owner approval for its exact head."""
+
+    def __init__(self, pr: int, author: str, head: str) -> None:
+        self.pr = pr
+        self.author = author
+        self.head = head
+        super().__init__(
+            f"PR #{pr} is authored by {author} at {head}. Mitchell must inspect and "
+            "explicitly approve this exact head before the reviewer may load it. Then "
+            f"rerun with --allow-external-head {head}."
+        )
+
+
 def encode(value: bytes) -> str:
     return base64.urlsafe_b64encode(value).rstrip(b"=").decode("ascii")
 
@@ -225,11 +239,38 @@ def next_finding_number(review_comments: list[dict[str, Any]], app_user_id: int)
     return next_number
 
 
+def pull_metadata(config: dict[str, Any], token: str, pr: int) -> dict[str, Any]:
+    return github(f"/repos/{config['repository']}/pulls/{pr}", token=token)
+
+
+def require_authorized_head(
+    pull: dict[str, Any],
+    pr: int,
+    owner_user_id: int,
+    allowed_external_head: str | None,
+) -> None:
+    author = pull.get("user", {})
+    author_id = author.get("id")
+    author_login = author.get("login")
+    head = pull.get("head", {}).get("sha")
+    if not isinstance(author_id, int) or not isinstance(author_login, str):
+        raise ReviewerError(f"PR #{pr} has invalid author metadata")
+    if not isinstance(head, str) or not re.fullmatch(r"[0-9a-f]{40}", head):
+        raise ReviewerError(f"PR #{pr} has invalid head metadata")
+    if author_id == owner_user_id:
+        return
+    if allowed_external_head != head:
+        raise ExternalPRApprovalRequired(pr, author_login, head)
+
+
 def pull_context(
-    config: dict[str, Any], token: str, pr: int
+    config: dict[str, Any],
+    token: str,
+    pr: int,
+    pull: dict[str, Any] | None = None,
 ) -> tuple[Any, Any, Any, Any]:
     repository = config["repository"]
-    pull = github(f"/repos/{repository}/pulls/{pr}", token=token)
+    pull = pull or pull_metadata(config, token, pr)
     files = all_pages(f"/repos/{repository}/pulls/{pr}/files", token)
     reviews = all_pages(f"/repos/{repository}/pulls/{pr}/reviews", token)
     review_comments = all_pages(f"/repos/{repository}/pulls/{pr}/comments", token)
