@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Animated, Easing, View } from 'react-native';
+import { Animated, Easing, Platform, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useThinkSoTheme } from './theme';
 
@@ -159,25 +159,33 @@ export function LoadingS({
         }}
       >
         <Svg width="100%" height="100%" viewBox="0 0 60 102">
-          {STROKES.map((stroke, index) => (
-            <AnimatedPath
-              key={stroke.d}
-              d={stroke.d}
-              fill="none"
-              stroke={resolvedInk}
-              strokeWidth={strokeWidth * WOBBLE[index]![5]}
-              strokeLinecap="round"
-              opacity={strokes[index]!.interpolate({
-                inputRange: [0, 0.001, 1],
-                outputRange: [0, WOBBLE[index]![6], WOBBLE[index]![6]],
-              })}
-              strokeDasharray={[stroke.length, stroke.length]}
-              strokeDashoffset={strokes[index]!.interpolate({
-                inputRange: [0, 1],
-                outputRange: [stroke.length, 0],
-              })}
-            />
-          ))}
+          {STROKES.map((stroke, index) => {
+            const shared = {
+              d: stroke.d,
+              fill: 'none' as const,
+              stroke: resolvedInk,
+              strokeWidth: strokeWidth * WOBBLE[index]![5],
+              strokeLinecap: 'round' as const,
+            };
+            if (Platform.OS === 'web') {
+              return <Path key={stroke.d} {...shared} opacity={WOBBLE[index]![6]} />;
+            }
+            return (
+              <AnimatedPath
+                key={stroke.d}
+                {...shared}
+                opacity={strokes[index]!.interpolate({
+                  inputRange: [0, 0.001, 1],
+                  outputRange: [0, WOBBLE[index]![6], WOBBLE[index]![6]],
+                })}
+                strokeDasharray={[stroke.length, stroke.length]}
+                strokeDashoffset={strokes[index]!.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [stroke.length, 0],
+                })}
+              />
+            );
+          })}
         </Svg>
       </View>
     </View>

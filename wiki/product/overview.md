@@ -17,6 +17,7 @@ The product loop is:
 - **LOCKED — agreed consequences only:** ThinkSo never writes or posts something a user did not approve as part of the challenge.
 - **LOCKED — posts only for MVP:** every consequence is exact pre-approved Threads post text published to the losing participant's connected account. The minting agent must not propose profile changes, offline dares, payments, purchases, physical acts, or other manual consequences that ThinkSo cannot execute.
 - **LOCKED — Threads required for MVP identity:** a connected Threads identity is required to participate. Disconnecting permanently retires that ThinkSo profile.
+- **LOCKED — separate account and social identities:** signup establishes an independent ThinkSo display name. Threads supplies a separate provider handle; future social providers may add other handles without replacing the ThinkSo account identity.
 - **LOCKED — AI is bounded:** the creation agent drafts contracts; the judge follows the stored resolution contract. Deterministic rules belong in code.
 
 ## Users and roles
@@ -51,7 +52,6 @@ Primary destinations:
 4. Create Challenge
 5. Challenge Contract
 6. Account
-7. How It Works
 
 Judgment is not a separate destination; links may open the Challenge Contract scrolled to its Judgment section.
 

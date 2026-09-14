@@ -51,16 +51,18 @@ The coordinator must:
 
 Local Auth Emulator verification needs `FIREBASE_PROJECT_ID=thinkso-5768a` and `FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099`; it does not need a service-account key. A future non-Google-hosted deployment supplies Application Default Credentials or an ignored service-account path through `GOOGLE_APPLICATION_CREDENTIALS`. Never commit a service-account JSON file.
 
-## Security gate before T-030 completion
+## Firebase-to-ThinkSo revocation bridge
 
-Firebase password resets and major account changes revoke Firebase refresh tokens, but ThinkSo currently issues a separate opaque session. The implementation must define and test how those Firebase revocations invalidate corresponding ThinkSo session families. Until then, password-reset UI may be built and emulator-tested, but T-030 cannot claim complete session revocation semantics.
+**DERIVED:** Firebase password resets and major account changes revoke Firebase refresh tokens, while ThinkSo issues a separate opaque session. Each ThinkSo session therefore retains only the creating Firebase token's `auth_time`; the user row retains Firebase's `tokens_valid_after` epoch and its last-check time. An authenticated ThinkSo request whose check is at least five minutes old asks the Admin SDK for the current epoch. A newer epoch atomically revokes every ThinkSo session family for that user before access is granted. T-030 owns the schema and pure policy tests; T-040 owns request authentication, the bounded Admin lookup, atomic revocation, and integration tests. No Firebase ID or refresh token is stored for this bridge.
 
 ## Acceptance evidence
 
 - Email/Password activation was verified on 2026-09-04 with a non-creating invalid-input probe that reached ordinary credential validation rather than `OPERATION_NOT_ALLOWED`.
 - Email enumeration protection was verified on 2026-09-04 when a fabricated unknown-account sign-in returned generic `INVALID_LOGIN_CREDENTIALS` rather than `EMAIL_NOT_FOUND`.
 - Android and iOS builds initialize Firebase without embedding an administrative credential.
-- Auth Emulator registration, sign-in, wrong-password, duplicate-email, reset-request, logout, and relaunch cases pass deterministically.
+- T-030: Auth Emulator registration, sign-in, wrong-password, and duplicate-email cases pass deterministically.
+- T-035: reset-request behavior passes deterministically.
+- T-040: logout, relaunch, refresh rotation, and Firebase-to-ThinkSo revocation enforcement pass deterministically.
 - The backend accepts a valid emulator ID token only in explicit emulator mode and rejects malformed/expired/wrong-project tokens.
 - One controlled live smoke test succeeds without logging email addresses, passwords, ID tokens, or session credentials.
 

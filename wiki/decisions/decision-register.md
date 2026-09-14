@@ -82,7 +82,7 @@
 - `send`: PROPOSED → SENT; `accept`: SENT → ACCEPTED. The MVP has no decline transition or endpoint.
 - The invite's `REJECT` control closes the Contract locally without a request, state change, or notification. True targeted rejection and DECLINED state are deferred to V2. Already accepted always conflicts.
 - First valid acceptance is atomic and wins.
-- Every Contract stores immutable `creator_display_name` and `opponent_display_name` text. The creator label defaults from the connected Threads profile name or handle and may be changed by the minting agent for one proposal without changing the profile. The Contract displays the creator's Threads handle and, after acceptance, the bound challenger's Threads handle. No challenger handle exists before acceptance; the intended-opponent text remains visible after binding.
+- Every Contract stores immutable `creator_display_name` and `opponent_display_name` text. The creator label defaults from the independent ThinkSo account display name and may be changed by the minting agent for one proposal without changing the profile. The Contract separately displays the creator's Threads handle and, after acceptance, the bound challenger's Threads handle. No challenger handle exists before acceptance; the intended-opponent text remains visible after binding.
 - `opponent_display_name` is immutable descriptive text, not access control. If a different link-holder accepts first, retain that intended-opponent text and separately display the authenticated bound challenger.
 - MVP forbids creator self-acceptance in both UI and API authorization. Solo/self challenges are a valid V2 use case, not part of the initial state machine.
 - Creator uses native share sheet; no custom success/share screen.

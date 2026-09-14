@@ -72,8 +72,10 @@ See [Mobile networking and session recovery](./mobile-networking.md) for failure
 - Store both the ThinkSo access token and refresh credential in `expo-secure-store`, not Async Storage or component state.
 - Cache the access token in application memory while the process is running so normal requests do not read SecureStore repeatedly. SecureStore remains its persistent home across process death and relaunch.
 - ThinkSo access tokens are opaque, database-backed bearer credentials with a 24-hour lifetime. The backend verifies that their session remains active on every authenticated request, allowing immediate revocation before nominal expiry.
+- At most five minutes after Firebase advances a user's token-valid-after epoch, the next authenticated request revokes every corresponding ThinkSo session family. Cache that Admin lookup per user; do not call Firebase on every request or retain Firebase credentials for the check.
 - Rotating ThinkSo refresh credentials expire after 30 days without use and after an absolute maximum of 180 days, after which Firebase email/password authentication is required again.
 - A fresh Firebase ID token is exchanged with the ThinkSo backend; the app then uses ThinkSo-issued session credentials for its API. Firebase credentials and ThinkSo session credentials remain separate concerns.
+- Configure the Firebase client with explicit in-memory auth persistence. ThinkSo's access and refresh credentials in SecureStore are the only persistent application session; do not add a second Async Storage-backed Firebase session.
 - At cold launch, hold protected routing in an initializing state while SecureStore is read. Use a stored access token if it is still valid; otherwise attempt refresh. Do not flash Login before restoration completes.
 - Refresh on demand when an access token has less than one hour remaining. Do not run a periodic or background refresh timer.
 - After an authenticated request returns `401`, permit one coordinated refresh and one replay of that request. A second `401` signs the user out rather than looping.

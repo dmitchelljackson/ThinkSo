@@ -70,7 +70,7 @@ Provider-native controls intentionally retain provider/platform typography. Icon
 
 1. **`DocumentScreen` — DERIVED**
 
-   Safe-area-aware paper surface, optional margin rule, responsive horizontal gutters, scrolling behavior, and screen background. It must not contain a fake device frame.
+   Safe-area-aware paper surface, optional inset margin rule, responsive horizontal gutters, scrolling behavior, and screen background. The margin rule is decoration positioned independently from the centered content column; it must never sit flush against the physical screen edge or shift content. It must not contain a fake device frame.
 
 2. **`FormHeader` — DERIVED**
 
@@ -86,7 +86,7 @@ Provider-native controls intentionally retain provider/platform typography. Icon
 
 5. **`HandwrittenAnnotation` and approved scribble assets — DERIVED**
 
-   Gloria Hallelujah annotation wrapper plus reusable underline/arrow marks. Required meaning must remain in ordinary text.
+   Gloria Hallelujah annotation wrapper plus reusable underline/arrow marks. Underline marks are centered directly beneath the words they annotate rather than positioned against the screen. Required meaning must remain in ordinary text.
 
 ### Interaction primitives
 
@@ -102,33 +102,37 @@ Provider-native controls intentionally retain provider/platform typography. Icon
 
    Full-row tappable checkbox, handwritten check, explanatory label, enabled/disabled state.
 
-9. **`FilingErrorToast` — LOCKED shared behavior**
+9. **`PasswordField` — DERIVED**
+
+   Shared native password input with an internal Show/Hide state, optional Forgot Password action, disabled state, validation error, and login/new-password autocomplete semantics. Screen presenters own the password value but do not own the transient visibility toggle.
+
+10. **`FilingErrorToast` — LOCKED shared behavior**
 
    Global pink toast with header, timestamp, message, close/swipe dismissal, optional countdown action, and no automatic action when the countdown expires. It must support `TRY AGAIN`, `DISMISS`, and `LOG OUT` semantics without screen-specific forks.
 
-10. **`LoadingS` — LOCKED shared behavior**
+11. **`LoadingS` — LOCKED shared behavior**
 
     ThinkSo activity indicator used outside provider-branded buttons and for restrained agent/research activity where specified.
 
-11. **`NoticeDialog` / `CommitmentDialog` shell — DERIVED**
+12. **`NoticeDialog` / `CommitmentDialog` shell — DERIVED**
 
     Document-style modal surface with administrative header, optional stamp/annotation/art, body, and action row. Commitment and retirement variants keep their own copy and behavior.
 
 ### Product composites
 
-12. **`AppTopBar` — DERIVED**
+13. **`AppTopBar` — DERIVED**
 
     Sticky/native-equivalent top navigation with back/profile action, ThinkSo title, and contextual label.
 
-13. **`ChallengeCard` — LOCKED reusable concept**
+14. **`ChallengeCard` — LOCKED reusable concept**
 
     One tappable canonical card structure with state variants; no internal actions.
 
-14. **`ContractPartyRow`, `ConsequenceBlock`, and `ContractSection` — DERIVED**
+15. **`ContractPartyRow`, `ConsequenceBlock`, and `ContractSection` — DERIVED**
 
     Repeated contract composition pieces shared by proposal and canonical contract views. Do not create a second contract data model to serve them.
 
-15. **`SettingsRow` — DERIVED**
+16. **`SettingsRow` — DERIVED**
 
     Account/legal row with label, optional value/status, and disclosure treatment.
 
