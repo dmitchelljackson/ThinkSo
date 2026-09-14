@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "id": "calibrate-local-reviewer-trust-boundary",
+  "status": "active",
+  "kind": "calibration",
+  "scope": "ThinkSo local pull-request review and post-merge feedback trigger skills",
+  "rule": "Do not require the trigger skills to launch their Python hosts from a detached origin/main checkout merely because a branch can edit the local scripts. For pull-request review, the accepted boundary is to inspect immutable author and head metadata first: owner-authored PRs proceed automatically, while any external author requires Mitchell's explicit approval bound to the exact head SHA before PR files or candidate code are fetched, and a new head invalidates approval. Post-merge feedback may invoke the local host directly while its JSON-only write validation and fresh-main retry remain intact.",
+  "rationale": "PR #7 initially answered a valid candidate-trust concern with detached-main bootstrap ceremony. The owner rejected that operational model as mismatched to agent use and approved a narrower author/head authorization gate plus the existing guarded post-merge write path. Merge f22c7241d2884108d5321dde0f94d00ceea317c8 implements that project-specific boundary.",
+  "origin": [
+    {
+      "url": "https://github.com/dmitchelljackson/ThinkSo/pull/7#discussion_r3993138999",
+      "effect": "created",
+      "note": "PR #7 CR-005 raised the risk of allowing candidate-controlled reviewer code to reach the privileged host path."
+    },
+    {
+      "url": "https://github.com/dmitchelljackson/ThinkSo/pull/7#discussion_r4001114363",
+      "effect": "edited",
+      "note": "The owner initially addressed the concern with a detached trusted-main host and described its bootstrap boundary."
+    },
+    {
+      "url": "https://github.com/dmitchelljackson/ThinkSo/pull/7#discussion_r4001121750",
+      "effect": "edited",
+      "note": "The owner rejected detached-main instructions for the feedback trigger as inconsistent with the intended agent workflow and questioned whether they protected a real threat."
+    },
+    {
+      "url": "https://github.com/dmitchelljackson/ThinkSo/pull/7#discussion_r4001123395",
+      "effect": "edited",
+      "note": "The owner applied the same calibration concern to the pull-request reviewer trigger."
+    },
+    {
+      "url": "https://github.com/dmitchelljackson/ThinkSo/pull/7#discussion_r4007815131",
+      "effect": "edited",
+      "note": "The owner confirmed the final feedback design: direct local invocation after merge with JSON-only validation and guarded main-update retry retained."
+    },
+    {
+      "url": "https://github.com/dmitchelljackson/ThinkSo/pull/7#discussion_r4007815340",
+      "effect": "edited",
+      "note": "The owner confirmed the final review design: direct invocation, owner-author bypass, and explicit approval tied to an external PR's exact head SHA before candidate loading."
+    }
+  ],
+  "retired_by": null
+}
