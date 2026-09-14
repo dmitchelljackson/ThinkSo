@@ -388,6 +388,22 @@ def commentable_ranges(patch: str | None) -> dict[str, list[list[int]]]:
     return ranges
 
 
+LOCKFILE_NAMES = {
+    "bun.lock",
+    "bun.lockb",
+    "package-lock.json",
+    "Pipfile.lock",
+    "pnpm-lock.yaml",
+    "poetry.lock",
+    "uv.lock",
+    "yarn.lock",
+}
+
+
+def is_lockfile(path: str) -> bool:
+    return Path(path).name in LOCKFILE_NAMES
+
+
 def validate_coverage(result: dict[str, Any], files: list[dict[str, Any]]) -> None:
     coverage = result.get("coverage")
     if not isinstance(coverage, list):
@@ -401,7 +417,10 @@ def validate_coverage(result: dict[str, Any], files: list[dict[str, Any]]) -> No
         complete = entry is not None and entry.get("diff") is True and (
             entry.get("full_file") is True
             or file.get("status") == "removed"
-            or str(entry.get("note") or "").strip()
+            or (
+                is_lockfile(file["filename"])
+                and bool(str(entry.get("note") or "").strip())
+            )
         )
         if not complete:
             missing.append(file["filename"])

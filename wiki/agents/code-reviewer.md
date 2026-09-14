@@ -27,8 +27,8 @@ A review is valid only if every change was actually read. Skimming, searching a 
 
 - **Every changed file:** read its complete diff, **and** read the entire file at the reviewed head. Skip the second part for deleted files. When output is truncated, continue reading until the end of the file.
 - **Dependency lockfiles:** reading the diff is sufficient. Confirm the changes match the corresponding manifest changes.
-- **Generated artifacts:** read the diff, and confirm they agree with their source of truth.
-- **Exceptions:** state any exception you applied in that file's coverage `note`.
+- **Generated artifacts:** read the complete artifact at head as well as its diff, and confirm it agrees with its source of truth.
+- **Exceptions:** only deleted files and recognized dependency lockfiles are exempt from a full-file read. State the exception in that file's coverage `note`. A note never excuses an unread regular or generated file.
 - **Large pull requests:** keep going. Do not trade coverage for brevity. Work file by file until every changed file is covered.
 
 ## Canon

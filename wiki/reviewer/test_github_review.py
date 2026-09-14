@@ -128,19 +128,48 @@ class ReviewerCliTests(unittest.TestCase):
 
     def test_coverage_requires_full_file_or_a_stated_exception(self) -> None:
         files = [
-            {"filename": "lock.yaml", "status": "modified"},
+            {"filename": "pnpm-lock.yaml", "status": "modified"},
             {"filename": "gone.py", "status": "removed"},
             {"filename": "skimmed.py", "status": "modified"},
         ]
         result = {
             "coverage": [
-                {"path": "lock.yaml", "diff": True, "full_file": False, "note": "lockfile diff"},
+                {"path": "pnpm-lock.yaml", "diff": True, "full_file": False, "note": "lockfile diff"},
                 {"path": "gone.py", "diff": True, "full_file": False, "note": ""},
                 {"path": "skimmed.py", "diff": True, "full_file": False, "note": ""},
             ]
         }
         with self.assertRaisesRegex(ReviewerError, "did not cover 1 .*skimmed.py"):
             validate_coverage(result, files)
+
+    def test_coverage_note_cannot_excuse_an_unread_regular_file(self) -> None:
+        files = [{"filename": "application.py", "status": "modified"}]
+        result = {
+            "coverage": [
+                {
+                    "path": "application.py",
+                    "diff": True,
+                    "full_file": False,
+                    "note": "output was truncated",
+                }
+            ]
+        }
+        with self.assertRaisesRegex(ReviewerError, "did not cover 1 .*application.py"):
+            validate_coverage(result, files)
+
+    def test_coverage_allows_a_named_lockfile_exception(self) -> None:
+        files = [{"filename": "services/api/uv.lock", "status": "modified"}]
+        result = {
+            "coverage": [
+                {
+                    "path": "services/api/uv.lock",
+                    "diff": True,
+                    "full_file": False,
+                    "note": "lockfile diff checked against pyproject.toml",
+                }
+            ]
+        }
+        validate_coverage(result, files)
 
     def test_markers_and_finding_numbers_require_the_app_identity(self) -> None:
         marker = "<!-- thinkso-reviewer:run pr=7 head=abc -->"
