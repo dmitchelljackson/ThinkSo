@@ -20,22 +20,23 @@ The default config shape is:
 }
 ```
 
-After this system is bootstrapped onto `main`, run a complete review from a temporary detached
-checkout of the fetched `origin/main`, never from the candidate branch:
+Run a complete review with:
 
 ```text
-python3 <trusted-main-worktree>/wiki/reviewer/review.py <number>
+python3 wiki/reviewer/review.py <number>
 ```
 
-Run feedback learning from the same trusted-main boundary after that reviewed pull request merges:
+Run feedback learning after that reviewed pull request merges:
 
 ```text
-python3 <trusted-main-worktree>/wiki/reviewer/feedback.py <number>
+python3 wiki/reviewer/feedback.py <number>
 ```
 
 For a non-mutating feedback-prompt test before merge, use `--dry-run`. It invokes the feedback agent and validates its proposal but never writes, commits, or pushes anything.
 
-Both entrypoints take the PR number as their only production input. The orchestrator, rather than candidate code, creates and removes the trusted-main worktree. The first merge is a manual bootstrap; later changes to the reviewer are reviewed by the previously trusted main version. The entrypoints validate the local GitHub App configuration before running. The model subprocess receives neither the PEM nor an installation token. The SDK process loads a temporary copy of the Codex session, deletes that file, and removes directory access before starting the model turn. Candidate `AGENTS.md` discovery is disabled, the model shell receives an allowlisted environment without credential locations or tokens, and approvals are denied. A custom Codex permission profile permits reads only from the exact review checkout, any explicitly supplied second checkout, and the minimal system runtime; it denies checkout writes, temporary-directory reads, and shell network access. Native web search remains available separately. The parent rejects output containing any copied authentication value before performing GitHub or Git mutations.
+The reviewer checks PR authorship before fetching files, comments, or the candidate branch. PRs authored by Mitchell proceed automatically. Every other author receives a structured `EXTERNAL_PR_APPROVAL_REQUIRED` result containing the current head SHA. The orchestrator must surface that result and may pass `--allow-external-head <sha>` only after Mitchell explicitly says he inspected and approves that exact head. A changed head requires fresh approval.
+
+The entrypoints validate the local GitHub App configuration before running. The model subprocess receives neither the PEM nor an installation token. The SDK process loads a temporary copy of the Codex session, deletes that file, and removes directory access before starting the model turn. Candidate `AGENTS.md` discovery is disabled, the model shell receives an allowlisted environment without credential locations or tokens, and approvals are denied. A custom Codex permission profile permits reads only from the exact review checkout, any explicitly supplied second checkout, and the minimal system runtime; it denies checkout writes, temporary-directory reads, and shell network access. Native web search remains available separately. The parent rejects output containing any copied authentication value before performing GitHub or Git mutations.
 
 The reviewer posts one normal review with a short summary and inline findings. Previous automated review text is deliberately excluded from model context so each head receives an independent review, while the trusted parent reads prior App-authored inline IDs and supplies the next sequential `CR-###` number. Duplicate-run markers count only when authored by the verified App bot identity. Optional `why` evidence is validated against the injected knowledge and rendered as a permanent rule link.
 

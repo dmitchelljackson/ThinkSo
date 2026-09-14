@@ -545,3 +545,7 @@ Required privileged reviewer and feedback hosts, imports, prompts, and policies 
 ## [2026-09-11] add | Traceable reviewer-rule lifecycle
 
 Added structured active and retired reviewer-rule directories. Learned rules now require validated GitHub comment provenance, preserve prior origins and append a new source on every edit, and may be retired only by moving the unchanged historical rule into the retired archive with an explicit owner-comment link and reason.
+
+## [2026-09-14] simplify | Pull-request reviewer authorization
+
+Removed the detached-`origin/main` launcher ceremony from the reviewer and feedback trigger skills. The reviewer now checks immutable GitHub author ID and head metadata before loading candidate content: owner-authored PRs proceed automatically, while external PRs require an explicit owner approval bound to the exact head SHA and expire on any update. Feedback runs directly after merge while retaining its internal guarded main-update retry.

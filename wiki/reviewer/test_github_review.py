@@ -1,17 +1,47 @@
 import unittest
 
 from github_review import (
+    ExternalPRApprovalRequired,
     ReviewerError,
     commentable_lines,
     has_authenticated_marker,
     next_finding_number,
     parse_inline_comment,
+    require_authorized_head,
     validate_structured_review,
     validate_summary,
 )
 
 
 class ReviewerCliTests(unittest.TestCase):
+    def test_owner_authored_pull_does_not_require_approval(self) -> None:
+        pull = {"user": {"id": 42, "login": "owner"}, "head": {"sha": "a" * 40}}
+        require_authorized_head(pull, 7, 42, None)
+
+    def test_external_pull_requires_exact_head_approval(self) -> None:
+        pull = {
+            "user": {"id": 99, "login": "contributor"},
+            "head": {"sha": "a" * 40},
+        }
+        with self.assertRaises(ExternalPRApprovalRequired) as raised:
+            require_authorized_head(pull, 7, 42, None)
+        self.assertEqual(raised.exception.head, "a" * 40)
+
+    def test_external_pull_accepts_approved_exact_head(self) -> None:
+        pull = {
+            "user": {"id": 99, "login": "contributor"},
+            "head": {"sha": "a" * 40},
+        }
+        require_authorized_head(pull, 7, 42, "a" * 40)
+
+    def test_external_pull_rejects_stale_head_approval(self) -> None:
+        pull = {
+            "user": {"id": 99, "login": "contributor"},
+            "head": {"sha": "b" * 40},
+        }
+        with self.assertRaises(ExternalPRApprovalRequired):
+            require_authorized_head(pull, 7, 42, "a" * 40)
+
     def test_parses_structured_inline_comment(self) -> None:
         self.assertEqual(
             parse_inline_comment("CR-001|P1|file.py|7|RIGHT|Failure: loses state"),
