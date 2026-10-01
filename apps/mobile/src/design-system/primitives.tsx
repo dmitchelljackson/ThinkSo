@@ -577,14 +577,10 @@ export function NoticeDialog({
 }
 
 export type FirebaseAccountFormBoundary = {
-  displayName?: string;
   email: string;
   password: string;
-  mode?: 'login' | 'register';
-  displayNameError?: string;
   emailError?: string;
   passwordError?: string;
-  onDisplayNameChange?: (displayName: string) => void;
   onEmailChange: (email: string) => void;
   onPasswordChange: (password: string) => void;
   onForgotPassword?: () => void;
@@ -598,7 +594,6 @@ export type FirebaseAccountFormBoundary = {
 export type PasswordFieldProps = {
   value: string;
   onChangeText: (password: string) => void;
-  mode?: 'login' | 'register';
   disabled?: boolean;
   error?: string;
   onForgotPassword?: () => void;
@@ -607,7 +602,6 @@ export type PasswordFieldProps = {
 export function PasswordField({
   value,
   onChangeText,
-  mode = 'login',
   disabled = false,
   error,
   onForgotPassword,
@@ -638,7 +632,7 @@ export function PasswordField({
             testID="account-password"
             accessibilityLabel="Password"
             autoCapitalize="none"
-            autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
+            autoComplete="current-password"
             editable={!disabled}
             secureTextEntry={!revealed}
             value={value}
@@ -666,22 +660,15 @@ export function PasswordField({
           {error}
         </Text>
       )}
-      {mode === 'register' && !error && (
-        <Text style={styles.fieldHint}>Eight characters minimum.</Text>
-      )}
     </>
   );
 }
 
 export function AccountFormFields({
-  displayName = '',
   email,
   password,
-  mode = 'login',
-  displayNameError,
   emailError,
   passwordError,
-  onDisplayNameChange,
   onEmailChange,
   onPasswordChange,
   onForgotPassword,
@@ -695,30 +682,6 @@ export function AccountFormFields({
   const styles = usePrimitiveStyles();
   return (
     <View style={styles.form}>
-      {mode === 'register' && onDisplayNameChange && (
-        <>
-          <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>NAME FOR THE RECORD</Text>
-            <TextInput
-              testID="account-display-name"
-              accessibilityLabel="Name for the record"
-              autoCapitalize="words"
-              autoComplete="name"
-              editable={!busy}
-              value={displayName}
-              onChangeText={onDisplayNameChange}
-              placeholder="How you’ll be listed"
-              placeholderTextColor={colors.mutedInk}
-              style={styles.input}
-            />
-          </View>
-          {displayNameError && (
-            <Text accessibilityRole="alert" style={styles.fieldError}>
-              {displayNameError}
-            </Text>
-          )}
-        </>
-      )}
       <View style={styles.fieldGroup}>
         <Text style={styles.fieldLabel}>EMAIL</Text>
         <TextInput
@@ -743,7 +706,6 @@ export function AccountFormFields({
       <PasswordField
         value={password}
         onChangeText={onPasswordChange}
-        mode={mode}
         disabled={busy}
         {...(passwordError ? { error: passwordError } : {})}
         {...(onForgotPassword ? { onForgotPassword } : {})}

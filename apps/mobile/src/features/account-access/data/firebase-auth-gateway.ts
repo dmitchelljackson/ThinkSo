@@ -2,19 +2,16 @@ import Constants from 'expo-constants';
 import { FirebaseError, initializeApp, getApp, getApps, type FirebaseOptions } from 'firebase/app';
 import {
   connectAuthEmulator,
-  createUserWithEmailAndPassword,
   getAuth,
   inMemoryPersistence,
   initializeAuth,
   signInWithEmailAndPassword,
-  updateProfile,
   type Auth,
 } from 'firebase/auth';
 import { AccountFailure } from '../../../domain/account';
 
 export interface FirebaseAuthGateway {
   signIn(email: string, password: string): Promise<string>;
-  register(email: string, password: string, displayName: string): Promise<string>;
 }
 
 type Extra = {
@@ -48,16 +45,6 @@ export class FirebaseWebAuthGateway implements FirebaseAuthGateway {
       return credential.user.getIdToken(true);
     } catch (error) {
       throw mapFirebaseError(error, true);
-    }
-  }
-
-  public async register(email: string, password: string, displayName: string): Promise<string> {
-    try {
-      const credential = await createUserWithEmailAndPassword(this.auth, email, password);
-      await updateProfile(credential.user, { displayName });
-      return credential.user.getIdToken(true);
-    } catch (error) {
-      throw mapFirebaseError(error, false);
     }
   }
 }
