@@ -10,12 +10,17 @@ Required content:
 - ThinkSo wordmark with the juvenile `!?` layer;
 - recurring `YOU VS THEM` motif, with YOU/THEM looking typed into contract fields;
 - tagline: **Write it down. We’ll call it. Keep the receipts.**
+- centered `no backing out` annotation, arrow, and flame at a restrained secondary scale;
+- hand-drawn underlines centered directly beneath the words they mark;
 - email and password fields with password obscured by default and an explicit show/hide control;
+- Create Account additionally requires `Name for the record`, the independent ThinkSo display name;
 - primary Log In, Create Account, and Forgot Password actions;
 - the [ThinkSo Access Form](<../../raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Access Form.dc.html>) and separate [ThinkSo Register](<../../raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Register.dc.html>) exports as current visual evidence;
-- How It Works, Terms, and Privacy links.
+- Terms and Privacy links.
 
-The Register export contains a `Name for the record` field, but this is a raw-source mismatch. The locked product uses the connected Threads identity for public identity, so the Create Account UI does not show or require signup display name. No standalone forgot-password dialog was exported; use a normal account-access dialog from the Access Form affordance, with behavior defined by the Login BDD.
+The red document margin rule is inset from the physical screen edge without shifting the centered content column. The Terms/Privacy footer is intentionally compact so it reads as supporting legal copy rather than another primary section.
+
+The ThinkSo account display name is independent of connected social identities. Threads supplies its own handle after connection; future providers may supply other handles. No standalone forgot-password dialog was exported; use a normal account-access dialog from the Access Form affordance, with behavior defined by the Login BDD.
 
 Behavior:
 
@@ -220,4 +225,4 @@ After the first successful Contract send or acceptance on a device, whichever oc
 
 ## Login informational placeholders
 
-How It Works, Terms, and Privacy are visible dummy controls for MVP. Tapping them does not navigate, open a modal or browser, or initiate a request. Real informational and legal destinations are deferred until their content exists.
+Terms and Privacy are visible dummy controls for MVP. Tapping either leaves Account Access in place and shows the global non-retryable `NOT YET IMPLEMENTED` toast; it does not navigate, open a modal or browser, or initiate a request. Forgot Password uses the same temporary toast until T-035 supplies recovery. Real legal destinations are deferred until their content exists. How It Works is not shown on Account Access.

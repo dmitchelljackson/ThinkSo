@@ -6,7 +6,7 @@
 |---|---|
 | Type / status | `PRODUCT` / `DRAFT` |
 | Owner review | `PENDING` |
-| Stack position / predecessor | `035` / T-030 |
+| Stack position / predecessor | `035` / T-190 |
 | Branch / PR | `stack/035-password-recovery` / — |
 
 ## Outcome

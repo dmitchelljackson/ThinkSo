@@ -136,7 +136,7 @@ In `POSTING`, `verdict` is present and final but the required Threads consequenc
 
 One serialization is used in direct reads, list-entry envelopes, chat proposals, and mutation responses. A list entry nests the unchanged canonical contract beside list-specific ordering metadata; it does not create a summary/detail contract variant. Nullable fields remain present as `null`. MVP omits viewer-relative action flags: clients derive visible controls from authenticated identity, state, and timestamps, while every mutation repeats authoritative server eligibility checks.
 
-`creator_display_name` and `opponent_display_name` are immutable descriptive Contract text, not access-control identities. Because a connected Threads account is required before minting, the creator label defaults from the creator's Threads profile name or handle; the minting agent may change that label for one proposal without changing the user profile. The authenticated user who wins acceptance is stored separately in `challenger`. If the intended name and actual challenger differ, clients display both: the original intended-opponent wording remains unchanged and the bound challenger identity is identified separately. The creator's Threads handle is always displayed with the creator label; after acceptance the bound challenger's Threads handle is displayed with the opponent label. Before acceptance there is no challenger handle to show.
+`creator_display_name` and `opponent_display_name` are immutable descriptive Contract text, not access-control identities. The creator label defaults from the creator's independent ThinkSo account display name; the minting agent may change that label for one proposal without changing the user profile. The authenticated user who wins acceptance is stored separately in `challenger`. If the intended name and actual challenger differ, clients display both: the original intended-opponent wording remains unchanged and the bound challenger identity is identified separately. The creator's Threads handle is always displayed separately with the creator label; after acceptance the bound challenger's Threads handle is displayed with the opponent label. Before acceptance there is no challenger handle to show.
 
 The minting proposal tool requires explicit `creator_display_name`, `opponent_display_name`, `acceptance_expiration`, `resolution_date`, and `resolution_expiration`; backend code supplies no fallback dates. The creator name is prefilled from the authenticated account context but remains explicit in the tool call. The tool rejects missing/invalid dates, `acceptance_expiration >= resolution_date`, and a judging window shorter than 48 hours. A seven-day judging window is minting-agent prompt guidance, not a validation requirement. No fixed acceptance-window duration is imposed; the agent must choose an event-aware fair commitment deadline.
 
@@ -156,14 +156,14 @@ Auth: public.
 { "firebase_id_token": "firebase-client-id-token" }
 ```
 
-The mobile client signs in or registers directly with Firebase Authentication using email/password, then sends a freshly obtained Firebase ID token here. The backend verifies signature, issuer, audience, expiry, Firebase UID, and claimed email with the Firebase Admin SDK before finding or creating the ThinkSo user. Invalid, expired, disabled, or revoked credentials receive `401 invalid_firebase_credential`. ThinkSo never receives the plaintext password. MVP deliberately does not require `email_verified == true`; see the known limitation.
+The mobile client signs in or registers directly with Firebase Authentication using email/password, then sends a freshly obtained Firebase ID token here. During registration, it first stores the normalized Name for the record as the Firebase profile display name and refreshes the ID token. The backend verifies signature, issuer, audience, expiry, Firebase UID, and claimed email, then reads the Firebase user record through the Admin SDK before finding or creating the ThinkSo user. A new ThinkSo profile requires and copies the Firebase record's initial display name; returning login does not overwrite the independent ThinkSo name from a social profile. Invalid, expired, disabled, or revoked credentials receive `401 invalid_firebase_credential`. A new identity without a valid display name receives `400 display_name_required`. ThinkSo never receives the plaintext password. MVP deliberately does not require `email_verified == true`; see the known limitation.
 
 ```json
 {
   "access_token": "opaque-database-backed-token",
   "refresh_token": "rotating-opaque-token",
   "expires_in": 86400,
-  "user": { "id": "uuid", "display_name": null, "is_retired": false, "social_identity": null },
+  "user": { "id": "uuid", "display_name": "Mitchell", "is_retired": false, "social_identity": null },
   "onboarding_complete": false
 }
 ```
@@ -410,9 +410,7 @@ Already accepted—including by the same caller—fails with `409`; acceptance i
 
 ## Informational and internal operations
 
-### `GET /how-it-works`
-
-Do not create this API for MVP. How It Works, Terms, and Privacy are visible but nonfunctional placeholder controls; they expose no product data and open no destination. Real content and routing can be designed later.
+Terms and Privacy are nonfunctional Login placeholders for MVP; they expose no product data and open no destination. Do not create informational-content APIs yet.
 
 ### Judge command (not a public HTTP endpoint)
 

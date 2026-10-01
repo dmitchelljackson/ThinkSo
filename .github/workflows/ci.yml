@@ -96,6 +96,13 @@ jobs:
           5s --health-retries 10
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
       - uses: astral-sh/setup-uv@v6
         with:
           version: 0.9.21
@@ -107,7 +114,16 @@ jobs:
       - run: uv sync --directory services/api --locked --dev
         env:
           DATABASE_URL: postgresql+psycopg://thinkso:thinkso-test-only@localhost:5432/thinkso_test
+      - run: pnpm install --frozen-lockfile
       - run: just backend-integration
+        env:
+          DATABASE_URL: postgresql+psycopg://thinkso:thinkso-test-only@localhost:5432/thinkso_test
+      - name: Firebase Auth emulator contract
+        run: >-
+          pnpm dlx firebase-tools@15.29.0 emulators:exec --project demo-thinkso --only auth
+          "FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 uv run --locked --directory services/api
+          pytest -q tests/test_firebase_emulator.py && pnpm --filter @thinkso/mobile
+          test:auth-emulator"
         env:
           DATABASE_URL: postgresql+psycopg://thinkso:thinkso-test-only@localhost:5432/thinkso_test
 

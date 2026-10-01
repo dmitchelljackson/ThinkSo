@@ -10,7 +10,7 @@ This document is the behavioral source of truth for Firebase email/password acco
 - Shared error treatment: [ErrorToast](<../../raw/designs/thinkso-login-email-password-2026-09-04/ErrorToast.dc.html>)
 - Shared activity indicator: [CoolSpinner / loading S](<../../raw/designs/thinkso-login-email-password-2026-09-04/CoolSpinner.dc.html>)
 
-The Access Form and Register exports preserve the approved visual language. The Register export contains a raw `Name for the record` field, but locked product behavior excludes it: public identity comes from the connected Threads identity, so signup has no display-name field. The archive has no standalone forgot-password dialog; the normal account-access dialog entered from Forgot Password is specified below. The historical provider-button composition remains visual evidence only; do not restore Apple/Google behavior or infer fixed dimensions.
+The Access Form and Register exports preserve the approved visual language. `Name for the record` creates the ThinkSo account's independent display name; connected social identities and handles remain separate. The archive has no standalone forgot-password dialog; the normal account-access dialog entered from Forgot Password is specified below. The historical provider-button composition remains visual evidence only; do not restore Apple/Google behavior or infer fixed dimensions.
 
 ## 1. Account Access / Login
 
@@ -28,8 +28,12 @@ And it shows a show-or-hide password control
 And it shows a primary Log In action
 And it shows a Create Account action
 And it shows a Forgot Password action
-And it shows the How It Works, Terms, and Privacy placeholders
+And it shows the Terms and Privacy placeholders
 And it does not show Apple, Google, phone, username, guest-login, or multi-factor controls
+When the user enters a password and chooses Show
+Then the entered password becomes readable and the control changes to Hide
+When the user chooses Hide
+Then the password is obscured again and the control changes to Show
 ```
 
 ### 1.2 Validate Login input locally
@@ -91,36 +95,41 @@ And the password is not logged or persisted by ThinkSo
 
 ### 1.6 Enter Create Account mode
 
-UI references: [ThinkSo Access Form](<../../raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Access Form.dc.html>) and [ThinkSo Register](<../../raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Register.dc.html>); omit the raw `Name for the record` field because public identity comes from Threads.
+UI references: [ThinkSo Access Form](<../../raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Access Form.dc.html>) and [ThinkSo Register](<../../raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Register.dc.html>).
 
 ```gherkin
 Given Login mode is displayed
 When the user chooses Create Account
 Then the screen enters Create Account mode without opening a social provider
+And it shows a required Name for the record field
 And it shows email and password fields
 And it shows a show-or-hide password control
 And it shows a primary Create Account action
 And it provides a way back to Login mode
-And it does not require username, display name, phone number, password confirmation, or multi-factor enrollment
+And it does not require a username, phone number, password confirmation, or multi-factor enrollment
 ```
 
 ### 1.7 Validate and create a Firebase account
 
-UI references: [ThinkSo Register](<../../raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Register.dc.html>) · [loading S](<../../raw/designs/thinkso-login-email-password-2026-09-04/CoolSpinner.dc.html>); omit the raw `Name for the record` field because public identity comes from Threads.
+UI references: [ThinkSo Register](<../../raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Register.dc.html>) · [loading S](<../../raw/designs/thinkso-login-email-password-2026-09-04/CoolSpinner.dc.html>).
 
 ```gherkin
-Given Create Account mode contains a syntactically valid email and a password accepted by the configured Firebase password policy
+Given Create Account mode contains a non-empty Name for the record of at most 80 characters
+And a syntactically valid email and a password accepted by the configured Firebase password policy
 When the user taps Create Account
 Then exactly one Firebase account-creation request begins
 And every account-access form action is disabled during the request
 And the separate loading S is shown
 And ThinkSo never receives or stores the plaintext password
 When Firebase creates the identity
-Then the client exchanges its Firebase ID token with the backend exactly once
+Then the client stores the normalized Name for the record in the Firebase profile
+And obtains a fresh Firebase ID token after that profile update
+And the client exchanges that Firebase ID token with the backend exactly once
 And exactly one incomplete ThinkSo profile is created when none exists
+And that profile stores the normalized Name for the record independently of any social identity
 And a ThinkSo session is issued
 And Main routes directly to Connect Threads for the never-connected profile
-And no verification step or display-name field is shown
+And no email-verification step is shown
 ```
 
 ### 1.8 Display the Forgot Password dialog
@@ -204,9 +213,11 @@ UI reference: [ThinkSo Access Form](<../../raw/designs/thinkso-login-email-passw
 
 ```gherkin
 Given an account-access mode is displayed
-When the user taps How It Works, Terms, or Privacy
+When the user taps Forgot Password, Terms, or Privacy before its destination is implemented
 Then the user remains in the same mode
-And no destination, browser, modal, account operation, or error toast is opened
+And no destination, browser, modal, or account operation is opened
+And the global toast states that the feature is not yet implemented
+And its action is countdown dismissal rather than retry
 ```
 
 ### 1.14 Restore and refresh stored ThinkSo session credentials

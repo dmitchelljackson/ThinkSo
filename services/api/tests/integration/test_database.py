@@ -37,7 +37,18 @@ async def test_migrated_database_has_foundation_revision() -> None:
                 text("SELECT typname FROM pg_type WHERE typname = 'pgqueuer_status'")
             )
             legacy_table = await connection.scalar(text("SELECT to_regclass('job_queue')"))
-        assert revision == "0001_foundation"
+            identity_tables = set(
+                (
+                    await connection.scalars(
+                        text(
+                            "SELECT to_regclass(name) FROM (VALUES "
+                            "('users'), ('retired_identity_tombstones'), ('user_sessions')) "
+                            "AS expected(name)"
+                        )
+                    )
+                ).all()
+            )
+        assert revision == "0002_identity_sessions"
         assert queue_table == "pgqueuer"
         assert {
             "id",
@@ -55,5 +66,6 @@ async def test_migrated_database_has_foundation_revision() -> None:
         assert queue_objects == {"pgqueuer_log", "pgqueuer_statistics", "pgqueuer_schedules"}
         assert queue_status_type == "pgqueuer_status"
         assert legacy_table is None
+        assert identity_tables == {"users", "retired_identity_tombstones", "user_sessions"}
     finally:
         await engine.dispose()

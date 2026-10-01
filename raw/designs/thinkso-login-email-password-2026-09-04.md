@@ -18,7 +18,7 @@ The archive also preserves the previously exported Record, Contract, Create Chal
 
 ## Interpretation notes
 
-The exported `ThinkSo Access Form` is the Login visual reference and includes email/password fields, a show/hide control, a Forgot it affordance, and a Register affordance. The separate `ThinkSo Register` source includes a `Name for the record` field. That field is a raw-source mismatch: locked product behavior uses the connected Threads identity for public identity, so Create Account must not display or require a signup display-name field. The mismatch is preserved here for traceability and does not change the BDD.
+The exported `ThinkSo Access Form` is the Login visual reference and includes email/password fields, a show/hide control, a Forgot it affordance, and a Register affordance. The separate `ThinkSo Register` source includes the required `Name for the record` field. It establishes the independent ThinkSo account display name; social provider handles remain separate identities.
 
 No standalone forgot-password dialog file is present in this archive. The normal MVP Forgot Password interaction is a standard account-access dialog entered from the Access Form's Forgot it affordance; its behavior, neutral confirmation, and Firebase-hosted reset completion are defined by the Login BDD. Do not infer provider buttons or a custom reset page from the historical `ThinkSo Login` source.
 

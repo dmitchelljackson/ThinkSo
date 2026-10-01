@@ -2,6 +2,10 @@
 
 This is an append-only history of material wiki operations.
 
+## [2026-10-01] split | Login and Create Account delivery
+
+The owner split the combined Firebase account-access slice after manual testing made its boundary difficult to review. T-030 now delivers Login and ThinkSo session issuance using a manually seeded Firebase Auth Emulator user. New ticket T-190 depends on T-030 and delivers in-app Create Account. Existing ticket numbers remain unchanged; the delivery table records T-190 immediately after T-030.
+
 ## [2026-09-14] harden | Full-coverage pull-request reviews
 
 A PR #5 review read only part of a large change set and missed the main screen, all mobile tests, and several wiki diffs. The code-reviewer prompt now requires reading every changed file's complete diff and full head file (dependency lockfiles may be checked as diffs against their manifests; generated artifacts must also be checked against their sources), discovering the governing tickets, specifications, and conventions from `AGENTS.md` and the wiki index, and evaluating each change for correctness, security, canon, scope, tests, contracts, and shared-code regressions. The reviewer returns a per-file coverage ledger that the parent validates before posting, and receives each file's commentable line ranges. Coverage notes cannot excuse unread regular or generated files.
@@ -29,6 +33,22 @@ Isolated post-merge learning in a temporary worktree fetched from `origin/main`.
 ## [2026-09-10] harden | Structured GitHub reviews
 
 Replaced free-form review-body posting with a guarded Python CLI under `wiki/reviewer/`. It validates the local PEM and GitHub App installation, exposes current PR patches, and atomically posts a real approve, request-changes, or comment review composed of a short summary and validated inline findings.
+
+## [2026-09-08] correction | Account Access visual hierarchy
+
+Centered and reduced the secondary `no backing out` annotation group, centered hand-drawn underlines beneath their words, compacted the Terms/Privacy footer, and inset the red document margin rule without moving the centered content column. Verified the responsive web matrix and native Android/iOS renders.
+
+## [2026-09-08] correction | Account Access placeholder feedback
+
+Forgot Password, Terms, and Privacy now keep the user on Account Access while showing the global non-retryable `NOT YET IMPLEMENTED` toast. Password recovery remains owned by T-035 and legal destinations remain deferred.
+
+## [2026-09-06] correction | Independent ThinkSo account name
+
+Restored the exported Register screen's required `Name for the record`. Signup establishes an independent ThinkSo display name; Threads and any future social provider supply separate handles. The minting agent defaults a proposal's creator label from the ThinkSo name while Contract presentation includes the relevant provider handles separately.
+
+## [2026-09-06] correction | Account Access controls and compact layout
+
+Removed the superseded How It Works control from the Account Access BDD, screen specification, API plan, navigation inventory, and implementation. Locked the shared PasswordField boundary and explicit Show/Hide behavior. Reopened compact-device verification after the initial visual pass used only representative large phones and missed wordmark clipping.
 
 ## [2026-09-06] decision | Two-stage mobile visual QA
 
