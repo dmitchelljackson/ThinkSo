@@ -2,6 +2,10 @@
 
 This is an append-only history of material wiki operations.
 
+## [2026-10-01] split | Login and Create Account delivery
+
+The owner split the combined Firebase account-access slice after manual testing made its boundary difficult to review. T-030 now delivers Login and ThinkSo session issuance using a manually seeded Firebase Auth Emulator user. New ticket T-190 depends on T-030 and delivers in-app Create Account. Existing ticket numbers remain unchanged; the delivery table records T-190 immediately after T-030.
+
 ## [2026-09-14] harden | Full-coverage pull-request reviews
 
 A PR #5 review read only part of a large change set and missed the main screen, all mobile tests, and several wiki diffs. The code-reviewer prompt now requires reading every changed file's complete diff and full head file (dependency lockfiles may be checked as diffs against their manifests; generated artifacts must also be checked against their sources), discovering the governing tickets, specifications, and conventions from `AGENTS.md` and the wiki index, and evaluating each change for correctness, security, canon, scope, tests, contracts, and shared-code regressions. The reviewer returns a per-file coverage ledger that the parent validates before posting, and receives each file's commentable line ranges. Coverage notes cannot excuse unread regular or generated files.

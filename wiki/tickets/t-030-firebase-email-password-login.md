@@ -1,4 +1,4 @@
-# T-030 — Authenticate with Firebase email/password and issue ThinkSo sessions
+# T-030 — Log in with Firebase email/password and issue ThinkSo sessions
 
 ## Control
 
@@ -11,13 +11,12 @@
 
 ## Outcome
 
-A new or returning user can create or access a ThinkSo profile with Firebase email/password and receive a persisted ThinkSo session; retired identities are denied.
+A manually seeded Firebase email/password user can log in, create or restore the matching ThinkSo profile, and receive a persisted ThinkSo session; retired identities are denied. In-app Firebase account creation belongs to T-190.
 
 ## Sources
 
-- [Login BDD 1.1–1.7 and 1.12–1.13](../behavior/login-screen-bdd.md#11-display-login-mode)
+- [Login BDD 1.1–1.5 and login portions of 1.11–1.13](../behavior/login-screen-bdd.md#11-display-login-mode)
 - [Login UI — ThinkSo Access Form](<../../raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Access Form.dc.html>)
-- [Create Account UI — ThinkSo Register](<../../raw/designs/thinkso-login-email-password-2026-09-04/ThinkSo Register.dc.html>)
 - [Mobile visual QA workflow](../design/visual-qa-workflow.md)
 - [Firebase email/password setup](../operations/firebase-email-password-setup.md)
 - [`POST /auth/login`](../api/api-specification.md#post-authlogin)
@@ -25,13 +24,13 @@ A new or returning user can create or access a ThinkSo profile with Firebase ema
 
 ## Scope and work
 
-- Login and Create Account presenter/UI, Firebase email/password adapter, loading/disabled/local-validation/generic-error behavior, placeholders, Firebase-token exchange, identity matching, profile creation/restoration, retired-profile rejection, session issuance, migrations, and tests.
-- Registration proceeds directly from Firebase account creation to ThinkSo token exchange and the Threads gate. Email verification, verification-email/resend UI, and cross-device verification reconciliation are post-MVP known issues.
-- Create Account requires `Name for the record` and stores it as the independent ThinkSo account display name; social provider handles remain separate.
+- Login presenter/UI, Firebase email/password sign-in adapter, loading/disabled/local-validation/generic-error behavior, placeholders, Firebase-token exchange, identity matching, profile creation/restoration, retired-profile rejection, session issuance, migrations, and tests.
+- The Create Account affordance remains visible but shows the standard not-yet-implemented toast until T-190 supplies the dependent registration flow.
+- Local Login QA manually seeds a Firebase Auth Emulator user, including its display name, before signing in through the app.
 
 ### Work breakdown
 
-- [x] **Mobile:** Login/Create Account presenters and forms, Firebase email/password effects, loading/error behavior, session receipt, and Threads-gate routing.
+- [x] **Mobile:** Login presenter and form, Firebase email/password sign-in effect, loading/error behavior, session receipt, and Threads-gate routing.
 - [x] **Backend:** Firebase ID-token validation, profile/identity/session persistence, retirement detection, and shared login endpoint.
 - [x] **Agent:** N/A.
 - [x] **Tests/CI:** presenter/component cases, Auth Emulator credential fakes, identity/link collisions, retired signals, API contracts, and migrations.
@@ -43,12 +42,12 @@ A new or returning user can create or access a ThinkSo profile with Firebase ema
 
 ## Acceptance and gates
 
-- [x] BDD 1.1–1.7 and 1.12–1.13 pass deterministically with Firebase email/password and required ThinkSo display name; no provider-button or email-verification behavior is required for MVP.
-- [x] New registration exchanges the Firebase ID token exactly once, creates one incomplete profile, issues a ThinkSo session, and routes to Connect Threads.
+- [x] BDD 1.1–1.5 and the Login portions of 1.11–1.13 pass deterministically with Firebase email/password; no provider-button behavior is required.
+- [x] First login by a manually seeded Firebase user exchanges the Firebase ID token exactly once, creates one incomplete ThinkSo profile, issues a session, and routes to Connect Threads.
 - [x] Repeated login reuses the active profile; identity collisions and retired signals follow the locked model.
 - [x] Access/refresh credentials and plaintext passwords are never logged or exposed to the UI model.
 - [x] Firebase Admin validation rejects malformed, expired, wrong-project, or retired identities.
-- [x] Expo Web Login and Create Account renders are compared side by side with their authoritative exports at matching phone viewports and material mismatches are repaired.
+- [x] The Expo Web Login render is compared side by side with its authoritative export at matching phone viewports and material mismatches are repaired.
 - [x] The repaired candidate is captured on Android and iOS and compared side by side with the same source designs.
 
 ## Activity log
@@ -81,19 +80,24 @@ A new or returning user can create or access a ThinkSo profile with Firebase ema
 
 `2026-09-08 | IMPLEMENTER | FIXED | pending coordinator commit | Added the global non-retryable NOT YET IMPLEMENTED toast for Forgot Password, Terms, and Privacy; focused presenter/UI tests and live Android verification pass.`
 
+`2026-10-01 | OWNER | AUTHORIZED_SPLIT | 91ef9b5 | Kept Login in T-030 and moved in-app Create Account to new dependent ticket T-190; Login QA manually seeds its Firebase Auth Emulator user.`
+
+`2026-10-01 | COORDINATOR | CANDIDATE_SPLIT | pending commit | Removed registration behavior from the T-030 candidate, retained the visible Create Account affordance as a placeholder, and aligned the local Firebase project and Emulator UI for manual Login QA.`
+
 ## Observations and decisions
 
 - Email confirmation is deferred from MVP; see [known issues](../product/known-issues.md).
+- **LOCKED 2026-10-01:** Create Account is a separate dependent slice, T-190. T-030 uses a manually seeded Auth Emulator account for Login verification.
 - **DERIVED:** Firebase revocation uses a five-minute per-user Admin epoch check. This slice persists and tests the required timestamps/policy; T-040 implements authenticated-request enforcement.
 - Firebase Auth state is memory-only; ThinkSo's access and rotating refresh credentials are the sole persisted device session. T-040 owns restore, refresh, and local-first logout.
 - Forgot Password, Terms, and Privacy remain deferred in this slice, but each responds with the global non-retryable `NOT YET IMPLEMENTED` toast instead of silently doing nothing. T-035 replaces the Forgot Password placeholder with its dialog and Firebase recovery behavior.
-- Login and Create Account remain fixed when their content fits. Compact screens may scroll when needed; Android uses keyboard pan so focusing an input does not remount or dismiss it.
+- Login remains fixed when its content fits. Compact screens may scroll when needed; Android uses keyboard pan so focusing an input does not remount or dismiss it.
 
 ## Handoff
 
-- **Delivered:** native Login/Create Account, Firebase credential effects, `POST /v1/auth/login`, identity/session tables, secure token storage, and Threads-gate routing.
+- **Delivered:** native Login, Firebase sign-in, `POST /v1/auth/login`, identity/session tables, secure token storage, and Threads-gate routing. T-190 owns in-app account creation.
 - **Candidate / PR:** current branch tip; [PR #5](https://github.com/dmitchelljackson/ThinkSo/pull/5).
-- **Evidence:** 51 mobile tests plus API-client tests; Python unit/integration and Firebase emulator contract tests; responsive Expo Web comparison; native Android Small Phone and large iOS visual checks; container, hygiene, documentation-link, generated-contract, and GitHub Actions checks.
+- **Evidence:** mobile and API-client tests; Python unit/integration and Firebase emulator contract tests; responsive Expo Web comparison; native Android Small Phone and large iOS Login checks; container, hygiene, documentation-link, generated-contract, and GitHub Actions checks.
 - **Limitations:** email verification and password recovery are deferred; T-040 supplies session restoration/rotation and request-time Firebase revocation enforcement; production Firebase smoke testing remains owner-controlled.
 
 UI-001 is resolved and the owner approved the repaired visual candidate.

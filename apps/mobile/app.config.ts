@@ -14,9 +14,10 @@ function firebaseConfig(): FirebaseClientConfig {
   if (!fs.existsSync(configPath)) {
     return {
       apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY ?? 'demo-api-key',
-      appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID ?? 'demo-thinkso',
-      projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID ?? 'demo-thinkso',
-      authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN ?? 'demo-thinkso.firebaseapp.com',
+      appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID ?? 'thinkso-5768a',
+      projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID ?? 'thinkso-5768a',
+      authDomain:
+        process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN ?? 'thinkso-5768a.firebaseapp.com',
     };
   }
   const raw = JSON.parse(fs.readFileSync(configPath, 'utf8')) as {
