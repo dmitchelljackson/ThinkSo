@@ -5,11 +5,15 @@ import { AccountAccessScreen, accountAccessAllowsScroll } from './AccountAccessS
 
 const mockOnEvent = jest.fn();
 let mockPresenterState: {
+  mode: 'login' | 'register';
+  displayName: string;
   email: string;
   password: string;
   busy: boolean;
   onEvent: typeof mockOnEvent;
 } = {
+  mode: 'login',
+  displayName: '',
   email: '',
   password: '',
   busy: false,
@@ -38,6 +42,8 @@ describe('AccountAccessScreen', () => {
   beforeEach(() => {
     mockOnEvent.mockReset();
     mockPresenterState = {
+      mode: 'login',
+      displayName: '',
       email: '',
       password: '',
       busy: false,
@@ -58,8 +64,6 @@ describe('AccountAccessScreen', () => {
     expect(screen.queryByRole('button', { name: 'HOW IT WORKS' })).toBeNull();
     expect(screen.getByRole('button', { name: 'TERMS OF SERVICE' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'PRIVACY POLICY' })).toBeTruthy();
-    await fireEvent.press(screen.getByRole('button', { name: 'CREATE ACCOUNT' }));
-    expect(mockOnEvent).toHaveBeenCalledWith({ type: 'createAccountPressed' });
     await fireEvent.press(screen.getByRole('button', { name: 'FORGOT IT' }));
     expect(mockOnEvent).toHaveBeenCalledWith({ type: 'forgotPasswordPressed' });
     await fireEvent.press(screen.getByRole('button', { name: 'TERMS OF SERVICE' }));
@@ -72,6 +76,20 @@ describe('AccountAccessScreen', () => {
     expect(accountAccessAllowsScroll(874)).toBe(false);
     expect(accountAccessAllowsScroll(800)).toBe(false);
     expect(accountAccessAllowsScroll(759)).toBe(true);
+  });
+
+  it('renders the required registration identity fields', async () => {
+    mockPresenterState = { ...mockPresenterState, mode: 'register' };
+    await render(
+      <SafeAreaProvider initialMetrics={metrics}>
+        <AccountAccessScreen />
+      </SafeAreaProvider>,
+    );
+    expect(screen.getByLabelText('Email')).toBeTruthy();
+    expect(screen.getByLabelText('Password')).toBeTruthy();
+    expect(screen.getByLabelText('Name for the record')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'CREATE ACCOUNT' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'LOG IN' })).toBeTruthy();
   });
 
   it('disables every action and shows the separate loading S while submitting', async () => {
