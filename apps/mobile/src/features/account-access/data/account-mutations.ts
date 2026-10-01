@@ -1,11 +1,13 @@
 import type { UseMutationOptions } from '@tanstack/react-query';
-import { AccountFailure, type ThinkSoSession } from '../../../domain/account';
+import { AccountFailure, type AccountMode, type ThinkSoSession } from '../../../domain/account';
 import type { AccountRepository } from './account-repository';
 import type { FirebaseAuthGateway } from './firebase-auth-gateway';
 
 export type AccountCommand = Readonly<{
+  mode: AccountMode;
   email: string;
   password: string;
+  displayName?: string;
   exchangeToken?: string;
 }>;
 
@@ -24,7 +26,14 @@ export class DefaultAccountMutations implements AccountMutations {
       mutationKey: ['account-access'],
       mutationFn: async (command) => {
         const firebaseIdToken =
-          command.exchangeToken ?? (await this.firebase.signIn(command.email, command.password));
+          command.exchangeToken ??
+          (command.mode === 'login'
+            ? await this.firebase.signIn(command.email, command.password)
+            : await this.firebase.register(
+                command.email,
+                command.password,
+                command.displayName ?? '',
+              ));
         try {
           return await this.repository.exchange(firebaseIdToken);
         } catch (error) {

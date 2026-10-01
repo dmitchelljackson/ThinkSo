@@ -1,3 +1,5 @@
+export type AccountMode = 'login' | 'register';
+
 export type ThinkSoUser = Readonly<{
   id: string;
   displayName?: string;

@@ -11,22 +11,44 @@ const session: ThinkSoSession = {
 
 describe('account access mutation boundary', () => {
   it('authenticates with Firebase then exchanges with ThinkSo', async () => {
-    const firebase = { signIn: jest.fn(async () => 'firebase-token') };
+    const firebase = { signIn: jest.fn(async () => 'firebase-token'), register: jest.fn() };
     const repository = { exchange: jest.fn(async () => session) };
     const mutation = new DefaultAccountMutations(firebase, repository).authenticate();
     await expect(
-      mutation.mutationFn?.({ email: 'a@b.com', password: 'password' } as never, {} as never),
+      mutation.mutationFn?.(
+        { mode: 'login', email: 'a@b.com', password: 'password' } as never,
+        {} as never,
+      ),
     ).resolves.toEqual(session);
     expect(firebase.signIn).toHaveBeenCalledWith('a@b.com', 'password');
     expect(repository.exchange).toHaveBeenCalledWith('firebase-token');
   });
 
-  it('retries a failed exchange without calling Firebase again', async () => {
-    const firebase = { signIn: jest.fn() };
+  it('registers with Firebase then exchanges exactly once', async () => {
+    const firebase = { signIn: jest.fn(), register: jest.fn(async () => 'firebase-token') };
     const repository = { exchange: jest.fn(async () => session) };
     const mutation = new DefaultAccountMutations(firebase, repository).authenticate();
     await mutation.mutationFn?.(
       {
+        mode: 'register',
+        displayName: 'Mitchell',
+        email: 'a@b.com',
+        password: 'password',
+      } as never,
+      {} as never,
+    );
+    expect(firebase.register).toHaveBeenCalledWith('a@b.com', 'password', 'Mitchell');
+    expect(repository.exchange).toHaveBeenCalledTimes(1);
+    expect(repository.exchange).toHaveBeenCalledWith('firebase-token');
+  });
+
+  it('retries a failed exchange without calling Firebase again', async () => {
+    const firebase = { signIn: jest.fn(), register: jest.fn() };
+    const repository = { exchange: jest.fn(async () => session) };
+    const mutation = new DefaultAccountMutations(firebase, repository).authenticate();
+    await mutation.mutationFn?.(
+      {
+        mode: 'login',
         email: 'a@b.com',
         password: 'password',
         exchangeToken: 'retained-token',
@@ -38,7 +60,7 @@ describe('account access mutation boundary', () => {
   });
 
   it('attaches the Firebase token only to recoverable exchange failures', async () => {
-    const firebase = { signIn: jest.fn(async () => 'firebase-token') };
+    const firebase = { signIn: jest.fn(async () => 'firebase-token'), register: jest.fn() };
     const repository = {
       exchange: jest.fn(async () => {
         throw new AccountFailure('recoverable', 'offline');
@@ -46,7 +68,10 @@ describe('account access mutation boundary', () => {
     };
     const mutation = new DefaultAccountMutations(firebase, repository).authenticate();
     await expect(
-      mutation.mutationFn?.({ email: 'a@b.com', password: 'password' } as never, {} as never),
+      mutation.mutationFn?.(
+        { mode: 'login', email: 'a@b.com', password: 'password' } as never,
+        {} as never,
+      ),
     ).rejects.toMatchObject({ kind: 'recoverable', exchangeToken: 'firebase-token' });
   });
 });

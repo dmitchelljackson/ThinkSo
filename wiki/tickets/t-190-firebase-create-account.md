@@ -4,10 +4,10 @@
 
 | Field | Value |
 |---|---|
-| Type / status | `PRODUCT` / `VERIFYING` |
+| Type / status | `PRODUCT` / `CHANGES_REQUESTED` |
 | Owner review | `VISUAL_APPROVED 2026-09-08 AS COMBINED FLOW` |
 | Stack position / predecessor | `031` / T-030 |
-| Branch / PR | `stack/190-firebase-create-account` / pending |
+| Branch / PR | `stack/190-firebase-create-account` / [#10](https://github.com/dmitchelljackson/ThinkSo/pull/10) |
 
 ## Outcome
 
@@ -52,7 +52,11 @@ None for deterministic Firebase Auth Emulator testing. A controlled live registr
 
 `2026-10-01 | OWNER | AUTHORIZED_SPLIT | 91ef9b5 | Split in-app Create Account from T-030 so Login can be reviewed and merged independently; existing ticket numbers remain unchanged.`
 
-`2026-10-01 | COORDINATOR | CANDIDATE_EXTRACTED | pending commit | Preserved the existing Create Account implementation on a branch stacked directly above the login-only T-030 candidate.`
+`2026-10-01 | COORDINATOR | CANDIDATE_EXTRACTED | 9b1be8e | Preserved the existing Create Account implementation on a branch stacked directly above the login-only T-030 candidate.`
+
+`2026-10-01 | CODE_REVIEWER | CHANGES_REQUESTED | 9b1be8e | CR-001 blocks completion: registration must resume safely when Firebase identity creation succeeds before a later profile, token, exchange, or storage step fails.`
+
+`2026-10-01 | COORDINATOR | STACK_SUBMITTED | pending commit | Opened dependent PR #10 on top of T-030 through GitHub native stacks.`
 
 ## Observations and decisions
 
