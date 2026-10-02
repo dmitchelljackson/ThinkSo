@@ -2,5 +2,9 @@ packages:
   - apps/*
   - packages/*
 
+allowBuilds:
+  '@firebase/util': true
+  protobufjs: true
+
 overrides:
   '@expo/ui': 57.0.15
