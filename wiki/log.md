@@ -581,3 +581,7 @@ Removed the detached-`origin/main` launcher ceremony from the reviewer and feedb
 ## [2026-10-01] correction | Login loading and keyboard form actions
 
 Moved Login progress into the fixed primary-action bounds so starting authentication does not resize the form card. Locked single-line mobile forms to advance through fields with the keyboard action and submit from the final field; multiline inputs retain their newline behavior unless explicitly specified otherwise.
+
+## [2026-10-02] split | Firebase session exchange and mobile Login reviews
+
+Replaced combined Login PR #5 with fresh stacked review units: backend Firebase verification, profile matching, and ThinkSo session issuance in PR #12, followed by the mobile Firebase SDK, Login presentation, API exchange, and SecureStore integration in PR #13. T-030 remains one product slice while the two architecture boundaries can now be learned and reviewed independently.

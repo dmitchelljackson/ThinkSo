@@ -7,7 +7,7 @@
 | Type / status | `PRODUCT` / `READY_FOR_REVIEW` |
 | Owner review | `VISUAL_APPROVED 2026-09-08` |
 | Stack position / predecessor | `030` / T-020 |
-| Branch / PR | `stack/030-firebase-email-password-login` / [#5](https://github.com/dmitchelljackson/ThinkSo/pull/5) |
+| Branches / PRs | Backend: `stack/030-firebase-session-exchange` / [#12](https://github.com/dmitchelljackson/ThinkSo/pull/12); mobile: `stack/031-mobile-firebase-login` / [#13](https://github.com/dmitchelljackson/ThinkSo/pull/13) |
 
 ## Outcome
 
@@ -88,6 +88,10 @@ A manually seeded Firebase email/password user can log in, create or restore the
 
 `2026-10-01 | IMPLEMENTER | FIXED | pending commit | Moved the loading S into the fixed Log In action and wired email Next to password plus password Done to Login; focused component tests cover both behaviors.`
 
+`2026-10-02 | OWNER | AUTHORIZED_SPLIT | 9cb923d | Replaced the combined PR with a backend Firebase-session-exchange PR and a dependent mobile Login PR so each architecture boundary can be reviewed independently.`
+
+`2026-10-02 | COORDINATOR | STACK_SUBMITTED | pending commit | Published fresh PRs #12 and #13 and retired combined PR #5; independent review history restarts on each replacement PR.`
+
 ## Observations and decisions
 
 - Email confirmation is deferred from MVP; see [known issues](../product/known-issues.md).
@@ -100,7 +104,7 @@ A manually seeded Firebase email/password user can log in, create or restore the
 ## Handoff
 
 - **Delivered:** native Login, Firebase sign-in, `POST /v1/auth/login`, identity/session tables, secure token storage, and Threads-gate routing. T-190 owns in-app account creation.
-- **Candidate / PR:** current branch tip; [PR #5](https://github.com/dmitchelljackson/ThinkSo/pull/5).
+- **Candidates / PRs:** backend session exchange in [PR #12](https://github.com/dmitchelljackson/ThinkSo/pull/12), followed by mobile Login in [PR #13](https://github.com/dmitchelljackson/ThinkSo/pull/13).
 - **Evidence:** mobile and API-client tests; Python unit/integration and Firebase emulator contract tests; responsive Expo Web comparison; native Android Small Phone and large iOS Login checks; container, hygiene, documentation-link, generated-contract, and GitHub Actions checks.
 - **Limitations:** email verification and password recovery are deferred; T-040 supplies session restoration/rotation and request-time Firebase revocation enforcement; production Firebase smoke testing remains owner-controlled.
 
