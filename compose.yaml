@@ -26,6 +26,8 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://thinkso:local-development-only@postgres:5432/thinkso}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:-thinkso-5768a}
+      FIREBASE_AUTH_EMULATOR_HOST: ${FIREBASE_AUTH_EMULATOR_HOST:-}
     ports:
       - '${API_PORT:-8000}:8000'
     healthcheck:
