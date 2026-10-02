@@ -15,6 +15,7 @@ import {
   Inline,
   LoadingS,
   NoticeDialog,
+  PasswordField,
   Spacer,
   Stack,
   ThreadsConnectButton,
@@ -84,6 +85,16 @@ describe('native visual foundation primitives', () => {
     expect(view.getByTestId('disabled').props.accessibilityState.disabled).toBe(true);
     expect(view.getByTestId('loading').props.accessibilityState.busy).toBe(true);
     expect(view.getByTestId('loading-indicator')).toBeTruthy();
+  });
+
+  it('reveals and obscures password text through the shared field control', async () => {
+    const view = await render(<PasswordField value="open-sesame" onChangeText={jest.fn()} />);
+    expect(view.getByTestId('account-password').props.secureTextEntry).toBe(true);
+    await fireEvent.press(view.getByRole('button', { name: 'Show password' }));
+    expect(view.getByTestId('account-password').props.secureTextEntry).toBe(false);
+    expect(view.getByRole('button', { name: 'Hide password' })).toBeTruthy();
+    await fireEvent.press(view.getByRole('button', { name: 'Hide password' }));
+    expect(view.getByTestId('account-password').props.secureTextEntry).toBe(true);
   });
 
   it('renders pressed feedback without moving the action', async () => {
